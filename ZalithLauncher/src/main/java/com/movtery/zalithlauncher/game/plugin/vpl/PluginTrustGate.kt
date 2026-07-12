@@ -46,7 +46,7 @@ object PluginTrustGate {
 
     data class PluginCandidate(
         val packageName: String,
-        val typeNameRes: Int
+        val type: PluginType
     )
 
     suspend fun verifyForLaunch(
@@ -60,7 +60,7 @@ object PluginTrustGate {
 
         if (candidates.isEmpty()) return emptyList()
 
-        return verifyNext(context, vpl, candidates, 0, mutableListOf(), onDialogShow)
+        return verifyNext(vpl, candidates, 0, mutableListOf(), onDialogShow)
     }
 
     fun resetUnknownPluginCooldown() {
@@ -73,22 +73,22 @@ object PluginTrustGate {
         RendererPluginManager.selectedRendererPlugin?.let { plugin ->
             val packageName = (plugin as? ApkRendererPlugin)?.packageName
             if (packageName != null) {
-                candidates.add(PluginCandidate(packageName, R.string.plugin_type_renderer))
+                candidates.add(PluginCandidate(packageName, PluginType.Renderer))
             }
         }
 
         val driver = DriverPluginManager.getDriver()
         if (driver.packageName.isNotEmpty() && !driver.isLauncher) {
-            candidates.add(PluginCandidate(driver.packageName, R.string.plugin_type_driver))
+            candidates.add(PluginCandidate(driver.packageName, PluginType.VulkanDriver))
         }
 
         for (plugin in NativePluginManager.getCheckedPlugins()) {
-            candidates.add(PluginCandidate(plugin.packageName, R.string.plugin_type_native))
+            candidates.add(PluginCandidate(plugin.packageName, PluginType.NativeLib))
         }
 
         if (FFmpegPluginManager.isAvailable) {
             candidates.add(
-                PluginCandidate("net.kdt.pojavlaunch.ffmpeg", R.string.plugin_type_ffmpeg)
+                PluginCandidate("net.kdt.pojavlaunch.ffmpeg", PluginType.FFmpeg)
             )
         }
 
@@ -96,7 +96,6 @@ object PluginTrustGate {
     }
 
     private suspend fun verifyNext(
-        context: Context,
         vpl: VerifiedPluginLoad,
         candidates: List<PluginCandidate>,
         index: Int,
@@ -109,7 +108,7 @@ object PluginTrustGate {
 
         val candidate = candidates[index]
         val result = vpl.inspectInstalledPackage(candidate.packageName)
-        logDecision(context, candidate, result)
+        logDecision(candidate, result)
 
         val allowUntrusted = AllSettings.allowUntrustedPlugins.getValue()
 
@@ -127,12 +126,11 @@ object PluginTrustGate {
                     throw CancellationException("Key trust disabled")
                 }
                 authorizations.add(requireAuthorization(result))
-                verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+                verifyNext(vpl, candidates, index + 1, authorizations, onDialogShow)
             }
 
             PluginTrustStatus.PENDING_TRUST -> {
                 requestAuthorTrust(
-                    context = context,
                     vpl = vpl,
                     candidate = candidate,
                     result = result,
@@ -146,7 +144,6 @@ object PluginTrustGate {
             PluginTrustStatus.UNTRUSTED -> {
                 if (allowUntrusted) {
                     requestKeyTrust(
-                        context = context,
                         vpl = vpl,
                         candidate = candidate,
                         result = result,
@@ -205,7 +202,6 @@ object PluginTrustGate {
     }
 
     private suspend fun requestAuthorTrust(
-        context: Context,
         vpl: VerifiedPluginLoad,
         candidate: PluginCandidate,
         result: PluginVerificationResult,
@@ -249,7 +245,6 @@ object PluginTrustGate {
         }
 
         return trustAuthorThenContinue(
-            context = context,
             vpl = vpl,
             candidate = candidate,
             result = result,
@@ -261,7 +256,6 @@ object PluginTrustGate {
     }
 
     private suspend fun trustAuthorThenContinue(
-        context: Context,
         vpl: VerifiedPluginLoad,
         candidate: PluginCandidate,
         result: PluginVerificationResult,
@@ -280,11 +274,10 @@ object PluginTrustGate {
             throw SecurityException("Plugin is not trusted after author confirmation: ${refreshed.status}")
         }
         authorizations.add(requireAuthorization(refreshed))
-        return verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+        return verifyNext(vpl, candidates, index + 1, authorizations, onDialogShow)
     }
 
     private suspend fun requestKeyTrust(
-        context: Context,
         vpl: VerifiedPluginLoad,
         candidate: PluginCandidate,
         result: PluginVerificationResult,
@@ -324,7 +317,6 @@ object PluginTrustGate {
         }
 
         return trustKeyThenContinue(
-            context = context,
             vpl = vpl,
             candidate = candidate,
             result = result,
@@ -336,7 +328,6 @@ object PluginTrustGate {
     }
 
     private suspend fun trustKeyThenContinue(
-        context: Context,
         vpl: VerifiedPluginLoad,
         candidate: PluginCandidate,
         result: PluginVerificationResult,
@@ -355,7 +346,7 @@ object PluginTrustGate {
             throw SecurityException("Plugin is not trusted after key confirmation: ${refreshed.status}")
         }
         authorizations.add(requireAuthorization(refreshed))
-        return verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+        return verifyNext(vpl, candidates, index + 1, authorizations, onDialogShow)
     }
 
     private suspend fun closeWithFailure(
@@ -379,11 +370,11 @@ object PluginTrustGate {
             ?: throw SecurityException("Trusted result does not contain a load authorization")
     }
 
-    private fun logDecision(context: Context, candidate: PluginCandidate, result: PluginVerificationResult) {
+    private fun logDecision(candidate: PluginCandidate, result: PluginVerificationResult) {
         val sha256 = result.matchedSignature?.sha256 ?: "unknown"
         Logger.info(
             TAG,
-            "Plugin verification: type=${context.getString(candidate.typeNameRes)}, " +
+            "Plugin verification: type=${candidate.type.name}, " +
                     "package=${candidate.packageName}, " +
                     "version=${result.packageInfo.versionName}, " +
                     "sha256=$sha256, " +
@@ -399,7 +390,7 @@ object PluginTrustGate {
             R.string.plugin_trust_general_details,
             label,
             version,
-            androidText(candidate.typeNameRes)
+            candidate.type.localeText
         )
         val author = result.author
         return if (author != null) {
