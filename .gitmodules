@@ -1,4 +1,3 @@
 [submodule "VerifiedPluginLoad"]
 	path = VerifiedPluginLoad
 	url = git@github.com:ZalithLauncher/VerifiedPluginLoad.git
-	branch = main
