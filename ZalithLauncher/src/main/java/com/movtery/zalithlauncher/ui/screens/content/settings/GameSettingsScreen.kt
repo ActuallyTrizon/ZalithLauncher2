@@ -107,6 +107,14 @@ fun GameSettingsScreen(
                         summary = stringResource(R.string.settings_game_skip_game_integrity_check_summary)
                     )
 
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.allowUntrustedPlugins,
+                        title = stringResource(R.string.settings_launcher_allow_untrusted_plugins),
+                        summary = stringResource(R.string.settings_launcher_allow_untrusted_plugins_summary)
+                    )
+
                     TextInputSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Bottom,

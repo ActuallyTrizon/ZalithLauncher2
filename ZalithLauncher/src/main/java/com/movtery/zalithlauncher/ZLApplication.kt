@@ -36,6 +36,7 @@ import com.movtery.zalithlauncher.context.refreshContext
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.path.GamePathManager
+import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustListSync
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.loadAllSettings
 import com.movtery.zalithlauncher.ui.activities.showFatalError
@@ -90,6 +91,7 @@ class ZLApplication : Application(), SingletonImageLoader.Factory {
             initializeData()
             PathManager.DIR_FILES_PRIVATE = getDir("files", MODE_PRIVATE)
             DEVICE_ARCHITECTURE = Architecture.getDeviceArchitecture()
+            PluginTrustListSync.start(this)
             //Force x86 lib directory for Asus x86 based zenfones
             if (Architecture.isx86Device() && Architecture.is32BitsDevice) {
                 val originalJNIDirectory = applicationInfo.nativeLibraryDir

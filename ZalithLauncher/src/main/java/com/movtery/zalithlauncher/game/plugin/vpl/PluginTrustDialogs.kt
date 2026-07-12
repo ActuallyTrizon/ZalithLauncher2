@@ -1,0 +1,429 @@
+package com.movtery.zalithlauncher.game.plugin.vpl
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.components.MarqueeText
+import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
+import com.movtery.zalithlauncher.ui.theme.cardColor
+import com.movtery.zalithlauncher.ui.theme.onCardColor
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+
+@Composable
+fun PluginTrustDialogHost() {
+    val request by PluginTrustDialogState.currentRequest.collectAsState()
+
+    request?.let { req ->
+        when (req) {
+            is PluginTrustDialogState.DialogRequest.AuthorTrust -> {
+                AuthorTrustDialog(
+                    title = req.title,
+                    summary = req.summary,
+                    message = req.message,
+                    generalDetails = req.generalDetails,
+                    technicalDetails = req.technicalDetails,
+                    severity = req.severity,
+                    onTrust = { req.deferred.complete(PluginTrustDialogState.DialogAction.TRUST) },
+                    onCancel = { req.deferred.complete(PluginTrustDialogState.DialogAction.CANCEL) }
+                )
+            }
+            is PluginTrustDialogState.DialogRequest.KeyTrust -> {
+                KeyTrustDialog(
+                    title = req.title,
+                    summary = req.summary,
+                    message = req.message,
+                    generalDetails = req.generalDetails,
+                    technicalDetails = req.technicalDetails,
+                    cooldownSeconds = req.cooldownSeconds,
+                    onTrust = { req.deferred.complete(PluginTrustDialogState.DialogAction.TRUST) },
+                    onCancel = { req.deferred.complete(PluginTrustDialogState.DialogAction.CANCEL) }
+                )
+            }
+            is PluginTrustDialogState.DialogRequest.Error -> {
+                ErrorDialog(
+                    title = req.title,
+                    summary = req.summary,
+                    message = req.message,
+                    generalDetails = req.generalDetails,
+                    technicalDetails = req.technicalDetails,
+                    onClose = { req.deferred.complete(PluginTrustDialogState.DialogAction.CANCEL) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AuthorTrustDialog(
+    title: AndroidStringText,
+    summary: AndroidStringText?,
+    message: AndroidStringText?,
+    generalDetails: AndroidStringText?,
+    technicalDetails: AndroidStringText?,
+    severity: PluginTrustDialogState.Severity,
+    onTrust: () -> Unit,
+    onCancel: () -> Unit
+) {
+    val severityInfo = when (severity) {
+        PluginTrustDialogState.Severity.ERROR -> SeverityInfo(
+            label = stringResource(R.string.plugin_trust_level_error),
+            icon = painterResource(R.drawable.ic_close),
+            color = Color(0xFFB42318)
+        )
+        PluginTrustDialogState.Severity.WARNING -> SeverityInfo(
+            label = stringResource(R.string.plugin_trust_level_warning),
+            icon = painterResource(R.drawable.ic_warning_filled),
+            color = Color(0xFFB54708)
+        )
+        PluginTrustDialogState.Severity.INFO -> SeverityInfo(
+            label = stringResource(R.string.plugin_trust_level_info),
+            icon = painterResource(R.drawable.ic_info_filled),
+            color = Color(0xFF2563EB)
+        )
+    }
+
+    TrustDialog(
+        onDismissRequest = onCancel,
+        title = {
+            SeverityTitle(
+                info = severityInfo,
+                title = title
+            )
+        },
+        body = {
+            TrustDialogContent(
+                summary = summary,
+                message = message,
+                generalDetails = generalDetails,
+                technicalDetails = technicalDetails
+            )
+        },
+        confirm = {
+            Button(onClick = onTrust) {
+                MarqueeText(text = stringResource(R.string.plugin_trust_author_action))
+            }
+        },
+        cancel = {
+            FilledTonalButton(onClick = onCancel) {
+                MarqueeText(text = stringResource(R.string.plugin_trust_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun KeyTrustDialog(
+    title: AndroidStringText,
+    summary: AndroidStringText?,
+    message: AndroidStringText?,
+    generalDetails: AndroidStringText?,
+    technicalDetails: AndroidStringText?,
+    cooldownSeconds: Int,
+    onTrust: () -> Unit,
+    onCancel: () -> Unit
+) {
+    var remainingSeconds by remember { mutableIntStateOf(cooldownSeconds) }
+    val isReady = remainingSeconds <= 0
+
+    LaunchedEffect(cooldownSeconds) {
+        remainingSeconds = cooldownSeconds
+        while (remainingSeconds > 0) {
+            delay(1_000L.milliseconds)
+            remainingSeconds--
+        }
+    }
+
+    TrustDialog(
+        onDismissRequest = onCancel,
+        title = {
+            Column {
+                SeverityTitle(
+                    info = SeverityInfo(
+                        label = stringResource(R.string.plugin_trust_level_warning),
+                        icon = painterResource(R.drawable.ic_warning_filled),
+                        color = Color(0xFFB54708)
+                    ),
+                    title = title
+                )
+            }
+        },
+        body = {
+            TrustDialogContent(
+                summary = summary,
+                message = message,
+                generalDetails = generalDetails,
+                technicalDetails = technicalDetails
+            )
+        },
+        confirm = {
+            Button(
+                onClick = onTrust,
+                enabled = isReady
+            ) {
+                MarqueeText(
+                    text = if (isReady) {
+                        stringResource(R.string.plugin_trust_key_action)
+                    } else {
+                        stringResource(R.string.plugin_trust_key_wait, remainingSeconds)
+                    }
+                )
+            }
+        },
+        cancel = {
+            FilledTonalButton(onClick = onCancel) {
+                MarqueeText(text = stringResource(R.string.plugin_trust_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+private fun ErrorDialog(
+    title: AndroidStringText,
+    summary: AndroidStringText?,
+    message: AndroidStringText?,
+    generalDetails: AndroidStringText?,
+    technicalDetails: AndroidStringText?,
+    onClose: () -> Unit
+) {
+    TrustDialog(
+        onDismissRequest = onClose,
+        title = {
+            Column {
+                SeverityTitle(
+                    info = SeverityInfo(
+                        label = stringResource(R.string.plugin_trust_level_error),
+                        icon = painterResource(R.drawable.ic_close),
+                        color = Color(0xFFB42318)
+                    ),
+                    title = title
+                )
+            }
+        },
+        body = {
+            TrustDialogContent(
+                summary = summary,
+                message = message,
+                generalDetails = generalDetails,
+                technicalDetails = technicalDetails
+            )
+        },
+        confirm = {
+            Button(onClick = onClose) {
+                MarqueeText(text = stringResource(R.string.plugin_trust_close))
+            }
+        }
+    )
+}
+
+@Composable
+private fun TrustDialogContent(
+    summary: AndroidStringText?,
+    message: AndroidStringText?,
+    generalDetails: AndroidStringText?,
+    technicalDetails: AndroidStringText?
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScrollWithBar(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        if (summary != null) {
+            AndroidStringText(
+                text = summary,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        BasicInfoChunk(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.plugin_trust_general_information),
+            message, generalDetails
+        )
+
+        BasicInfoChunk(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.plugin_trust_technical_information),
+            technicalDetails
+        )
+    }
+}
+
+@Composable
+private fun BasicInfoChunk(
+    modifier: Modifier = Modifier,
+    title: String,
+    vararg infos: AndroidStringText?
+) {
+    infos.filterNotNull()
+        .takeIf { it.isNotEmpty() }
+        ?.let { infos0 ->
+            Column(
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                infos0.forEach { info ->
+                    AndroidStringText(
+                        text = info,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+        }
+}
+
+
+@Composable
+private fun TrustDialog(
+    onDismissRequest: () -> Unit,
+    title: @Composable () -> Unit,
+    body: @Composable () -> Unit,
+    confirm: (@Composable () -> Unit)? = null,
+    cancel: (@Composable () -> Unit)? = null,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            Surface(
+                modifier = Modifier
+                    .padding(all = 6.dp)
+                    .heightIn(max = maxHeight - 12.dp)
+                    .fillMaxWidth(0.65f)
+                    .wrapContentHeight(),
+                shadowElevation = 6.dp,
+                color = cardColor(false),
+                contentColor = onCardColor(),
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    title()
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f, false)
+                    ) {
+                        body()
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                    ) {
+                        cancel?.invoke()
+                        confirm?.invoke()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SeverityTitle(
+    info: SeverityInfo,
+    title: AndroidStringText,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = info.color.copy(alpha = 0.15f),
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                painter = info.icon,
+                contentDescription = null,
+                tint = info.color,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(24.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = info.label,
+                style = MaterialTheme.typography.labelMedium,
+                color = info.color,
+                fontWeight = FontWeight.Bold
+            )
+            AndroidStringText(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+private data class SeverityInfo(
+    val label: String,
+    val icon: Painter,
+    val color: Color
+)

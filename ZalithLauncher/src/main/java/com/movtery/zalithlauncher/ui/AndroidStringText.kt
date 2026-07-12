@@ -238,7 +238,7 @@ fun resolveAndroidString(text: AndroidStringText): AnnotatedString {
         is AndroidStringText.Text -> AnnotatedString(text.value)
         is AndroidStringText.Annotated -> text.value
         is AndroidStringText.StringRes -> {
-            val args = text.args
+            val args = text.args?.map { resolveFormatArg(it) }?.toTypedArray()
             AnnotatedString(
                 if (args == null) {
                     stringResource(text.key)
@@ -257,6 +257,14 @@ fun resolveAndroidString(text: AndroidStringText): AnnotatedString {
     }
 }
 
+@Composable
+private fun resolveFormatArg(arg: Any): Any {
+    return when (arg) {
+        is AndroidStringText -> resolveAndroidString(arg).toString()
+        else -> arg
+    }
+}
+
 /**
  * 在非 Composable 环境中将 [AndroidStringText] 解析为 [String]
  *
@@ -265,10 +273,20 @@ fun resolveAndroidString(text: AndroidStringText): AnnotatedString {
 fun AndroidStringText.toAndroidString(context: Context): String = when (this) {
     is AndroidStringText.Text -> value
     is AndroidStringText.Annotated -> value.toString()
-    is AndroidStringText.StringRes -> if (args == null) {
-        context.getString(key)
-    } else {
-        context.getString(key, *args)
+    is AndroidStringText.StringRes -> {
+        val args = args?.map { resolveFormatArg(it, context) }?.toTypedArray()
+        if (args == null) {
+            context.getString(key)
+        } else {
+            context.getString(key, *args)
+        }
     }
     is AndroidStringText.Appended -> texts.joinToString("") { it.toAndroidString(context) }
+}
+
+private fun resolveFormatArg(arg: Any, context: Context): Any {
+    return when (arg) {
+        is AndroidStringText -> arg.toAndroidString(context)
+        else -> arg
+    }
 }

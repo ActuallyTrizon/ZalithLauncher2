@@ -35,6 +35,7 @@ import com.movtery.zalithlauncher.game.path.getGameHome
 import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
 import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
+import com.movtery.zalithlauncher.game.plugin.vpl.PluginNativeLoadGuard
 import com.movtery.zalithlauncher.path.LibPath
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -88,6 +89,9 @@ abstract class Launcher(
 
         LoggerBridge.appendTitle("DLOPEN Java Runtime")
         dlopenJavaRuntime()
+
+        LoggerBridge.appendTitle("Plugin Native Load Guard")
+        PluginNativeLoadGuard.verify(context)
 
         dlopenEngine()
 

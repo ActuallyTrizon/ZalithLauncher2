@@ -29,6 +29,23 @@ val defaultCurseForgeApiKey = project.findProperty("curseforge_api_key") as? Str
 
 val projectArch: String = System.getProperty("arch", "all")
 
+val defaultVplTrustListUrlPrefixes = listOf(
+    "https://raw.giteeusercontent.com/fcl-team/VerifiedPluginLoad/raw/main/src/main/assets",
+    "https://raw.githubusercontent.com/ZalithLauncher/VerifiedPluginLoad/refs/heads/main/src/main/assets",
+    "https://repo.miawa.cn/vpl/src/main/assets"
+)
+val vplTrustListUrlPrefixes = (project.findProperty("vpl.trustListUrlPrefixes") as? String)
+    ?.split(",")
+    ?.map { it.trim() }
+    ?.takeIf { it.all { url -> url.isNotEmpty() } }
+    ?: defaultVplTrustListUrlPrefixes
+val vplTrustListJsonSuffix = (project.findProperty("vpl.trustListJsonSuffix") as? String)
+    ?.takeIf { it.isNotEmpty() }
+    ?: "trusted-authors.json"
+val vplTrustListSignatureSuffix = (project.findProperty("vpl.trustListSignatureSuffix") as? String)
+    ?.takeIf { it.isNotEmpty() }
+    ?: "trusted-authors.json.sig"
+
 fun getKeyFromLocal(envKey: String, fileName: String? = null, default: String? = null): String {
     val key = System.getenv(envKey)
     return key ?: fileName?.let {
@@ -67,6 +84,15 @@ android {
         versionCode = launcherVersionCode
         versionName = launcherVersionName
         manifestPlaceholders["launcher_name"] = launcherAPPName
+
+        fun buildConfigString(value: String) = "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+        buildConfigField(
+            "String[]",
+            "VPL_TRUST_LIST_URL_PREFIXES",
+            "new String[] { ${vplTrustListUrlPrefixes.joinToString(", ") { buildConfigString(it) }} }"
+        )
+        buildConfigField("String", "VPL_TRUST_LIST_JSON_SUFFIX", buildConfigString(vplTrustListJsonSuffix))
+        buildConfigField("String", "VPL_TRUST_LIST_SIGNATURE_SUFFIX", buildConfigString(vplTrustListSignatureSuffix))
     }
 
     buildTypes {
@@ -226,6 +252,7 @@ dependencies {
     implementation(project(":LayerController"))
     implementation(project(":ColorPicker"))
     implementation(project(":Terracotta"))
+    implementation(project(":VerifiedPluginLoad"))
     //Utils
     implementation(libs.bytehook)
     implementation(libs.gson)

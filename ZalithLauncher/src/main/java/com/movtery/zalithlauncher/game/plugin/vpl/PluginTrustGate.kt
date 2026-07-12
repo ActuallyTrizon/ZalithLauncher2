@@ -1,0 +1,391 @@
+package com.movtery.zalithlauncher.game.plugin.vpl
+
+import android.content.Context
+import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
+import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
+import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
+import com.movtery.zalithlauncher.game.plugin.renderer.ApkRendererPlugin
+import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
+import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
+import com.movtery.zalithlauncher.utils.logging.Logger
+import com.tungsten.verifiedpluginload.api.VerifiedPluginLoad
+import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadRegistry
+import com.tungsten.verifiedpluginload.model.AuthorType
+import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization
+import com.tungsten.verifiedpluginload.model.PluginTrustStatus
+import com.tungsten.verifiedpluginload.model.PluginVerificationResult
+import com.tungsten.verifiedpluginload.model.TrustActionStatus
+import com.tungsten.verifiedpluginload.model.TrustSource
+import com.tungsten.verifiedpluginload.model.TrustedAuthorInfo
+import kotlinx.coroutines.CancellationException
+
+object PluginTrustGate {
+    private const val TAG = "VerifiedPluginLoad"
+    private const val UNKNOWN_PLUGIN_COOLDOWN_SECONDS = 6
+
+    data class PluginCandidate(
+        val packageName: String,
+        val typeNameRes: Int
+    )
+
+    suspend fun verifyForLaunch(
+        context: Context,
+        onDialogShow: (AndroidStringText) -> Unit = {}
+    ): List<PluginLoadAuthorization> {
+        PluginTrustListSync.awaitStartupRefresh()
+
+        val vpl = VerifiedPluginLoadRegistry.get(context)
+        val candidates = collectCandidates()
+
+        if (candidates.isEmpty()) return emptyList()
+
+        return verifyNext(context, vpl, candidates, 0, mutableListOf(), onDialogShow)
+    }
+
+    fun resetUnknownPluginCooldown() {
+        PluginTrustDialogState.dismissCurrent()
+    }
+
+    private fun collectCandidates(): List<PluginCandidate> {
+        val candidates = mutableListOf<PluginCandidate>()
+
+        RendererPluginManager.selectedRendererPlugin?.let { plugin ->
+            val packageName = (plugin as? ApkRendererPlugin)?.packageName
+            if (packageName != null) {
+                candidates.add(PluginCandidate(packageName, R.string.plugin_type_renderer))
+            }
+        }
+
+        val driver = DriverPluginManager.getDriver()
+        if (driver.packageName.isNotEmpty() && !driver.isLauncher) {
+            candidates.add(PluginCandidate(driver.packageName, R.string.plugin_type_driver))
+        }
+
+        for (plugin in NativePluginManager.getCheckedPlugins()) {
+            candidates.add(PluginCandidate(plugin.packageName, R.string.plugin_type_native))
+        }
+
+        if (FFmpegPluginManager.isAvailable) {
+            candidates.add(PluginCandidate("net.kdt.pojavlaunch.ffmpeg", R.string.plugin_type_ffmpeg))
+        }
+
+        return candidates
+    }
+
+    private suspend fun verifyNext(
+        context: Context,
+        vpl: VerifiedPluginLoad,
+        candidates: List<PluginCandidate>,
+        index: Int,
+        authorizations: MutableList<PluginLoadAuthorization>,
+        onDialogShow: (AndroidStringText) -> Unit
+    ): List<PluginLoadAuthorization> {
+        if (index >= candidates.size) {
+            return authorizations.toList()
+        }
+
+        val candidate = candidates[index]
+        val result = vpl.inspectInstalledPackage(candidate.packageName)
+        logDecision(context, candidate, result)
+
+        val allowUntrusted = AllSettings.allowUntrustedPlugins.getValue()
+
+        return when (result.status) {
+            PluginTrustStatus.TRUSTED -> {
+                if (!isExplicitKeyTrustAllowed(result.trustSource, allowUntrusted)) {
+                    closeWithFailure(
+                        title = androidText(R.string.plugin_trust_title_key_trust_disabled),
+                        summary = androidText(R.string.plugin_trust_summary_key_trust_disabled),
+                        message = androidText(R.string.plugin_trust_key_trust_disabled_body),
+                        generalDetails = generalDetails(candidate, result),
+                        technicalDetails = technicalDetails(candidate, result),
+                        onDialogShow = onDialogShow
+                    )
+                    throw CancellationException("Key trust disabled")
+                }
+                authorizations.add(requireAuthorization(result))
+                verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+            }
+
+            PluginTrustStatus.PENDING_TRUST -> {
+                requestAuthorTrust(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+            }
+
+            PluginTrustStatus.UNTRUSTED -> {
+                if (allowUntrusted) {
+                    requestKeyTrust(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+                } else {
+                    closeWithFailure(
+                        title = androidText(R.string.plugin_trust_title_untrusted),
+                        summary = androidText(R.string.plugin_trust_summary_untrusted),
+                        message = androidText(R.string.plugin_trust_untrusted_body),
+                        generalDetails = generalDetails(candidate, result),
+                        technicalDetails = technicalDetails(candidate, result),
+                        onDialogShow = onDialogShow
+                    )
+                    throw CancellationException("Untrusted plugin")
+                }
+            }
+
+            PluginTrustStatus.BANNED -> {
+                val reason = result.keyDescription ?: androidText(R.string.plugin_trust_banned_reason_default)
+                val warning = bannedWarningText( result.author)
+                closeWithFailure(
+                    title = androidText(R.string.plugin_trust_title_banned),
+                    summary = androidText(R.string.plugin_trust_summary_banned),
+                    message = androidText(R.string.plugin_trust_banned_body, warning),
+                    generalDetails = generalDetails(candidate, result),
+                    technicalDetails = androidText(
+                        technicalDetails(candidate, result),
+                        androidText(R.string.plugin_trust_banned_technical_details, reason)
+                    ),
+                    onDialogShow = onDialogShow
+                )
+                throw CancellationException("Banned plugin")
+            }
+
+            PluginTrustStatus.VERIFICATION_FAILED -> {
+                closeWithFailure(
+                    title = androidText(R.string.plugin_trust_title_failed),
+                    summary = androidText(R.string.plugin_trust_summary_failed),
+                    message = androidText(R.string.plugin_trust_failed_body),
+                    generalDetails = generalDetails(candidate, result),
+                    technicalDetails = androidText(
+                        technicalDetails(candidate, result),
+                        androidText(R.string.plugin_trust_failed_technical_details, result.diagnostic.name)
+                    ),
+                    onDialogShow = onDialogShow
+                )
+                throw CancellationException("Verification failed")
+            }
+        }
+    }
+
+    private suspend fun requestAuthorTrust(
+        context: Context,
+        vpl: VerifiedPluginLoad,
+        candidate: PluginCandidate,
+        result: PluginVerificationResult,
+        candidates: List<PluginCandidate>,
+        index: Int,
+        authorizations: MutableList<PluginLoadAuthorization>,
+        onDialogShow: (AndroidStringText) -> Unit
+    ): List<PluginLoadAuthorization> {
+        val author = result.author
+        if (author == null || author.confidence == 0) {
+            closeWithFailure(
+                title = androidText(R.string.plugin_trust_title_registered),
+                summary = androidText(R.string.plugin_trust_summary_registered),
+                message = confidenceText(author),
+                generalDetails = generalDetails(candidate, result),
+                technicalDetails = technicalDetails(candidate, result),
+                onDialogShow = onDialogShow
+            )
+            throw CancellationException("Author not trustable")
+        }
+
+        val severity = if (author.confidence == 1) {
+            PluginTrustDialogState.Severity.WARNING
+        } else {
+            PluginTrustDialogState.Severity.INFO
+        }
+
+        val title = androidText(R.string.plugin_trust_title_registered)
+        onDialogShow(title)
+        val action = PluginTrustDialogState.showAuthorTrust(
+            title = title,
+            summary = androidText(R.string.plugin_trust_summary_registered),
+            message = confidenceText(author),
+            generalDetails = generalDetails(candidate, result),
+            technicalDetails = technicalDetails(candidate, result),
+            severity = severity
+        )
+
+        if (action == PluginTrustDialogState.DialogAction.CANCEL) {
+            throw CancellationException("User cancelled author trust")
+        }
+
+        return trustAuthorThenContinue(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+    }
+
+    private suspend fun trustAuthorThenContinue(
+        context: Context,
+        vpl: VerifiedPluginLoad,
+        candidate: PluginCandidate,
+        result: PluginVerificationResult,
+        candidates: List<PluginCandidate>,
+        index: Int,
+        authorizations: MutableList<PluginLoadAuthorization>,
+        onDialogShow: (AndroidStringText) -> Unit
+    ): List<PluginLoadAuthorization> {
+        val author = result.author ?: throw SecurityException("No author info")
+        val action = vpl.trustAuthor(author.uuid)
+        if (action.status != TrustActionStatus.SUCCESS) {
+            throw SecurityException("Could not store author trust: ${action.status}")
+        }
+        val refreshed = vpl.inspectInstalledPackage(candidate.packageName)
+        if (refreshed.status != PluginTrustStatus.TRUSTED) {
+            throw SecurityException("Plugin is not trusted after author confirmation: ${refreshed.status}")
+        }
+        authorizations.add(requireAuthorization(refreshed))
+        return verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+    }
+
+    private suspend fun requestKeyTrust(
+        context: Context,
+        vpl: VerifiedPluginLoad,
+        candidate: PluginCandidate,
+        result: PluginVerificationResult,
+        candidates: List<PluginCandidate>,
+        index: Int,
+        authorizations: MutableList<PluginLoadAuthorization>,
+        onDialogShow: (AndroidStringText) -> Unit
+    ): List<PluginLoadAuthorization> {
+        if (result.currentSignatures.isEmpty()) {
+            closeWithFailure(
+                title = androidText(R.string.plugin_trust_title_failed),
+                summary = androidText(R.string.plugin_trust_summary_failed),
+                message = androidText(R.string.plugin_trust_failed_body),
+                generalDetails = generalDetails(candidate, result),
+                technicalDetails = androidText(
+                    technicalDetails(candidate, result),
+                    androidText(R.string.plugin_trust_failed_technical_details, "APK_UNSIGNED")
+                ),
+                onDialogShow = onDialogShow
+            )
+            throw CancellationException("Unsigned APK")
+        }
+
+        val title = androidText(R.string.plugin_trust_title_untrusted)
+        onDialogShow(title)
+        val action = PluginTrustDialogState.showKeyTrust(
+            title = title,
+            summary = androidText(R.string.plugin_trust_summary_unknown),
+            message = androidText(R.string.plugin_trust_unknown_body),
+            generalDetails = generalDetails(candidate, result),
+            technicalDetails = technicalDetails(candidate, result),
+            cooldownSeconds = UNKNOWN_PLUGIN_COOLDOWN_SECONDS
+        )
+
+        if (action == PluginTrustDialogState.DialogAction.CANCEL) {
+            throw CancellationException("User cancelled key trust")
+        }
+
+        return trustKeyThenContinue(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+    }
+
+    private suspend fun trustKeyThenContinue(
+        context: Context,
+        vpl: VerifiedPluginLoad,
+        candidate: PluginCandidate,
+        result: PluginVerificationResult,
+        candidates: List<PluginCandidate>,
+        index: Int,
+        authorizations: MutableList<PluginLoadAuthorization>,
+        onDialogShow: (AndroidStringText) -> Unit
+    ): List<PluginLoadAuthorization> {
+        val keyHash = result.currentSignatures.first().value
+        val action = vpl.trustKeyHash(keyHash)
+        if (action.status != TrustActionStatus.SUCCESS) {
+            throw SecurityException("Could not store key trust: ${action.status}")
+        }
+        val refreshed = vpl.inspectInstalledPackage(candidate.packageName)
+        if (refreshed.status != PluginTrustStatus.TRUSTED) {
+            throw SecurityException("Plugin is not trusted after key confirmation: ${refreshed.status}")
+        }
+        authorizations.add(requireAuthorization(refreshed))
+        return verifyNext(context, vpl, candidates, index + 1, authorizations, onDialogShow)
+    }
+
+    private suspend fun closeWithFailure(
+        title: AndroidStringText,
+        summary: AndroidStringText?,
+        message: AndroidStringText?,
+        generalDetails: AndroidStringText?,
+        technicalDetails: AndroidStringText?,
+        onDialogShow: (AndroidStringText) -> Unit
+    ) {
+        onDialogShow(title)
+        PluginTrustDialogState.showError(title, summary, message, generalDetails, technicalDetails)
+    }
+
+    fun isExplicitKeyTrustAllowed(trustSource: TrustSource?, allowUntrusted: Boolean): Boolean {
+        return trustSource != TrustSource.KEY || allowUntrusted
+    }
+
+    private fun requireAuthorization(result: PluginVerificationResult): PluginLoadAuthorization {
+        return result.toLoadAuthorization()
+            ?: throw SecurityException("Trusted result does not contain a load authorization")
+    }
+
+    private fun logDecision(context: Context, candidate: PluginCandidate, result: PluginVerificationResult) {
+        val sha256 = result.matchedSignature?.sha256 ?: "unknown"
+        Logger.info(
+            TAG,
+            "Plugin verification: type=${context.getString(candidate.typeNameRes)}, " +
+                "package=${candidate.packageName}, " +
+                "version=${result.packageInfo.versionName}, " +
+                "sha256=$sha256, " +
+                "status=${result.status}, " +
+                "trustListVersion=${result.trustListVersion}"
+        )
+    }
+
+    private fun generalDetails(candidate: PluginCandidate, result: PluginVerificationResult): AndroidStringText {
+        val label = result.packageInfo.applicationLabel?.takeIf { it.isNotBlank() } ?: candidate.packageName
+        val version = result.packageInfo.versionName ?: "-"
+        val details = androidText(
+            R.string.plugin_trust_general_details,
+            label,
+            version,
+            androidText(candidate.typeNameRes)
+        )
+        val author = result.author
+        return if (author != null) {
+            androidText(details, authorDetails(author))
+        } else {
+            details
+        }
+    }
+
+    private fun technicalDetails(candidate: PluginCandidate, result: PluginVerificationResult): AndroidStringText {
+        val packageName = result.packageInfo.packageName ?: candidate.packageName
+        val sha256 = if (result.currentSignatures.isNotEmpty()) result.currentSignatures.first().sha256 else "-"
+        return androidText(R.string.plugin_trust_technical_details, packageName, sha256)
+    }
+
+    private fun authorDetails(author: TrustedAuthorInfo): AndroidStringText {
+        val type = if (author.type == AuthorType.ORG) {
+            androidText(R.string.plugin_trust_author_org)
+        } else {
+            androidText(R.string.plugin_trust_author_person)
+        }
+        return androidText(
+            R.string.plugin_trust_author_details,
+            author.name,
+            type,
+            author.description ?: "-",
+            author.web ?: "-"
+        )
+    }
+
+    private fun bannedWarningText(author: TrustedAuthorInfo?): AndroidStringText {
+        return if (author != null && author.confidence == 0) {
+            androidText(R.string.plugin_trust_banned_confidence_0)
+        } else {
+            androidText(R.string.plugin_trust_banned_confidence_known)
+        }
+    }
+
+    private fun confidenceText(author: TrustedAuthorInfo?): AndroidStringText {
+        if (author == null) return androidText(R.string.plugin_trust_confidence_0)
+        return when (author.confidence) {
+            2 -> androidText(R.string.plugin_trust_confidence_2)
+            1 -> androidText(R.string.plugin_trust_confidence_1)
+            else -> androidText(R.string.plugin_trust_confidence_0)
+        }
+    }
+}

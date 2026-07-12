@@ -656,4 +656,9 @@ object AllSettings : SettingsRegistry() {
      * 启动 MC26.2+ 时，自动检查 Vulkan
      */
     val autoVulkanChecker = boolSetting("autoVulkanChecker", true)
+
+    /**
+     * 允许加载不受信任的插件
+     */
+    val allowUntrustedPlugins = boolSetting("allowUntrustedPlugins", false)
 }
