@@ -1,3 +1,21 @@
+/*
+ * Zalith Launcher 2
+ * Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
+ */
+
 package com.movtery.zalithlauncher.game.plugin.vpl
 
 import android.content.Context
@@ -69,7 +87,9 @@ object PluginTrustGate {
         }
 
         if (FFmpegPluginManager.isAvailable) {
-            candidates.add(PluginCandidate("net.kdt.pojavlaunch.ffmpeg", R.string.plugin_type_ffmpeg))
+            candidates.add(
+                PluginCandidate("net.kdt.pojavlaunch.ffmpeg", R.string.plugin_type_ffmpeg)
+            )
         }
 
         return candidates
@@ -111,12 +131,30 @@ object PluginTrustGate {
             }
 
             PluginTrustStatus.PENDING_TRUST -> {
-                requestAuthorTrust(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+                requestAuthorTrust(
+                    context = context,
+                    vpl = vpl,
+                    candidate = candidate,
+                    result = result,
+                    candidates = candidates,
+                    index = index,
+                    authorizations = authorizations,
+                    onDialogShow = onDialogShow
+                )
             }
 
             PluginTrustStatus.UNTRUSTED -> {
                 if (allowUntrusted) {
-                    requestKeyTrust(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+                    requestKeyTrust(
+                        context = context,
+                        vpl = vpl,
+                        candidate = candidate,
+                        result = result,
+                        candidates = candidates,
+                        index = index,
+                        authorizations = authorizations,
+                        onDialogShow = onDialogShow
+                    )
                 } else {
                     closeWithFailure(
                         title = androidText(R.string.plugin_trust_title_untrusted),
@@ -132,11 +170,13 @@ object PluginTrustGate {
 
             PluginTrustStatus.BANNED -> {
                 val reason = result.keyDescription ?: androidText(R.string.plugin_trust_banned_reason_default)
-                val warning = bannedWarningText( result.author)
                 closeWithFailure(
                     title = androidText(R.string.plugin_trust_title_banned),
                     summary = androidText(R.string.plugin_trust_summary_banned),
-                    message = androidText(R.string.plugin_trust_banned_body, warning),
+                    message = androidText(
+                        R.string.plugin_trust_banned_body,
+                        bannedWarningText(result.author)
+                    ),
                     generalDetails = generalDetails(candidate, result),
                     technicalDetails = androidText(
                         technicalDetails(candidate, result),
@@ -208,7 +248,16 @@ object PluginTrustGate {
             throw CancellationException("User cancelled author trust")
         }
 
-        return trustAuthorThenContinue(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+        return trustAuthorThenContinue(
+            context = context,
+            vpl = vpl,
+            candidate = candidate,
+            result = result,
+            candidates = candidates,
+            index = index,
+            authorizations = authorizations,
+            onDialogShow = onDialogShow
+        )
     }
 
     private suspend fun trustAuthorThenContinue(
@@ -274,7 +323,16 @@ object PluginTrustGate {
             throw CancellationException("User cancelled key trust")
         }
 
-        return trustKeyThenContinue(context, vpl, candidate, result, candidates, index, authorizations, onDialogShow)
+        return trustKeyThenContinue(
+            context = context,
+            vpl = vpl,
+            candidate = candidate,
+            result = result,
+            candidates = candidates,
+            index = index,
+            authorizations = authorizations,
+            onDialogShow = onDialogShow
+        )
     }
 
     private suspend fun trustKeyThenContinue(
@@ -326,11 +384,11 @@ object PluginTrustGate {
         Logger.info(
             TAG,
             "Plugin verification: type=${context.getString(candidate.typeNameRes)}, " +
-                "package=${candidate.packageName}, " +
-                "version=${result.packageInfo.versionName}, " +
-                "sha256=$sha256, " +
-                "status=${result.status}, " +
-                "trustListVersion=${result.trustListVersion}"
+                    "package=${candidate.packageName}, " +
+                    "version=${result.packageInfo.versionName}, " +
+                    "sha256=$sha256, " +
+                    "status=${result.status}, " +
+                    "trustListVersion=${result.trustListVersion}"
         )
     }
 

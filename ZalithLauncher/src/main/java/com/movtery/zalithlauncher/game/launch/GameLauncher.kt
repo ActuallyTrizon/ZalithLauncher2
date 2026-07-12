@@ -21,8 +21,8 @@ package com.movtery.zalithlauncher.game.launch
 import android.app.Activity
 import android.os.Build
 import android.os.Parcelable
-import androidx.annotation.Keep
 import android.widget.Toast
+import androidx.annotation.Keep
 import androidx.compose.ui.unit.IntSize
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.R

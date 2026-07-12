@@ -33,7 +33,6 @@ import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException
 import com.movtery.zalithlauncher.game.account.microsoft.toLocal
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginLoadAuthorizationHolder
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustGate
-import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustListSync
 import com.movtery.zalithlauncher.game.version.download.DownloadMode
 import com.movtery.zalithlauncher.game.version.download.MinecraftDownloader
 import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
@@ -133,12 +132,11 @@ object LaunchGame {
                 task.updateMessage(androidText(R.string.game_vulkan_check_title))
                 checkVulkanCapabilities(version, waitForVulkanChecker)
 
-                val trustResult = runCatching {
+                runCatching {
                     PluginTrustGate.verifyForLaunch(context) { title ->
                         task.updateMessage(title)
                     }
-                }
-                trustResult.onSuccess { authorizations ->
+                }.onSuccess { authorizations ->
                     PluginLoadAuthorizationHolder.set(authorizations)
                     runGame(context, version, account)
                     exitActivity()

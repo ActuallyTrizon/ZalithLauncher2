@@ -102,7 +102,14 @@ object PluginNativeLoadGuard {
 
         if (rendererPackageName != null) {
             val rendererPath = selectedRenderer.path
-            verifyPlugin(vpl, authorizations, "Renderer", rendererPackageName, rendererPath, allowUntrusted)
+            verifyPlugin(
+                vpl = vpl,
+                authorizations = authorizations,
+                type = "Renderer",
+                packageName = rendererPackageName,
+                expectedNativeDirectory = rendererPath,
+                allowUntrusted = allowUntrusted
+            )
             verifyRendererLibraries(selectedRenderer)
         } else {
             val rendererPath = selectedRenderer?.path
@@ -112,21 +119,46 @@ object PluginNativeLoadGuard {
         }
 
         val driver = DriverPluginManager.getDriver()
-        if (driver.packageName.isNotEmpty()) {
-            verifyPlugin(vpl, authorizations, "Vulkan driver", driver.packageName, driver.path, allowUntrusted)
-        } else if (!samePath(driver.path, context.applicationInfo.nativeLibraryDir)) {
+        if (driver.packageName.isNotEmpty() && !driver.isLauncher) {
+            verifyPlugin(
+                vpl = vpl,
+                authorizations = authorizations,
+                type = "Vulkan driver",
+                packageName = driver.packageName,
+                expectedNativeDirectory = driver.path,
+                allowUntrusted = allowUntrusted
+            )
+        } else if (!driver.isLauncher && !samePath(
+                driver.path,
+                context.applicationInfo.nativeLibraryDir
+            )
+        ) {
             throw IOException("Vulkan driver path is not owned by the launcher or an installed plugin APK")
         }
 
         for (plugin in NativePluginManager.getCheckedPlugins()) {
-            verifyPlugin(vpl, authorizations, "Native plugin", plugin.packageName, plugin.path, allowUntrusted)
+            verifyPlugin(
+                vpl = vpl,
+                authorizations = authorizations,
+                type = "Native plugin",
+                packageName = plugin.packageName,
+                expectedNativeDirectory = plugin.path,
+                allowUntrusted = allowUntrusted
+            )
             verifyNativePluginEnvironment(plugin)
         }
 
         if (FFmpegPluginManager.isAvailable) {
             val ffmpegPath = FFmpegPluginManager.libraryPath
             if (ffmpegPath != null) {
-                verifyPlugin(vpl, authorizations, "FFmpeg plugin", "net.kdt.pojavlaunch.ffmpeg", ffmpegPath, allowUntrusted)
+                verifyPlugin(
+                    vpl = vpl,
+                    authorizations = authorizations,
+                    type = "FFmpeg plugin",
+                    packageName = "net.kdt.pojavlaunch.ffmpeg",
+                    expectedNativeDirectory = ffmpegPath,
+                    allowUntrusted = allowUntrusted
+                )
                 requireLibraryInside(ffmpegPath, "libffmpeg.so", "FFmpeg library")
             }
         }
@@ -158,9 +190,9 @@ object PluginNativeLoadGuard {
 
         val authorized = authorizations.any { auth ->
             auth.packageName == packageName &&
-                samePath(auth.apkPath, apkPath) &&
-                auth.versionCode == result.packageInfo.versionCode &&
-                auth.currentSignatures == result.currentSignatures.toSet()
+                    samePath(auth.apkPath, apkPath) &&
+                    auth.versionCode == result.packageInfo.versionCode &&
+                    auth.currentSignatures == result.currentSignatures.toSet()
         }
         if (!authorized) {
             throw IOException("$type has no matching pre-launch verification authorization")
@@ -170,23 +202,35 @@ object PluginNativeLoadGuard {
         Logger.info(
             TAG,
             "$type trusted: package=$packageName, " +
-                "version=${result.packageInfo.versionName}, " +
-                "sha256=$hash, " +
-                "trustListVersion=${result.trustListVersion}"
+                    "version=${result.packageInfo.versionName}, " +
+                    "sha256=$hash, " +
+                    "trustListVersion=${result.trustListVersion}"
         )
     }
 
     private fun verifyRendererLibraries(renderer: RendererPlugin) {
         requireLibraryInside(renderer.path, renderer.glName, "Renderer OpenGL library")
         if (renderer.eglName.isNotEmpty()) {
-            requireLibraryInside(renderer.path, stripLeadingSlash(renderer.eglName), "Renderer EGL library")
+            requireLibraryInside(
+                nativeDirectory = renderer.path,
+                relativeLibrary = stripLeadingSlash(renderer.eglName),
+                label = "Renderer EGL library"
+            )
         }
         for (dlopenLib in renderer.dlopen) {
-            requireLibraryInside(renderer.path, dlopenLib, "Renderer DLOPEN library")
+            requireLibraryInside(
+                nativeDirectory = renderer.path,
+                relativeLibrary = dlopenLib,
+                label = "Renderer DLOPEN library"
+            )
         }
         for ((key, value) in renderer.env) {
             if (key == "LIB_MESA_NAME" || key == "MESA_LIBRARY") {
-                requireLibraryInside(renderer.path, value, "Renderer Mesa library")
+                requireLibraryInside(
+                    nativeDirectory = renderer.path,
+                    relativeLibrary = value,
+                    label = "Renderer Mesa library"
+                )
             }
         }
     }
@@ -219,30 +263,32 @@ object PluginNativeLoadGuard {
         }
     }
 
-    private fun requireLibraryInside(directory: String, libraryName: String, label: String) {
-        val file = File(directory, libraryName)
-        if (!file.exists() || !file.isFile) {
-            throw IOException("$label not found at expected path: ${file.absolutePath}")
+    private fun requireLibraryInside(nativeDirectory: String?, relativeLibrary: String, label: String?) {
+        if (relativeLibrary.isBlank() || !relativeLibrary.endsWith(".so")) {
+            throw IOException("$label is not a shared-library file")
+        }
+        val target = File(nativeDirectory, stripLeadingSlash(relativeLibrary)).getCanonicalFile()
+        if (!pathInside(nativeDirectory, target.path)) {
+            throw IOException("$label escapes the installed native library directory")
+        }
+        if (!target.isFile()) {
+            throw IOException("$label is missing from the installed native library directory")
         }
     }
 
-    private fun controlledNativePath(baseDir: String, value: String): Boolean {
-        if (value.isEmpty()) return true
-        val paths = value.split(":")
-        return paths.all { path ->
-            if (path.isEmpty()) return@all true
-            val resolved = try {
-                File(path).canonicalPath
-            } catch (_: IOException) {
-                return false
-            }
-            val baseResolved = try {
-                File(baseDir).canonicalPath
-            } catch (_: IOException) {
-                return false
-            }
-            resolved.startsWith(baseResolved)
+    private fun pathInside(base: String?, path: String?): Boolean {
+        if (base == null || path == null) return false
+        val baseFile = File(base).getCanonicalFile()
+        val targetFile = File(path).getCanonicalFile()
+        return targetFile.toPath().startsWith(baseFile.toPath())
+    }
+
+    private fun controlledNativePath(baseDir: String?, value: String?): Boolean {
+        if (value.isNullOrBlank()) return false
+        for (entry in value.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            if (entry.isBlank() || !pathInside(baseDir, entry)) return false
         }
+        return true
     }
 
     private fun stripLeadingSlash(name: String): String {

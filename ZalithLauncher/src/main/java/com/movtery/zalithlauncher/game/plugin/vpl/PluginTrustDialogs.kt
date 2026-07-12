@@ -1,22 +1,35 @@
+/*
+ * Zalith Launcher 2
+ * Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
+ */
+
 package com.movtery.zalithlauncher.game.plugin.vpl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -67,6 +80,7 @@ fun PluginTrustDialogHost() {
                     onCancel = { req.deferred.complete(PluginTrustDialogState.DialogAction.CANCEL) }
                 )
             }
+
             is PluginTrustDialogState.DialogRequest.KeyTrust -> {
                 KeyTrustDialog(
                     title = req.title,
@@ -79,6 +93,7 @@ fun PluginTrustDialogHost() {
                     onCancel = { req.deferred.complete(PluginTrustDialogState.DialogAction.CANCEL) }
                 )
             }
+
             is PluginTrustDialogState.DialogRequest.Error -> {
                 ErrorDialog(
                     title = req.title,
@@ -110,11 +125,13 @@ private fun AuthorTrustDialog(
             icon = painterResource(R.drawable.ic_close),
             color = Color(0xFFB42318)
         )
+
         PluginTrustDialogState.Severity.WARNING -> SeverityInfo(
             label = stringResource(R.string.plugin_trust_level_warning),
             icon = painterResource(R.drawable.ic_warning_filled),
             color = Color(0xFFB54708)
         )
+
         PluginTrustDialogState.Severity.INFO -> SeverityInfo(
             label = stringResource(R.string.plugin_trust_level_info),
             icon = painterResource(R.drawable.ic_info_filled),
