@@ -90,8 +90,8 @@ abstract class Launcher(
         LoggerBridge.appendTitle("DLOPEN Java Runtime")
         dlopenJavaRuntime()
 
-        LoggerBridge.appendTitle("Plugin Native Load Guard")
-        PluginNativeLoadGuard.verify(context)
+//        LoggerBridge.appendTitle("Plugin Native Load Guard")
+//        PluginNativeLoadGuard.verify(context)
 
         dlopenEngine()
 

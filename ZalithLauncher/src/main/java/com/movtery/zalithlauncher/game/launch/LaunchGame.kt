@@ -31,7 +31,6 @@ import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileExcepti
 import com.movtery.zalithlauncher.game.account.microsoft.NotPurchasedMinecraftException
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException
 import com.movtery.zalithlauncher.game.account.microsoft.toLocal
-import com.movtery.zalithlauncher.game.plugin.vpl.PluginLoadAuthorizationHolder
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustGate
 import com.movtery.zalithlauncher.game.version.download.DownloadMode
 import com.movtery.zalithlauncher.game.version.download.MinecraftDownloader
@@ -137,7 +136,7 @@ object LaunchGame {
                         task.updateMessage(title)
                     }
                 }.onSuccess { authorizations ->
-                    PluginLoadAuthorizationHolder.set(authorizations)
+//                    PluginLoadAuthorizationHolder.set(authorizations)
                     runGame(context, version, account)
                     exitActivity()
                 }.onFailure { e ->
