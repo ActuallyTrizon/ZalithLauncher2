@@ -169,7 +169,7 @@ fun JavaManageScreen(
                                 }
                                 (context as? Activity)?.let { activity ->
                                     val jreName = AllSettings.javaRuntime.takeIf { AllSettings.autoPickJavaRuntime.getValue() }?.getValue()
-                                    executeJarWithUri(activity, uri, jreName)
+                                    executeJarWithUri(activity, uri, jreName, submitError)
                                 }
                             }
                         },
