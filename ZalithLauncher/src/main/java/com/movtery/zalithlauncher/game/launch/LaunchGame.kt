@@ -133,11 +133,11 @@ object LaunchGame {
                 checkVulkanCapabilities(version, waitForVulkanChecker)
 
                 runCatching {
-                    PluginTrustGate.verifyForLaunch(context) { title ->
+                    val authorizations = PluginTrustGate.verifyForLaunch(context) { title ->
                         task.updateMessage(title)
                     }
-                }.onSuccess { authorizations ->
                     PluginNativeLoadGuard.verify(context, authorizations)
+                }.onSuccess {
                     runGame(context, version, account)
                     exitActivity()
                 }.onFailure { e ->
@@ -145,6 +145,12 @@ object LaunchGame {
                         Logger.info(TAG, "Plugin trust gate cancelled by user")
                     } else {
                         Logger.error(TAG, "Plugin trust gate failed", e)
+                        submitError(
+                            ErrorViewModel.ThrowableMessage(
+                                title = androidText(R.string.plugin_trust_level_error),
+                                message = androidText(e.stackTraceToString())
+                            )
+                        )
                     }
                 }
             },

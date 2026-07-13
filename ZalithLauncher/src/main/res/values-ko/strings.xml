@@ -486,7 +486,6 @@
     <string name="account_local_uuid_tip_4">이 옵션은 숙련된 사용자를 위한 것이며, 일반적으로는 조정할 필요가 없습니다.</string>
     <string name="account_local_uuid_invalid">잘못된 UUID 형식입니다</string>
     <string name="account_local_uuid_copy">UUID 복사</string>
-    <string name="account_local_uuid_copied">%s 계정의 UUID가 복사되었습니다</string>
     <string name="account_other_login_baseurl_not_set">기본 URL이 설정되지 않았습니다</string>
     <string name="account_other_login_getting_full_url">URL 주소 확인 중</string>
     <string name="account_other_login_getting_server_info">서버 정보 불러오는 중</string>
