@@ -45,7 +45,9 @@ import com.movtery.zalithlauncher.context.COPY_LABEL_LINK
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.control.ControlManager
+import com.movtery.zalithlauncher.game.plugin.PluginLoader
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
+import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustDialogHost
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustGate
 import com.movtery.zalithlauncher.game.plugin.vpl.PluginTrustListSync
@@ -177,6 +179,12 @@ class MainActivity : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         PluginTrustListSync.start(applicationContext)
+
+        //加载渲染器
+        Renderers.init()
+        //加载插件
+        PluginLoader.loadAllPlugins(this, false)
+        refreshData()
 
         //初始化通知管理（创建渠道）
         NotificationManager.initManager(this)
@@ -483,6 +491,10 @@ class MainActivity : BaseAppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleImportIfNeeded(intent)
+        // 重载渲染器
+        Renderers.init(true)
+        // 重载插件
+        PluginLoader.loadAllPlugins(this, true)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
