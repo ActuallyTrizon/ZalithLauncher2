@@ -21,6 +21,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -30,4 +31,3 @@ include(":LWJGL")
 include(":LayerController")
 include(":ColorPicker")
 include(":Terracotta")
-include(":VerifiedPluginLoad")

@@ -22,6 +22,7 @@ import android.content.Context
 import android.os.Build
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
+import com.movtery.zalithlauncher.game.plugin.natives.NativePlugin
 import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer.ApkRendererPlugin
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPlugin
@@ -234,7 +235,7 @@ object PluginNativeLoadGuard {
         }
     }
 
-    private fun verifyNativePluginEnvironment(plugin: com.movtery.zalithlauncher.game.plugin.natives.NativePlugin) {
+    private fun verifyNativePluginEnvironment(plugin: NativePlugin) {
         for (entry in plugin.envList) {
             val separator = entry.indexOf('=')
             if (separator <= 0 || separator == entry.lastIndex) continue

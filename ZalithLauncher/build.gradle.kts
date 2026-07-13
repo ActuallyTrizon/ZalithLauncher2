@@ -252,7 +252,6 @@ dependencies {
     implementation(project(":LayerController"))
     implementation(project(":ColorPicker"))
     implementation(project(":Terracotta"))
-    implementation(project(":VerifiedPluginLoad"))
     //Utils
     implementation(libs.bytehook)
     implementation(libs.gson)
@@ -277,6 +276,7 @@ dependencies {
     implementation(libs.fishnet)
     implementation(libs.process.phoenix)
     implementation(libs.lunarcalendar)
+    implementation(libs.verifiedpluginload)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     //Safe
     implementation(libs.androidx.room.runtime)
