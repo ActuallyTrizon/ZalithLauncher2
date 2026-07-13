@@ -92,9 +92,8 @@ object PluginNativeLoadGuard {
         return trustSource != TrustSource.KEY || allowUntrustedPlugins
     }
 
-    fun verify(context: Context) {
+    fun verify(context: Context, authorizations: List<PluginLoadAuthorization>) {
         val vpl = VerifiedPluginLoadRegistry.get(context)
-        val authorizations = PluginLoadAuthorizationHolder.get()
         val allowUntrusted = AllSettings.allowUntrustedPlugins.getValue()
 
         val selectedRenderer = RendererPluginManager.selectedRendererPlugin
