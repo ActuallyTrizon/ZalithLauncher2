@@ -24,7 +24,6 @@ import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
 import com.movtery.zalithlauncher.game.plugin.natives.NativePlugin
 import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
-import com.movtery.zalithlauncher.game.plugin.renderer.ApkRendererPlugin
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPlugin
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -97,29 +96,21 @@ object PluginNativeLoadGuard {
         val vpl = VerifiedPluginLoadRegistry.get(context)
         val allowUntrusted = AllSettings.allowUntrustedPlugins.getValue()
 
-        val selectedRenderer = RendererPluginManager.selectedRendererPlugin
-        val rendererPackageName = (selectedRenderer as? ApkRendererPlugin)?.packageName
-
-        if (rendererPackageName != null) {
-            val rendererPath = selectedRenderer.path
+        val renderer = RendererPluginManager.selectedRendererPlugin
+        if (renderer != null) {
             verifyPlugin(
                 vpl = vpl,
                 authorizations = authorizations,
                 type = "Renderer",
-                packageName = rendererPackageName,
-                expectedNativeDirectory = rendererPath,
+                packageName = renderer.packageName,
+                expectedNativeDirectory = renderer.path,
                 allowUntrusted = allowUntrusted
             )
-            verifyRendererLibraries(selectedRenderer)
-        } else {
-            val rendererPath = selectedRenderer?.path
-            if (!rendererPath.isNullOrEmpty()) {
-                throw IOException("Renderer native path is not owned by an installed plugin APK")
-            }
+            verifyRendererLibraries(renderer)
         }
 
         val driver = DriverPluginManager.getDriver()
-        if (driver.packageName.isNotEmpty() && !driver.isLauncher) {
+        if (!driver.isLauncher) {
             verifyPlugin(
                 vpl = vpl,
                 authorizations = authorizations,
@@ -128,11 +119,7 @@ object PluginNativeLoadGuard {
                 expectedNativeDirectory = driver.path,
                 allowUntrusted = allowUntrusted
             )
-        } else if (!driver.isLauncher && !samePath(
-                driver.path,
-                context.applicationInfo.nativeLibraryDir
-            )
-        ) {
+        } else if (!samePath(driver.path, context.applicationInfo.nativeLibraryDir)) {
             throw IOException("Vulkan driver path is not owned by the launcher or an installed plugin APK")
         }
 
@@ -149,17 +136,14 @@ object PluginNativeLoadGuard {
         }
 
         if (FFmpegPluginManager.isAvailable) {
-            val ffmpegPath = FFmpegPluginManager.libraryPath
-            if (ffmpegPath != null) {
-                verifyPlugin(
-                    vpl = vpl,
-                    authorizations = authorizations,
-                    type = "FFmpeg plugin",
-                    packageName = "net.kdt.pojavlaunch.ffmpeg",
-                    expectedNativeDirectory = ffmpegPath,
-                    allowUntrusted = allowUntrusted
+            val libraryPath = FFmpegPluginManager.libraryPath
+            if (libraryPath != null) {
+                verifyPlugin(vpl, authorizations, "FFmpeg", "net.kdt.pojavlaunch.ffmpeg", libraryPath, allowUntrusted)
+                requireLibraryInside(
+                    nativeDirectory = libraryPath,
+                    relativeLibrary = "libffmpeg.so",
+                    label = "FFmpeg plugin"
                 )
-                requireLibraryInside(ffmpegPath, "libffmpeg.so", "FFmpeg library")
             }
         }
     }

@@ -27,11 +27,11 @@ class RendererPlugin(
     val summary: String? = null,
     val minMCVer: String? = null,
     val maxMCVer: String? = null,
-    private val glName: String,
-    private val eglName: String,
+    val glName: String,
+    val eglName: String,
     val path: String,
-    private val env: Map<String, String>,
-    private val dlopen: List<String>,
+    val env: Map<String, String>,
+    val dlopen: List<String>,
     val isConfigurable: Boolean = false,
 ): RendererInterface {
     override fun getRendererId(): String = id

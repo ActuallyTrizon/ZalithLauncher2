@@ -23,7 +23,6 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.ffmpeg.FFmpegPluginManager
 import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
-import com.movtery.zalithlauncher.game.plugin.renderer.ApkRendererPlugin
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -71,10 +70,7 @@ object PluginTrustGate {
         val candidates = mutableListOf<PluginCandidate>()
 
         RendererPluginManager.selectedRendererPlugin?.let { plugin ->
-            val packageName = (plugin as? ApkRendererPlugin)?.packageName
-            if (packageName != null) {
-                candidates.add(PluginCandidate(packageName, PluginType.Renderer))
-            }
+            candidates.add(PluginCandidate(plugin.packageName, PluginType.Renderer))
         }
 
         val driver = DriverPluginManager.getDriver()
