@@ -191,7 +191,6 @@
     <string name="download_modpack_install_overrides">Mengekstrak file modpack</string>
     <string name="download_modpack_download">Mengunduh konten modpack</string>
     <string name="download_modpack_download_mods">Unduh semua mod (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Coba unduh semua mod lagi (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Mendapatkan informasi loader</string>
     <string name="download_modpack_final_move">Memindahkan file modpack</string>
     <string name="download_assets_category_worldgen">Elemen Dunia</string>
@@ -499,7 +498,6 @@
     <string name="settings_control_mouse_control_mode_click">Kontrol Sentuh</string>
     <string name="settings_launcher_full_screen_title">Mode layar penuh</string>
     <string name="minecraft_download_downloading_game_files">Mengunduh file\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Mencoba mengunduh ulang\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Terjadi kesalahan saat mengunduh Minecraft</string>
     <string name="generic_reset">Reset</string>
     <string name="generic_cancel">Batal</string>
@@ -570,8 +568,6 @@
     <string name="minecraft_download_stat_download_task">Bersiap mengunduh</string>
     <string name="minecraft_download_stat_verify_task">Mempersiapkan verifikasi</string>
     <string name="minecraft_download_verifying_and_repairing_files">Memverifikasi file\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Mencoba verifikasi ulang\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_failed_retried">Launcher sudah mencoba ulang satu kali, tetapi beberapa tugas masih gagal diunduh</string>
     <string name="settings_element_selected">Dipilih: %s</string>
     <string name="settings_label_ignore_if_blank">Biarkan kosong untuk mengabaikan</string>
     <string name="settings_tab_renderer">Perender</string>
@@ -630,8 +626,6 @@
     <string name="settings_launcher_animate_speed_summary">Atur kecepatan animasi launcher</string>
     <string name="settings_launcher_animate_extent_title">Intensitas Animasi</string>
     <string name="settings_launcher_animate_extent_summary">Atur intensitas animasi launcher</string>
-    <string name="settings_launcher_mirror_modloader_title">Sumber Versi Mod loader</string>
-    <string name="settings_launcher_mirror_file_download_title">Sumber File Unduhan</string>
     <string name="settings_launcher_mirror_official_first">Prioritaskan sumber resmi</string>
     <string name="settings_launcher_mirror_mirror_first">Prioritaskan Sumber Mirror</string>
     <string name="control_keyboard_bind_title">Ikat Tombol</string>
@@ -840,7 +834,6 @@
     <string name="mods_update_task_replace">Mengganti file mod</string>
     <string name="mods_update_no_mods_update">Semua mod sudah terbaru, tidak perlu pembaruan</string>
     <string name="mods_update_updating">Memperbarui semua mod (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Mencoba ulang pembaruan untuk semua mod (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Pembaruan Berhasil</string>
     <string name="mods_update_success_text">Semua mod yang dipilih telah diperbarui ke versi terbaru!</string>
     <string name="mods_update_failed">Pembaruan Mod Gagal</string>
@@ -974,7 +967,7 @@
     <string name="notification_data_terracotta_message">Saat mode multiplayer, launcher akan memakai layanan foreground untuk menampilkan status koneksi saat ini, jadi membutuh izin notifikasi.</string>
     <string name="versions_update_loader">Perbarui Loader</string>
     <string name="versions_update_loader_waiting_for_others">Menunggu tugas lain selesai</string>
-    <string name="versions_update_loader_diff_message">Apakah kamu yakin ingin mengubah loader game yang sedang dipakai?</string>
+    <string name="versions_update_loader_diff_message">Apakah Anda yakin ingin mengubah loader game yang sedang dipakai?</string>
     <string name="versions_update_loader_diff_change">Ubah: %1$s %2$s → %3$s</string>
     <string name="versions_update_loader_diff_remove">Hapus: %s</string>
     <string name="versions_update_loader_diff_load">Muat: %1$s %2$s</string>
@@ -1016,8 +1009,6 @@
     <string name="upgrade_cloud_drive">Penyimpanan Cloud</string>
     <string name="cape_name_zombie_horse">Kuda Zombi</string>
     <string name="control_editor_edit_text_size_custom">Ukuran Teks Kustom</string>
-    <string name="settings_launcher_mirror_assets_search_title">Sumber Pencarian Platform Aset</string>
-    <string name="settings_launcher_mirror_assets_download_title">Sumber Unduhan Platform Aset</string>
     <string name="about_acknowledgements_mcim_text">%s menggunakan sumber mirror MCIM</string>
     <string name="generic_copied">Disalin</string>
     <string name="crash_link_share_button">Bagikan Tautan</string>
@@ -1090,7 +1081,6 @@
     <string name="versions_export_task_finished">Modpack Anda berhasil diekspor!</string>
     <string name="mods_update_task_loading">Sinkronisasi data mod: %s</string>
     <string name="version_summary_fools_2_0">Kami tidak akan melakukan pembaruan! Jika ada bug, mohon dimaklumi ya! XD</string>
-    <string name="versions_overview_cant_share_folder_message">Tidak ada aplikasi pihak ketiga di perangkat ini untuk membuka folder ini!</string>
     <string name="settings_gamepad_config_title">Pengaturan Tombol Gamepad</string>
     <string name="settings_gamepad_config_summary">Pilih pengaturan tombol gamepad yang digunakan</string>
     <string name="settings_gamepad_config_delete">Hapus Pengaturan Saat Ini</string>
@@ -1215,4 +1205,20 @@
     <string name="settings_launcher_color_theme_style">Gaya Palet</string>
     <string name="settings_renderer_config_title">Konfigurasi Renderer</string>
     <string name="settings_renderer_env_title">Variabel Lingkungan: %s</string>
+    <string name="control_editor_menu_new_widget_joystick">Tambahkan Joystick</string>
+    <string name="control_editor_edit_category_joystick_config">Konfigurasi Joystick</string>
+    <string name="control_editor_edit_category_joystick_style">Gaya Joystick</string>
+    <string name="control_editor_edit_size_joystick">Ukuran Joystick</string>
+    <string name="control_editor_edit_joystick_dead_zone">Dead Zone</string>
+    <string name="control_editor_edit_joystick_lock_threshold">Batas Penguncian</string>
+    <string name="control_editor_edit_joystick_can_lock">Kunci ke Depan</string>
+    <string name="control_editor_edit_joystick_trigger_mode">Mode Trigger</string>
+    <string name="control_editor_edit_joystick_trigger_mode_drag">Trigger Seret</string>
+    <string name="control_editor_edit_joystick_trigger_mode_touch">Trigger Sentuh</string>
+    <string name="control_editor_edit_joystick_lock_events">Event Penguncian</string>
+    <string name="control_editor_edit_joystick_select_area">Pilih area untuk mengatur event</string>
+    <string name="control_editor_edit_joystick_style_list">Daftar Gaya Joystick</string>
+    <string name="control_editor_edit_joystick_style_list_empty">Tidak ada gaya joystick pada layout kontrol saat ini</string>
+    <string name="control_editor_edit_joystick_style_list_name">Nama Gaya Joystick</string>
+    <string name="control_editor_edit_joystick_style_list_delete">Apakah Anda yakin ingin menghapus gaya joystick %s?</string>
 </resources>

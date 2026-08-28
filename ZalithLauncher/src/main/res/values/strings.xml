@@ -275,7 +275,6 @@
     <string name="download_modpack_install_overrides">Extract modpack files</string>
     <string name="download_modpack_download">Download modpack content</string>
     <string name="download_modpack_download_mods">Download all mods (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Retry downloading all mods (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Retrieve loader information</string>
     <string name="download_modpack_final_move">Moving modpack files</string>
     <!--  Assets Category  -->
@@ -408,6 +407,7 @@
     <string name="game_menu_option_force_close_text">Forcing the currently running game to close may cause save data corruption or prevent settings from being saved. Avoid this action unless necessary.</string>
     <string name="game_menu_option_switch_log">Log Output</string>
     <string name="game_menu_option_input_method">Switch Input Method</string>
+    <string name="game_menu_option_auto_show_ime">Auto-show Input Method (SDL)</string>
     <string name="game_menu_option_switch_fps">FPS Display</string>
     <string name="game_menu_option_switch_memory">Memory Display</string>
     <string name="game_menu_option_menu_ball_opacity">Menu Overlay Opacity</string>
@@ -665,7 +665,6 @@
     <string name="versions_overview_screenshot_folder">Screenshot Folder</string>
     <string name="versions_overview_logs_folder">Log Folder</string>
     <string name="versions_overview_crash_report_folder">Crash Report Folder</string>
-    <string name="versions_overview_cant_share_folder_message">No third-party app is available on this device to open this folder!</string>
     <string name="versions_overview_log">Running Log</string>
     <string name="versions_config_version_settings">Version-Specific Settings</string>
     <string name="versions_config_game_settings">Game-Specific Settings</string>
@@ -768,7 +767,6 @@
     <string name="mods_update_task_loading">Syncing mod data: %s</string>
     <string name="mods_update_no_mods_update">All mods are already up to date, no update needed</string>
     <string name="mods_update_updating">Updating all mods (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Retrying update for all mods (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Update Successful</string>
     <string name="mods_update_success_text">All selected mods have been updated to the latest version!</string>
     <string name="mods_update_failed">Mod Update Failed</string>
@@ -843,10 +841,7 @@
     <string name="minecraft_download_stat_verify_task">Preparing verifications</string>
     <string name="minecraft_download_downloading_game_files">Downloading files \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Verifying files \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Retrying downloads \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Retrying verifications \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">An error occurred while downloading Minecraft</string>
-    <string name="minecraft_download_failed_retried">The launcher already attempted one retry, but some tasks still failed to download</string>
     <string name="minecraft_download_failed_notfound">Some dependency files could not be downloaded. If the issue persists after multiple attempts, the game may be missing required libraries. We recommend reinstalling the game.</string>
     <!-- Settings -->
     <string name="settings_title_blur">Blur Effect</string>
@@ -977,6 +972,13 @@
     <string name="settings_control_gyroscope_invert_y_summary">When enabled, rotating the device up or down will control the camera in the opposite direction</string>
     <string name="settings_gamepad_title">Gamepad Control</string>
     <string name="settings_gamepad_summary">Enable or disable gamepad control. If another device is mistakenly recognized as a gamepad, please turn off this option.</string>
+    <string name="settings_gamepad_input_mode_title">Gamepad Input Mode</string>
+    <string name="settings_gamepad_input_mode_mapped">Mapped (Virtual Keys)</string>
+    <string name="settings_gamepad_input_mode_mapped_summary">Gamepad buttons and joysticks act as virtual keyboard and mouse</string>
+    <string name="settings_gamepad_input_mode_sdl">SDL Direct</string>
+    <string name="settings_gamepad_input_mode_sdl_summary">Raw gamepad input is delivered to the game via the SDL/GLFW gamepad API; button remapping is bypassed</string>
+    <string name="gamepad_mode_prompt_description">Gamepad input detected. The launcher supports two gamepad input modes; please choose the one you want to use.</string>
+    <string name="gamepad_mode_prompt_hint">You can change this later in the "Gamepad" tab of the in-game menu or in the launcher settings.</string>
     <string name="settings_gamepad_deadzone_title">Gamepad Deadzone Scaling</string>
     <string name="settings_gamepad_deadzone_summary">Set the ratio of the joystick\'s non-responsive center area</string>
     <string name="settings_gamepad_joystick_mode_title">Joystick Operation Mode</string>
@@ -1037,10 +1039,9 @@
     <string name="settings_launcher_log_share_title">Share Launcher Logs</string>
     <string name="settings_launcher_log_share_summary">Tap to share the launcher log files, so developers can identify and fix issues with the launcher</string>
     <string name="settings_launcher_log_share_packing">Package launcher log files</string>
-    <string name="settings_launcher_mirror_modloader_title">Mod Loader Version Source</string>
-    <string name="settings_launcher_mirror_file_download_title">File Download Source</string>
-    <string name="settings_launcher_mirror_assets_search_title">Asset Platform Search Source</string>
-    <string name="settings_launcher_mirror_assets_download_title">Asset Platform Download Source</string>
+    <string name="settings_launcher_mirror_game_source_title">Game Download Source</string>
+    <string name="settings_launcher_mirror_asset_platform_source_title">Mod Download Source</string>
+    <string name="settings_launcher_mirror_auto">Auto</string>
     <string name="settings_launcher_mirror_official_first">Prefer Official Source</string>
     <string name="settings_launcher_mirror_mirror_first">Prefer Mirror Source</string>
     <string name="settings_launcher_background_title">Launcher Background</string>
@@ -1128,7 +1129,6 @@
     <string name="control_editor_edit_category_joystick_events">Direction Events</string>
     <string name="control_editor_edit_category_joystick_style">Joystick Style</string>
     <string name="control_editor_edit_size_joystick">Joystick Size</string>
-    <string name="control_editor_edit_size_reference">Size Reference</string>
     <string name="control_editor_edit_joystick_dead_zone">Dead Zone</string>
     <string name="control_editor_edit_joystick_lock_threshold">Lock Threshold</string>
     <string name="control_editor_edit_joystick_can_lock">Forward Lock</string>
@@ -1341,7 +1341,6 @@
     <string name="fm_editor_goto_invalid">Line number out of range</string>
     <string name="fm_editor_replace">Replace</string>
     <string name="fm_editor_replace_all">Replace all</string>
-    <string name="fm_editor_replace_hint">Replace with</string>
     <string name="fm_editor_undo">Undo</string>
     <string name="fm_editor_redo">Redo</string>
     <string name="fm_editor_wordwrap">Word wrap</string>

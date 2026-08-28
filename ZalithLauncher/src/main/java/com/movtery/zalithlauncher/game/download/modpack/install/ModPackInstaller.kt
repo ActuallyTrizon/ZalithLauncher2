@@ -36,8 +36,8 @@ import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import com.movtery.zalithlauncher.utils.logging.Logger
-import com.movtery.zalithlauncher.utils.network.downloadFileSuspend
-import com.movtery.zalithlauncher.utils.network.downloadFromMirrorListSuspend
+import com.movtery.zalithlauncher.utils.network.downloadFile
+import com.movtery.zalithlauncher.utils.network.downloadFileFromSources
 import com.movtery.zalithlauncher.utils.network.isUsingMobileData
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
 import kotlinx.coroutines.CoroutineScope
@@ -172,7 +172,7 @@ class ModPackInstaller(
                             task.clearSpeed()
                         }
                     ) { report ->
-                        downloadFromMirrorListSuspend(
+                        downloadFileFromSources(
                             urls = version
                                 .platformDownloadUrl()
                                 .mapMCIMMirrorUrls(),
@@ -189,7 +189,7 @@ class ModPackInstaller(
                     task.updateProgress(-1f)
                     task.updateMessage(null)
                     iconUrl?.let { iconUrl ->
-                        downloadFileSuspend(
+                        downloadFile(
                             url = iconUrl,
                             outputFile = tempIconFile
                         )

@@ -333,10 +333,7 @@
     <string name="minecraft_download_stat_verify_task">Подготовка проверок</string>
     <string name="minecraft_download_downloading_game_files">Загрузка файлов: \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Проверка файлов \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Пробуем снова \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Повторная проверка\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Произошла ошибка при загрузке Minecraft</string>
-    <string name="minecraft_download_failed_retried">До этого лаунчер уже пытался выполнить повторную попытку, но некоторые задачи всё же не удалось загрузить</string>
     <string name="minecraft_download_failed_notfound">Некоторые зависимые файлы не удалось скачать. Если проблема сохраняется после нескольких попыток, возможно, в игре отсутствуют необходимые файлы библиотек. Попробуйте переустановить игру.</string>
     <!-- Settings -->
     <string name="settings_element_selected">Выбрано: %s</string>
@@ -498,7 +495,6 @@
     <string name="download_modpack_install_overrides">Распаковка файлов сборки</string>
     <string name="download_modpack_download">Скачать необходимые файлы для сборки</string>
     <string name="download_modpack_download_mods">Скачать все моды (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Повторить загрузку всех модов (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Получение информации о мод-лоудере</string>
     <string name="download_modpack_final_move">Перемещение файлов сборки</string>
     <string name="download_assets_category_ores_resources">Руды и ресурсы</string>
@@ -701,8 +697,6 @@
     <string name="settings_launcher_log_share_title">Поделиться логами лаунчера</string>
     <string name="settings_launcher_log_share_summary">Нажмите, чтобы поделиться файлами логов лаунчера. Это поможет разработчикам выявить и исправить проблемы в его работе.</string>
     <string name="settings_launcher_log_share_packing">Упаковка файлов логов лаунчера</string>
-    <string name="settings_launcher_mirror_modloader_title">Источник версий мод-лоудера</string>
-    <string name="settings_launcher_mirror_file_download_title">Источник загрузки файлов</string>
     <string name="settings_launcher_mirror_official_first">Предпочитать официальный источник</string>
     <string name="settings_launcher_mirror_mirror_first">Предпочитать зеркало</string>
     <string name="control_keyboard_bind_title">Забиндить клавишу</string>
@@ -863,7 +857,6 @@
     <string name="mods_update_task_replace">Заменение файлов модов</string>
     <string name="mods_update_no_mods_update">Обновления не нужны, у вас стоят актуальные версии модов^-^</string>
     <string name="mods_update_updating">Обновление всех модов (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Повторная попытка обновления всех модов (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Обновление завершено успешно</string>
     <string name="mods_update_success_text">Все выбранные моды были успешно обновлены до последней версии!</string>
     <string name="mods_update_failed">Неудачное обновление модов</string>
@@ -1044,8 +1037,6 @@
     <string name="crash_link_share_failed_link_not_found">Ссылка не найдена. Пожалуйста, попробуйте позже</string>
     <string name="download_game_addon_warning_api">не выбран. Без его установки большинство модов не будет работать!</string>
     <string name="settings_launcher_language">Язык</string>
-    <string name="settings_launcher_mirror_assets_search_title">Источник поиска платформы ресурсов</string>
-    <string name="settings_launcher_mirror_assets_download_title">Источник загрузки платформы ресурсов</string>
     <string name="about_acknowledgements_mcim_text">использует зеркальный источник MCIM</string>
     <string name="servers_list_add_server_name">Имя сервера</string>
     <string name="servers_list_add_server_default_name">Майнкрафт сервер</string>
@@ -1086,7 +1077,6 @@
     <string name="account_local_uuid_invalid">Неверный формат UUID</string>
     <string name="account_local_uuid_copy">Копировать UUID</string>
     <string name="account_local_uuid_copied">UUID аккаунта %s скопирован</string>
-    <string name="versions_overview_cant_share_folder_message">На этом устройстве нет подходящих приложений для открытия этой папки!</string>
     <string name="versions_config_vibrate_kind_title">Тип вибрации</string>
     <string name="versions_config_vibrate_kind_summary">Выберите тип вибрации при срабатывании TouchController</string>
     <string name="versions_install_loader">Установить загрузчик</string>
@@ -1209,4 +1199,18 @@
     <string name="game_vulkan_check_missing_features">Отсутствующие функции:</string>
     <string name="game_vulkan_check_unsupp">Ваше устройство не поддерживает запуск Minecraft 26.2+ с Vulkan.</string>
     <string name="game_vulkan_check_supp">Ваше устройство поддерживает запуск Minecraft 26.2+ с Vulkan.</string>
+    <string name="error_bad_request">(%s) Сервер не мог понять запрос</string>
+    <string name="error_forbidden">(%s) У вас нет прав на доступ к этому ресурсу</string>
+    <string name="error_not_acceptable">(%s) Неприемлемо</string>
+    <string name="error_gone">(%s) Запрошенный ресурс больше не доступен</string>
+    <string name="error_too_many_requests">(%s) Попробуйте позже</string>
+    <string name="download_category_by_id">Искать по ID</string>
+    <string name="download_assets_id_holder">ID проекта</string>
+    <string name="download_assets_id_not_found">Проект не найден!</string>
+    <string name="cape_name_builder">Строитель</string>
+    <string name="cape_name_crafter">Крафтер</string>
+    <string name="settings_title_blur">Эффект размытия</string>
+    <string name="settings_renderer_config_title">Конфигурация рендерера</string>
+    <string name="control_editor_menu_new_widget_joystick">Добавить джойстик</string>
+    <string name="control_editor_edit_category_joystick_config">Конфиг джойстика</string>
 </resources>

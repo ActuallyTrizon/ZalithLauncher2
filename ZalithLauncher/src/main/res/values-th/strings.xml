@@ -26,7 +26,7 @@
     <string name="generic_disable">ปิดใช้งาน</string>
     <string name="generic_open_link">เปิดในเบราวเซอร์</string>
     <string name="generic_cannot_empty">ข้อมูลไม่สามารถว่างเปล่าได้</string>
-    <string name="generic_input_invalid_character">มีตัวอักษรที่ไม่เกี่ยวกับข้อมูล: %s</string>
+    <string name="generic_input_invalid_character">มีตัวอักษรที่ไม่เกี่ยวกับข้อมูล: \"%s\"</string>
     <string name="generic_input_failed_to_number">ข้อมูลไม่สามารถใส่แค่ตัวเลขได้</string>
     <string name="generic_input_too_small">ข้อมูลไม่สามารถมีค่าที่น้อยกว่า %s</string>
     <string name="generic_input_too_large">ข้อมูลไม่สามารถมีค่าที่มากกว่า %s</string>
@@ -206,15 +206,15 @@
     <string name="crash_link_share_failed_link_not_found">ไม่มีลิงก์ที่ใช้งานได้ กรุณาลองใหม่ภายหลัง.</string>
     <string name="crash_launch_crash_title">การเปิดแอปล้มเหลว</string>
     <string name="crash_launch_crash_message">รันเชอร์พบปัญหาร้ายแรงและผิดพลาดในช่วงเริ่มต้น</string>
-    <string name="error_import_image">การทำเข้ารูปผิดพลาด</string>
+    <string name="error_import_image">พยผิดพลาดในการนำเข้ารูปภาพ</string>
     <string name="error_import_file">ข้อผิดพลาดที่เกิดขึ้นในขณะที่นําเข้าไฟล์</string>
     <string name="error_create_dir">การสร้างไดเรกทอรีด้ล้มเหลว: %s</string>
     <string name="error_timeout">คำขอหมดเวลา</string>
     <string name="error_network_unreachable">เครือข่ายไม่สามารถใช้งานได้ ณ ตอนนี้</string>
     <string name="error_connection_failed">การเข้าร่วมเซิฟเวอร์ล้มแหลว</string>
     <string name="error_parse_failed">การวิเคราะห์ข้อมูลล้มเหลว</string>
-    <string name="error_unauthorized">(%s) ไม่ได้รับอนุญาต</string>
-    <string name="error_notfound">(%s) ไม่พบทรัพยากร</string>
+    <string name="error_unauthorized">(%s) โปรดตรวจสอบและลองอีกรอบ</string>
+    <string name="error_notfound">(%s) ไม่พบรีแควส</string>
     <string name="splash_screen_unpack_desc">รันเชอร์ต้องการติดตั้งไฟล์เหล่านีัเพื่อให้มันใจว่าminecraftทำงานได้ปกติ. ไฟล์เหล่านั้น</string>
     <string name="splash_screen_installing">ตัวรันเซอร์จำเป็นต้องติดตั้งไฟล์เหล่านี้เพื่อให้แน่ใจว่า Minecraft จะทำงานได้อย่างถูกต้อง ไฟล์เหล่านี้ถูกรวมอยู่ในแอปแล้วและต้องทำการแตกไฟล์ก่อน คลิกที่ปุ่มด้านล่างเพื่อเริ่มการแตกไฟล์และอัปเดต</string>
     <string name="splash_screen_agree">ติดตั้ง</string>
@@ -322,7 +322,6 @@
     <string name="download_assets_install_assets_for_versions">ต้องการติดตั้งสำหรับเกมเวอร์ชันใด?</string>
     <string name="download_modpack_download">ดาวน์โหลดเนื้อหาที่จำเป็นสำหรับมอดแพ็ค</string>
     <string name="download_modpack_download_mods">ดาวน์โหลดมอดทั้งหมด (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">กำลังลองดาวน์โหลดมอดทั้งหมดอีกครั้ง (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">ดึงข้อมูลตัวรันเกม</string>
     <string name="download_modpack_final_move">กำลังย้ายไฟล์มอดแพ็ค</string>
     <string name="download_assets_category_worldgen">การสร้างโลก</string>
@@ -370,4 +369,10 @@
     <string name="game_menu_option_menu_ball_opacity">ความโปร่งใสของปุ่มเมนูหลัก</string>
     <string name="game_menu_option_send_keycode">ส่งรหัสปุ่ม</string>
     <string name="game_menu_option_replacement_control">แทนที่ชุดปุ่มควบคุม</string>
+    <string name="generic_edit">แก้ไข</string>
+    <string name="generic_view">ดู</string>
+    <string name="page_title_home_page_editor">แก้ไขหน้าแรก</string>
+    <string name="error_bad_request">[%s เซิร์ฟเวอร์ไม่สามารถเข้าใจคําขอน้ได้</string>
+    <string name="error_forbidden">(%s) คุณไม่มีสิทธิในการเข้าถึงทรัพยากรนี้</string>
+    <string name="error_not_acceptable">(%s) ไม่ยอมรับ</string>
 </resources>

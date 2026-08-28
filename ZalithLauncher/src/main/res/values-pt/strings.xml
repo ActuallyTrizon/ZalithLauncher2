@@ -287,7 +287,6 @@
     <string name="download_modpack_install_overrides">Extrair arquivos do modpack</string>
     <string name="download_modpack_download">Descarregar conteúdo do modpack</string>
     <string name="download_modpack_download_mods">Baixar todos os mods (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Tente baixar novamente todos os mods (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Recuperar informações do carregador</string>
     <string name="download_modpack_final_move">Movendo arquivos do modpack</string>
     <string name="crash_launch_crash_title">A inicialização do app falhou</string>
@@ -523,10 +522,7 @@
     <string name="minecraft_download_stat_verify_task">Preparando verificações</string>
     <string name="minecraft_download_downloading_game_files">Baixando arquivos \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Verificando arquivos \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Baixando novamente \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Verificando novamente \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Ocorreu um erro durante o download do Minecraft</string>
-    <string name="minecraft_download_failed_retried">O launcher já tentou uma nova tentativa, mas algumas tarefas ainda não foram descarregadas</string>
     <string name="minecraft_download_failed_notfound">Alguns ficheiros de dependência não puderam ser descarregados. Se o problema persistir após várias tentativas, o jogo pode estar sem as bibliotecas necessárias. Recomendamos reinstalar o jogo.</string>
     <string name="settings_element_selected">Selecionado: %s</string>
     <string name="settings_label_ignore_if_blank">Deixe em branco para ignorar</string>
@@ -621,8 +617,6 @@
     <string name="settings_launcher_log_retention_days_title">Tempo de retenção do registro</string>
     <string name="settings_launcher_log_share_title">Compartilhar registros do launcher</string>
     <string name="settings_launcher_log_share_packing">Arquivos de registro do inicializador de pacotes</string>
-    <string name="settings_launcher_mirror_modloader_title">Versão da fonte do Mod Loader</string>
-    <string name="settings_launcher_mirror_file_download_title">Fonte do arquivo de download</string>
     <string name="settings_launcher_mirror_official_first">Preferir fonte oficial</string>
     <string name="settings_launcher_mirror_mirror_first">Preferir fonte mirror</string>
     <string name="about_acknowledgements_pojav_text">%s utiliza o backend do PojavLauncher</string>
@@ -930,8 +924,7 @@
     <string name="cape_name_builder">Construtor</string>
     <string name="cape_name_crafter">Artesão</string>
     <string name="file_invalid_leading_or_trailing_space">Não é possível começar ou terminar com um espaço!</string>
-    <string name="versions_manage_pin">Pin📌</string>
-    <string name="versions_overview_cant_share_folder_message">Nenhuma app de terceiros está disponível neste dispositivo para abrir esta pasta!</string>
+    <string name="versions_manage_pin">Pin</string>
     <string name="versions_overview_log">A executar a Log</string>
     <string name="versions_config_vibrate_kind_title">Tipo de Vibração</string>
     <string name="versions_config_vibrate_kind_summary">Defina o tipo de vibração quando o mod Touch Controller acionar a vibração</string>
@@ -999,7 +992,6 @@
     <string name="mods_update_task_replace">Substituir ficheiros de mod</string>
     <string name="mods_update_task_loading">A sincronizar dados do mod: %s</string>
     <string name="mods_update_updating">A atualizar todos os mods (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">A tentar atualizar todos os mods novamente (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_failed">Falha na atualização do mod</string>
     <string name="mods_update_failed_text">Ocorreu um erro ao atualizar mods:</string>
     <string name="saves_manage_import_unpacking">A descompactar Mundo: %s</string>
@@ -1008,7 +1000,6 @@
     <string name="screenshots_manage_no_screenshots">Sem nenhuma print para esta versão</string>
     <string name="screenshots_manage_export">Exportar</string>
     <string name="screenshots_manage_export_title">Exportar Prints</string>
-    <string name="screenshots_manage_export_success">Exportação concluída</string>
     <string name="screenshots_manage_export_failed">Exportação falhou</string>
     <string name="screenshots_manage_export_all_message">Exportar todas as suas print para a sua galeria?</string>
     <string name="screenshots_manage_export_selected_message">Exportar %1$d prints selecionadas para a galeria do telemóvel?</string>
@@ -1088,8 +1079,6 @@
     <string name="settings_launcher_color_theme_style">Estilo de paleta</string>
     <string name="settings_launcher_dark_mode_title">Modo escuro</string>
     <string name="settings_launcher_language">Idioma</string>
-    <string name="settings_launcher_mirror_assets_search_title">Fonte de pesquisa da plataforma de ativos</string>
-    <string name="settings_launcher_mirror_assets_download_title">Fonte de descarga da plataforma de ativos</string>
     <string name="settings_launcher_background_summary">Escolha uma imagem ou vídeo como plano de fundo do Launcher</string>
     <string name="settings_launcher_background_importing">A importar o ficheiro de fundo do Launcher</string>
     <string name="settings_launcher_background_reset_message">Tem certeza que deseja redefinir o fundo do launcher?</string>

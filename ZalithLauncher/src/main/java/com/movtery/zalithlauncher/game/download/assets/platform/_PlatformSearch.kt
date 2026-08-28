@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.game.download.assets.platform
 
 import android.util.Log
+import com.movtery.zalithlauncher.game.addons.mirror.MirrorPriority
+import com.movtery.zalithlauncher.game.addons.mirror.resolveMirrorPriority
 import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.CurseForgeSearcher
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.MCIM_CURSEFORGE_API
@@ -26,7 +28,6 @@ import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.MCIM_MO
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.ModrinthSearcher
 import com.movtery.zalithlauncher.game.download.assets.utils.localizedModSearchKeywords
 import com.movtery.zalithlauncher.setting.AllSettings
-import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.DownloadAssetsState
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.SearchAssetsState
 import com.movtery.zalithlauncher.utils.isChinaMainland
@@ -109,12 +110,12 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
 fun mirroredCurseForgeSource(
     enabledMirror: Boolean = isChinaMainland()
 ): List<CurseForgeSearcher> {
-    val source = AllSettings.assetSearchSource.getValue()
+    val source = resolveMirrorPriority(AllSettings.assetPlatformSource.getValue(), mainland = enabledMirror)
     val mirrorSource = mirrorCurseForgeSearcher.takeIf { enabledMirror }
     return when (source) {
-        MirrorSourceType.OFFICIAL_FIRST ->
+        MirrorPriority.OFFICIAL_FIRST ->
             listOfNotNull(curseForgeSearcher, mirrorSource)
-        MirrorSourceType.MIRROR_FIRST ->
+        MirrorPriority.MIRROR_FIRST ->
             listOfNotNull(mirrorSource, curseForgeSearcher)
     }
 }
@@ -125,12 +126,12 @@ fun mirroredCurseForgeSource(
 fun mirroredModrinthSource(
     enabledMirror: Boolean = isChinaMainland()
 ): List<ModrinthSearcher> {
-    val source = AllSettings.assetSearchSource.getValue()
+    val source = resolveMirrorPriority(AllSettings.assetPlatformSource.getValue(), mainland = enabledMirror)
     val mirrorSource = mirrorModrinthSearcher.takeIf { enabledMirror }
     return when (source) {
-        MirrorSourceType.OFFICIAL_FIRST ->
+        MirrorPriority.OFFICIAL_FIRST ->
             listOfNotNull(modrinthSearcher, mirrorSource)
-        MirrorSourceType.MIRROR_FIRST ->
+        MirrorPriority.MIRROR_FIRST ->
             listOfNotNull(mirrorSource, modrinthSearcher)
     }
 }

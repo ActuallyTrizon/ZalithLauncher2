@@ -30,7 +30,7 @@ import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.ensureParentDirectory
 import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.logging.Logger
-import com.movtery.zalithlauncher.utils.network.downloadFromMirrorListSuspend
+import com.movtery.zalithlauncher.utils.network.downloadFileFromSources
 import com.movtery.zalithlauncher.utils.network.toLocal
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
@@ -142,7 +142,7 @@ private fun downloadSingleFile(
                         task.clearSpeed()
                     }
                 ) { report ->
-                    downloadFromMirrorListSuspend(
+                    downloadFileFromSources(
                         urls = version
                             .platformDownloadUrl()
                             .mapMCIMMirrorUrls(),

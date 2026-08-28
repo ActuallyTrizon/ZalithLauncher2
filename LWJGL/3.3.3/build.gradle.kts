@@ -1,5 +1,22 @@
+import java.security.MessageDigest
+
 plugins {
     java
+}
+
+fun writeVersion(file: File, inputs: List<File>) {
+    val digest = MessageDigest.getInstance("SHA-1")
+    inputs.forEach { input ->
+        input.inputStream().use { stream ->
+            val buffer = ByteArray(8192)
+            while (true) {
+                val count = stream.read(buffer)
+                if (count < 0) break
+                digest.update(buffer, 0, count)
+            }
+        }
+    }
+    file.writeText(digest.digest().joinToString("") { "%02x".format(it) })
 }
 
 val lwjglVersion = "3.3.3"
@@ -14,10 +31,13 @@ configurations {
 dependencies {
     compileOnly(fileTree(mapOf("dir" to "../compileOnly", "include" to listOf("*.jar"))))
     implementation(fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar"))))
-    add(
-        "lwjglModules",
-        fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar")))
-    )
+    // jsr305 仅为编译期注解依赖（@Nullable 等），不得打入运行时 assets，
+    // 否则会与 JDK 内置 java.annotation 模块导出同名包导致 ResolutionException
+    val lwjglModules = fileTree("libs/$lwjglVersion") {
+        include("*.jar")
+        exclude("jsr305.jar")
+    }
+    add("lwjglModules", lwjglModules)
 }
 
 tasks.jar {
@@ -27,7 +47,6 @@ tasks.jar {
 
     // Modules to copy over to the components directory instead of patching and merging
     val excludedModules = arrayOf(
-        "jsr305.jar",
         "lwjgl.jar",
         "lwjgl-freetype.jar",
 //            "lwjgl-glfw.jar",
@@ -81,8 +100,10 @@ tasks.jar {
             from(excludedModulesFileList)
             into(archiveFile.get().asFile.parentFile)
         }
-        versionFile.writeText(System.currentTimeMillis().toString())
+        writeVersion(versionFile, listOf(archiveFile.get().asFile) + excludedModulesFileList)
     }
+    outputs.file(versionFile)
+    outputs.files(excludedModules.map { path -> File(destinationDirectory.get().asFile, path) })
     exclude("net/java/openjdk/cacio/ctc/**")
 }
 

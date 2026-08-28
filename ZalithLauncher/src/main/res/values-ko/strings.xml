@@ -13,7 +13,7 @@
     <string name="generic_copy">복사</string>
     <string name="generic_paste">붙여넣기</string>
     <string name="generic_setting">설정</string>
-    <string name="generic_expand">확대</string>
+    <string name="generic_expand">확장</string>
     <string name="generic_collapse">중지</string>
     <string name="generic_main_menu">메인 메뉴</string>
     <string name="generic_download">다운로드</string>
@@ -39,7 +39,7 @@
     <string name="generic_in_progress">진행중</string>
     <string name="generic_anyway">항상 사용</string>
     <string name="generic_got_it">이해했습니다</string>
-    <string name="generic_more">더</string>
+    <string name="generic_more">더보기</string>
     <string name="generic_ignore">무시</string>
     <string name="generic_authorization">승인</string>
     <string name="generic_file_name">파일 이름: %s</string>
@@ -120,7 +120,7 @@
     <string name="error_notfound">(%s) 요청한 리소스를 찾을 수 없습니다</string>
     <string name="splash_screen_unpack_desc">런처가 Minecraft를 정상적으로 실행하기 위해 필요한 파일들을 설치해야 합니다. 이 파일들은 앱에 포함되어 있으며, 먼저 압축을 해제해야 합니다. 아래 버튼을 눌러 압축 해제 및 업데이트를 시작하세요.</string>
     <string name="splash_screen_installing">런처가 파일을 추출하고 있습니다. 추출이 완료되면 자동으로 메인 화면으로 이동합니다. 잠시만 기다려 주세요.</string>
-    <string name="splash_screen_agree">설치</string>
+    <string name="splash_screen_agree">동의 및 설치</string>
     <string name="notification_title">알림 권한 확인</string>
     <string name="notification_request">권한 요청</string>
     <string name="notification_data_jvm_service_message">원활한 설치를 위해 런처를 백그라운드에서 실행해야 합니다. 설치 안정성을 유지하기 위해 백그라운드 서비스를 시작하려 하며, 이 과정에서 알림 권한이 필요합니다. 설치가 중단되지 않도록 알림 권한을 허용해 주시겠어요? 이것은 안정적인 설치를 위해 꼭 필요한 과정입니다!</string>
@@ -129,7 +129,7 @@
     <string name="notification_data_terracotta_message">멀티플레이 세션 동안 런처는 현재 연결 상태를 표시하기 위해 백그라운드 서비스를 사용하며, 이를 위해 알림 권한이 필요합니다.</string>
     <string name="microphone_check_title">마이크 입력 확인</string>
     <string name="microphone_check_volume">음량: %d</string>
-    <string name="microphone_check_no_permissions">런처에 마이크 권한이 허용되지 않았습니다</string>
+    <string name="microphone_check_no_permissions">마이크 권한이 허용되지 않았습니다</string>
     <string name="unpack_screen_jre8">Java 8 환경 (Minecraft 1.16 이하 버전에서 필요)</string>
     <string name="unpack_screen_jre17">Java 17 환경 (Minecraft 1.17 이상 버전에서 필요)</string>
     <string name="unpack_screen_jre21">Java 21 환경 (Minecraft 1.20.5 이상 버전에서 필요)</string>
@@ -147,7 +147,7 @@
     <string name="download_category_saves">월드</string>
     <string name="download_category_shaders">쉐이더팩</string>
     <string name="download_game_failed_to_get_versions">버전 정보를 가져오지 못했습니다: %s. 터치하여 재시도하세요.</string>
-    <string name="download_game_type_release">릴리스</string>
+    <string name="download_game_type_release">릴리즈</string>
     <string name="download_game_type_snapshot">스냅샷</string>
     <string name="download_game_type_april_fools">만우절 버전</string>
     <string name="download_game_type_old">오래된 버전</string>
@@ -158,8 +158,8 @@
     <string name="download_game_version_overwrite_select">덮어쓸 버전</string>
     <string name="download_game_version_overwrite_select_subtitle">덮어쓸 버전을 선택하세요. 이 기능을 통해 대상 버전을 업그레이드하거나 다운그레이드할 수 있습니다</string>
     <string name="download_game_addon_list_load_error">목록을 불러오지 못했습니다: %s</string>
-    <string name="download_game_addon_available">설치 가능</string>
-    <string name="download_game_addon_unavailable">설치 불가능</string>
+    <string name="download_game_addon_available">사용 가능</string>
+    <string name="download_game_addon_unavailable">사용 불가능</string>
     <string name="download_game_addon_incompatible_with">%s와(과) 호환되지 않습니다</string>
     <string name="download_game_addon_compatible_with">%s와(과) 호환됩니다</string>
     <string name="download_game_addon_request_addon">먼저 %s 버전을 선택해 주세요</string>
@@ -172,8 +172,8 @@
     <string name="download_game_addon_warning_api">%s이(가) 선택되지 않았습니다. 설치하지 않으면 대부분의 모드가 작동하지 않습니다!</string>
     <string name="download_game_install_title">게임 설치 중</string>
     <string name="download_game_install_vanilla">바닐라 %s 다운로드 중</string>
-    <string name="download_game_install_base_download_file">%1$s %2$s 핵심파일 다운로드</string>
-    <string name="download_game_install_base_download_file2">%s 핵심파일 다운로드</string>
+    <string name="download_game_install_base_download_file">%1$s %2$s 핵심 파일 다운로드</string>
+    <string name="download_game_install_base_download_file2">%s 핵심 파일 다운로드</string>
     <string name="download_game_install_base_install">%s 설치</string>
     <string name="download_game_install_base_installing">백그라운드에서 %s 설치 중</string>
     <string name="download_game_install_optifine_fetch_download_url">OptiFine %s 다운로드 URL 가져오기</string>
@@ -198,11 +198,11 @@
     <string name="download_assets_filter_category">카테고리</string>
     <string name="download_assets_filter_modloader">모드 로더</string>
     <string name="download_assets_filter_none">선택된 항목 없음</string>
-    <string name="download_assets_filter_sort_by_relevant">관련성 순</string>
+    <string name="download_assets_filter_sort_by_relevant">관련성</string>
     <string name="download_assets_filter_sort_by_total_downloads">누적 다운로드 수</string>
-    <string name="download_assets_filter_sort_by_popularity">인기순</string>
-    <string name="download_assets_filter_sort_by_recently_created">최신순</string>
-    <string name="download_assets_filter_sort_by_recently_updated">최근 업데이트순</string>
+    <string name="download_assets_filter_sort_by_popularity">인기</string>
+    <string name="download_assets_filter_sort_by_recently_created">최신</string>
+    <string name="download_assets_filter_sort_by_recently_updated">최근 업데이트</string>
     <string name="download_assets_result_authors">제작: %s</string>
     <string name="download_assets_result_previous_page">이전 페이지</string>
     <string name="download_assets_result_next_page">다음 페이지</string>
@@ -211,7 +211,7 @@
     <string name="download_assets_failed_to_get_versions">버전 목록을 가져오지 못했습니다: %s. 터치하여 재시도하세요.</string>
     <string name="download_assets_show_only_mc_release">릴리즈 버전만 표시</string>
     <string name="download_assets_search_mc_versions">마인크래프트 버전 검색</string>
-    <string name="download_assets_dependency_projects">필수 요구 사항</string>
+    <string name="download_assets_dependency_projects">필수 항목</string>
     <string name="download_assets_optional_projects">선택 항목</string>
     <string name="download_assets_loading_page_data">목록 데이터를 불러오는 중</string>
     <string name="download_assets_loaded_chunk_page">목록 데이터 로드완료, 청크 %1$d, 페이지 %2$d</string>
@@ -221,7 +221,7 @@
     <string name="download_assets_source_link">소스 코드 보기</string>
     <string name="download_assets_issues_link">문제 보고</string>
     <string name="download_assets_wiki_link">위키 보기</string>
-    <string name="download_assets_release_type_release">릴리스</string>
+    <string name="download_assets_release_type_release">릴리즈</string>
     <string name="download_assets_release_type_beta">베타</string>
     <string name="download_assets_release_type_alpha">알파</string>
     <string name="download_assets_no_installed_versions">현재 설치된 게임 버전이 없어 리소스의 다운로드 위치를 결정할 수 없습니다, 먼저 게임 버전을 설치해 주세요!</string>
@@ -238,13 +238,12 @@
     <string name="download_modpack_install_overrides">모드팩 파일 압축 해제 중</string>
     <string name="download_modpack_download">모드팩 콘텐츠 다운로드</string>
     <string name="download_modpack_download_mods">모든 모드 다운로드 중 (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">모든 모드 다운로드 재시도 중 (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">로더 정보 가져오는 중</string>
     <string name="download_modpack_final_move">모드팩 파일 이동 중</string>
     <string name="download_assets_category_worldgen">월드 구성 요소</string>
     <string name="download_assets_category_biomes">바이옴</string>
     <string name="download_assets_category_dimensions">차원</string>
-    <string name="download_assets_category_ores_resources">광석 및 자원</string>
+    <string name="download_assets_category_ores_resources">광물 및 자원</string>
     <string name="download_assets_category_structures">구조물</string>
     <string name="download_assets_category_technology">기술</string>
     <string name="download_assets_category_item_fluid_energy_transport">운송 및 물류</string>
@@ -557,7 +556,7 @@
     <string name="versions_manage_copy_version_tip">현재 버전을 독립된 환경(버전 격리)으로 복제합니다. \'모든 파일 복사\' 선택 시 리소스, 월드, 설정값 등 모든 데이터를 포함하여 복사합니다.</string>
     <string name="versions_manage_copy_version_all">모든 파일 복사</string>
     <string name="versions_manage_delete_version">버전 삭제</string>
-    <string name="versions_manage_delete_version_tip_hint1">”버전을 삭제하면 ./versions/%s 디렉토리 내의 모든 파일이 삭제됩니다. 여기에는 해당 버전의 월드, 리소스팩, 모드 등 중요한 데이터가 모두 포함됩니다.</string>
+    <string name="versions_manage_delete_version_tip_hint1">버전을 삭제하면 ./versions/%s 디렉토리 내의 모든 파일이 삭제됩니다. 여기에는 해당 버전의 월드, 리소스팩, 모드 등 중요한 데이터가 모두 포함됩니다.</string>
     <string name="versions_manage_delete_version_tip_hint2">버전 격리를 활성화한 경우 관련 파일이 이 디렉토리에만 저장되므로, 버전을 삭제하면 해당 파일들도 모두 함께 삭제됩니다;</string>
     <string name="versions_manage_delete_version_tip_hint3">버전 격리를 사용하지 않는 경우 게임 파일이 루트 디렉토리에 저장되며, 버전을 삭제해도 모든 관련 파일이 정리되지는 않습니다.</string>
     <string name="versions_manage_delete_version_tip_hint4">진행하기 전에 중요한 데이터를 반드시 백업해 두시고, 삭제 시 각별히 주의해 주시기 바랍니다!</string>
@@ -595,7 +594,6 @@
     <string name="versions_overview_screenshot_folder">스크린샷 폴더</string>
     <string name="versions_overview_logs_folder">로그 폴더</string>
     <string name="versions_overview_crash_report_folder">충돌 보고서 폴더</string>
-    <string name="versions_overview_cant_share_folder_message">파일을 열 수 있는 앱이 없습니다!</string>
     <string name="versions_config_version_settings">버전별 설정</string>
     <string name="versions_config_game_settings">게임별 설정</string>
     <string name="versions_config_support_settings">추가 지원 설정</string>
@@ -616,7 +614,7 @@
     <string name="versions_config_microphone_check_summary">시스템 마이크가 사용 가능한지 확인하거나 런처에 마이크 권한이 허용되었는지 확인합니다. 이 점검을 통해 Simple Voice Chat과 같이 마이크가 필요한 모드를 정상적으로 사용할 수 있습니다.</string>
     <string name="versions_install_loader">로더 설치</string>
     <string name="versions_update_loader">로더 업데이트</string>
-    <string name="versions_update_loader_waiting_for_others">다른 항목의 로딩이 완료될 때까지 기다리는 중</string>
+    <string name="versions_update_loader_waiting_for_others">다른 작업이 완료될 때까지 기다리는 중</string>
     <string name="versions_update_loader_diff_message">정말로 현재 로더를 변경하시겠습니까?</string>
     <string name="versions_update_loader_diff_change">변경: %1$s %2$s → %3$s</string>
     <string name="versions_update_loader_diff_remove">제거: %s</string>
@@ -695,14 +693,13 @@
     <string name="mods_update_task_loading">모드 데이터 동기화 중: %s</string>
     <string name="mods_update_no_mods_update">모든 모드가 이미 최신 버전입니다. 업데이트가 필요하지 않습니다</string>
     <string name="mods_update_updating">모든 모드 업데이트 중 (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">모든 모드 업데이트 재시도 중 (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">업데이트 성공</string>
     <string name="mods_update_success_text">선택한 모든 모드가 최신 버전으로 업데이트되었습니다!</string>
     <string name="mods_update_failed">모드 업데이트 실패</string>
     <string name="mods_update_failed_text">모드를 업데이트하는 중 오류가 발생했습니다:</string>
     <string name="saves_manage">월드</string>
     <string name="saves_manage_info">월드 정보</string>
-    <string name="saves_manage_invalid">손상된 세이브 파일입니다</string>
+    <string name="saves_manage_invalid">손상된 월드 파일입니다</string>
     <string name="saves_manage_last_played">최근 플레이: %s</string>
     <string name="saves_manage_gamemode">게임 모드: %s</string>
     <string name="saves_manage_gamemode_survival">서바이벌 모드</string>
@@ -718,9 +715,9 @@
     <string name="saves_manage_difficulty_locked">난이도 잠금</string>
     <string name="saves_manage_allow_commands">명령어 허용</string>
     <string name="saves_manage_world_seed">월드 시드: %s</string>
-    <string name="saves_manage_exists">동일한 이름의 세이브가 존재합니다</string>
-    <string name="saves_manage_save_name">이름 저장</string>
-    <string name="saves_manage_backup">세이브 백업</string>
+    <string name="saves_manage_exists">동일한 이름의 월드가 존재합니다</string>
+    <string name="saves_manage_save_name">월드 이름</string>
+    <string name="saves_manage_backup">월드 백업</string>
     <string name="generic_edit">편집</string>
     <string name="page_title_home_page_editor">홈페이지 에디터</string>
     <string name="error_bad_request">(%s) 서버가 요청을 이해하지 못했습니다</string>
@@ -734,8 +731,8 @@
     <string name="game_vulkan_check_turnip">Turnip 사용: %s</string>
     <string name="game_vulkan_check_missing_extensions">누락된 확장:</string>
     <string name="game_vulkan_check_missing_features">누락된 기능:</string>
-    <string name="game_vulkan_check_unsupp">현재 기기는 Minecraft 26.2+를 Vulkan으로 실행하는 것을 지원하지 않습니다</string>
-    <string name="game_vulkan_check_supp">현재 기기는 Minecraft 26.2+를 Vulkan으로 실행하는 것을 지원합니다</string>
+    <string name="game_vulkan_check_unsupp">현재 기기는 Minecraft 26.2 이상을 Vulkan으로 실행하는 것을 지원하지 않습니다</string>
+    <string name="game_vulkan_check_supp">현재 기기는 Minecraft 26.2 이상을 Vulkan으로 실행하는 것을 지원합니다</string>
     <string name="plugin_download_title">플러그인 다운로드</string>
     <string name="account_change_skin_arm_style">팔 스타일</string>
     <string name="account_change_skin_arm_wide">굵은 팔</string>
@@ -773,8 +770,6 @@
     <string name="servers_list_copy_server_address">서버 주소 복사</string>
     <string name="minecraft_download_downloading_game_files">게임 파일 다운로드중  \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">파일 검증중 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">다운로드 재시도중 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">검증 재시도중 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="generic_view">보기</string>
     <string name="error_bad_gateway">(%s) 서버가 업스트림에서 유효하지 않은 응답을 받았습니다</string>
     <string name="error_service_unavailable">(%s) 현재 서버가 일시적으로 요청을 처리할 수 없습니다</string>
@@ -802,7 +797,6 @@
     <string name="minecraft_download_stat_download_task">다운로드 준비중</string>
     <string name="minecraft_download_stat_verify_task">검증 준비중</string>
     <string name="minecraft_download_failed">Minecraft를 다운로드하는 중에 오류가 발생했습니다</string>
-    <string name="minecraft_download_failed_retried">한 번 더 시도했지만 여전히 몇몇 다운로드가 실패했습니다</string>
     <string name="minecraft_download_failed_notfound">몇몇 필수 파일을 다운로드할 수 없습니다. 문제가 계속되는 경우, 게임에 필요한 라이브러리가 누락되었을 수 있습니다. 게임을 재설치해 보세요.</string>
     <string name="settings_title_blur">블러 효과</string>
     <string name="settings_element_selected">현재 선택: %s</string>
@@ -905,7 +899,7 @@
     <string name="about_acknowledgements_title">감사의 말</string>
     <string name="about_sponsor">스폰서 지원</string>
     <string name="about_launcher_project_link">프로젝트 링크</string>
-    <string name="about_launcher_author_movtery_text">%s의 저자</string>
+    <string name="about_launcher_author_movtery_text">%s의 제작자</string>
     <string name="about_launcher_author_movtery_title">MovTery</string>
     <string name="about_launcher_version">런처 버전: %s</string>
     <string name="about_launcher_title">런처 정보</string>
@@ -974,8 +968,6 @@
     <string name="settings_launcher_background_title">런처 배경</string>
     <string name="settings_launcher_mirror_mirror_first">미러 소스 선호</string>
     <string name="settings_launcher_mirror_official_first">공식 소스 선호</string>
-    <string name="settings_launcher_mirror_file_download_title">파일 다운로드 소스</string>
-    <string name="settings_launcher_mirror_modloader_title">모드로더 버전 소스</string>
     <string name="settings_launcher_log_share_packing">패키지 런처 로그 파일</string>
     <string name="settings_launcher_log_share_title">런처 로그 공유</string>
     <string name="settings_launcher_log_retention_days_title">로그 보관일</string>
@@ -990,4 +982,15 @@
     <string name="settings_launcher_color_theme_title">색상 테마</string>
     <string name="settings_gamepad_config_create">새로운 게임패드 프로필</string>
     <string name="settings_gamepad_remapping_finished_saving">잠시만 기다려 주세요. 런처가 설정을 저장하고 적용중입니다.</string>
+    <string name="settings_game_jvm_args_summary">추가 JVM 인수를 수정하면 충돌이 일어날 가능성이 높으므로, 확실히 이해하고 있는 경우가 아니라면 수정하지 않는 것이 좋습니다</string>
+    <string name="settings_game_log_buffer_flush_interval_title">로그 업데이트 간격</string>
+    <string name="settings_game_log_buffer_flush_interval_summary">로그 버퍼가 얼마나 자주 업데이트될지를 설정합니다. 너무 빠르거나 느리면 성능에 영향을 미칠 수 있습니다</string>
+    <string name="settings_control_physical_key_bind_ime_title">키보드 IME 단축기</string>
+    <string name="settings_control_mouse_sensitivity_title">가상 마우스 민감도</string>
+    <string name="settings_control_mouse_control_mode_title">마우스 컨트롤 모드</string>
+    <string name="settings_gamepad_remapping_finished_saved">게임패드 매핑이 저장되었습니다. 이제 이 창을 닫을 수 있습니다!</string>
+    <string name="control_manage_failed_to_save">컨트롤 레이아웃 저장 실패</string>
+    <string name="control_editor_edit_style_config_delete">정말 컨트롤 외관 \'%s\'을(를) 삭제하시겠습니까?</string>
+    <string name="about_acknowledgements_pojav_text">%s은(는) PojavLauncher의 실행 백엔드를 사용합니다</string>
+    <string name="vibrate_kind_one_shot">상수</string>
 </resources>

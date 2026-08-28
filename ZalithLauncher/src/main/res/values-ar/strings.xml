@@ -201,7 +201,6 @@
     <string name="download_modpack_install_overrides">استخراج ملفات المودباكات</string>
     <string name="download_modpack_download">تنزيل المحتوى المطلوب للمودباك</string>
     <string name="download_modpack_download_mods">تنزيل جميع المودات (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">أعد محاولة تنزيل جميع المودات (%1$d/%2$d, %3$s)</string>
     <string name="animate_type_bounce">إهتزاز قوي</string>
     <string name="animate_type_jelly_bounce">إهتزاز</string>
     <string name="animate_type_slice_in">انتقالي</string>

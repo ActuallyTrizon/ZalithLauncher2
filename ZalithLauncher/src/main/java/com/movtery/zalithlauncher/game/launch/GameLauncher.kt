@@ -39,6 +39,7 @@ import com.movtery.zalithlauncher.game.download.game.parseLibraryComponents
 import com.movtery.zalithlauncher.game.multirt.Runtime
 import com.movtery.zalithlauncher.game.multirt.RuntimesManager
 import com.movtery.zalithlauncher.game.path.GamePathManager
+import com.movtery.zalithlauncher.game.plugin.Plugin
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
 import com.movtery.zalithlauncher.game.renderer.Renderers
@@ -197,7 +198,7 @@ class GameLauncher(
             }
         }
 
-        val rendererLib = loadGraphicsLibrary() ?: return
+        val rendererLib = getRendererLibrary() ?: return
         if (!ZLBridge.dlopen(rendererLib) && !ZLBridge.dlopen(findInLdLibPath(rendererLib))) {
             Logger.error(TAG, "Failed to load renderer $rendererLib")
         }
@@ -206,7 +207,7 @@ class GameLauncher(
     override fun progressFinalUserArgs(args: MutableList<String>, ramAllocation: Int) {
         super.progressFinalUserArgs(args, version.getRamAllocation(activity))
         if (Renderers.isCurrentRendererValid()) {
-            args.add("-Dorg.lwjgl.opengl.libname=${loadGraphicsLibrary()}")
+            args.add("-Dorg.lwjgl.opengl.libname=${getRendererLibrary()}")
         }
     }
 
@@ -374,6 +375,9 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
     val renderer = Renderers.getCurrentRenderer()
     val rendererId = renderer.getRendererId()
 
+    // SDL 环境变量
+    envMap["SDL_OPENGL_LIBRARY"] = rendererId
+
     if (rendererId.startsWith("opengles2")) {
         envMap["LIBGL_ES"] = "2"
         envMap["LIBGL_MIPMAP"] = "3"
@@ -386,6 +390,14 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
 
     renderer.getRendererEGL()?.let { eglName ->
         envMap["POJAVEXEC_EGL"] = eglName
+
+        // 指定 SDL EGL
+        val nativeLibPath = if (renderer is Plugin) {
+            renderer.getNativeLibPath()
+        } else {
+            PathManager.DIR_NATIVE_LIB
+        }
+        envMap["SDL_EGL_LIBRARY"] = "$nativeLibPath/$eglName"
     }
 
     envMap["POJAV_RENDERER"] = rendererId
@@ -400,7 +412,7 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
         envMap["force_glsl_extensions_warn"] = "true"
         envMap["allow_higher_compat_version"] = "true"
         envMap["allow_glsl_extension_directive_midshader"] = "true"
-        envMap["LIB_MESA_NAME"] = loadGraphicsLibrary() ?: "null"
+        envMap["LIB_MESA_NAME"] = getRendererLibrary() ?: "null"
     }
 
     if (!envMap.containsKey("LIBGL_ES")) {
@@ -420,12 +432,7 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
     }
 }
 
-/**
- * Open the render library in accordance to the settings.
- * It will fallback if it fails to load the library.
- * @return The name of the loaded library
- */
-private fun loadGraphicsLibrary(): String? {
+private fun getRendererLibrary(): String? {
     return if (!Renderers.isCurrentRendererValid()) null
     else Renderers.getCurrentRenderer().getRendererLibrary()
 }

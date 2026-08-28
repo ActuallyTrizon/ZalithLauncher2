@@ -563,36 +563,18 @@ fun LauncherSettingsScreen(
                         ListSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Top,
-                            unit = AllSettings.fetchModLoaderSource,
+                            unit = AllSettings.gameDownloadSource,
                             items = MirrorSourceType.entries,
-                            title = stringResource(R.string.settings_launcher_mirror_modloader_title),
+                            title = stringResource(R.string.settings_launcher_mirror_game_source_title),
                             getItemText = { stringResource(it.textRes) }
                         )
 
                         ListSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Middle,
-                            unit = AllSettings.fileDownloadSource,
+                            unit = AllSettings.assetPlatformSource,
                             items = MirrorSourceType.entries,
-                            title = stringResource(R.string.settings_launcher_mirror_file_download_title),
-                            getItemText = { stringResource(it.textRes) }
-                        )
-
-                        ListSettingsCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Middle,
-                            unit = AllSettings.assetSearchSource,
-                            items = MirrorSourceType.entries,
-                            title = stringResource(R.string.settings_launcher_mirror_assets_search_title),
-                            getItemText = { stringResource(it.textRes) }
-                        )
-
-                        ListSettingsCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Middle,
-                            unit = AllSettings.assetDownloadSource,
-                            items = MirrorSourceType.entries,
-                            title = stringResource(R.string.settings_launcher_mirror_assets_download_title),
+                            title = stringResource(R.string.settings_launcher_mirror_asset_platform_source_title),
                             getItemText = { stringResource(it.textRes) }
                         )
                     }

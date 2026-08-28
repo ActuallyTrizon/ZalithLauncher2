@@ -134,6 +134,8 @@ private fun updateLibrary(
         path = replacement.newPath
         sha1 = replacement.newSha1
         url = replacement.newUrl
+        //新版本的大小与旧版本必然不同，残留旧值会令下载器提前截断文件
+        if (replacement.newSize > 0) size = replacement.newSize
     }
 }
 

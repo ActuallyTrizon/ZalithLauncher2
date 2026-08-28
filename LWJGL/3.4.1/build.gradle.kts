@@ -1,5 +1,22 @@
+import java.security.MessageDigest
+
 plugins {
     java
+}
+
+fun writeVersion(file: File, inputs: List<File>) {
+    val digest = MessageDigest.getInstance("SHA-1")
+    inputs.forEach { input ->
+        input.inputStream().use { stream ->
+            val buffer = ByteArray(8192)
+            while (true) {
+                val count = stream.read(buffer)
+                if (count < 0) break
+                digest.update(buffer, 0, count)
+            }
+        }
+    }
+    file.writeText(digest.digest().joinToString("") { "%02x".format(it) })
 }
 
 val lwjglVersion = "3.4.1"
@@ -81,7 +98,7 @@ tasks.jar {
             from(excludedModulesFileList)
             into(archiveFile.get().asFile.parentFile)
         }
-        versionFile.writeText(System.currentTimeMillis().toString())
+        writeVersion(versionFile, listOf(archiveFile.get().asFile) + excludedModulesFileList)
     }
     // Adds the jank to outputs
     outputs.file(versionFile)

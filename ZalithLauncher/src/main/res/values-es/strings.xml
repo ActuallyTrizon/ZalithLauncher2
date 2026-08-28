@@ -31,7 +31,7 @@
     <string name="generic_input_length">Longitud del texto: %1$d/%2$d</string>
     <string name="generic_unpacking">Descomprimiendo %s</string>
     <string name="generic_unknown">Desconocido</string>
-    <string name="generic_follow_global">Usar ajuste global</string>
+    <string name="generic_follow_global">Usar global</string>
     <string name="generic_custom">Personalizado</string>
     <string name="generic_search">Buscar</string>
     <string name="generic_loading">Cargando</string>
@@ -89,7 +89,7 @@
     <string name="error_network_unreachable">Red no disponible</string>
     <string name="error_connection_failed">Error al conectar con el servidor</string>
     <string name="error_parse_failed">Error al procesar los datos</string>
-    <string name="error_unauthorized">(%s) No autorizado</string>
+    <string name="error_unauthorized">(%s) Revise sus credenciales e inténtelo de nuevo</string>
     <string name="error_notfound">(%s) Recurso no encontrado</string>
     <string name="splash_screen_unpack_desc">El launcher necesita instalar algunos archivos para que Minecraft funcione correctamente. Están incluidos en la aplicación y deben ser extraídos. Pulse el botón de abajo para comenzar la extracción y actualización.</string>
     <string name="splash_screen_installing">El launcher está extrayendo los archivos. Cuando termine te llevará a la pantalla principal. Por favor, espera pacientemente.</string>
@@ -209,7 +209,6 @@
     <string name="download_modpack_download_mods">Descargar todos los mods (%1$d/%2$d,%3$s)</string>
     <string name="download_assets_category_technology">Tecnología</string>
     <string name="download_assets_category_item_fluid_energy_transport">Canalizaciones y logística</string>
-    <string name="download_modpack_download_mods_retry">Reintentar descargar todos los mods (%1$d/%2$d,%3$s)</string>
     <string name="download_modpack_get_loaders">Obteniendo información del cargador</string>
     <string name="download_modpack_final_move">Moviendo archivos del modpack</string>
     <string name="download_assets_category_worldgen">Generación del mundo</string>
@@ -623,7 +622,6 @@
     <string name="mods_update_task_replace">Reemplazar archivos de mods</string>
     <string name="mods_update_no_mods_update">Todos los mods ya están actualizados, no se necesita actualización</string>
     <string name="mods_update_updating">Actualizando todos los mods (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Reintentando actualizar todos los mods (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Actualización exitosa</string>
     <string name="mods_update_success_text">¡Todos los mods seleccionados se han actualizado a la última versión!</string>
     <string name="mods_update_failed">Actualización de mod fallida</string>
@@ -675,10 +673,7 @@
     <string name="minecraft_download_stat_verify_task">Preparando verificaciones</string>
     <string name="minecraft_download_downloading_game_files">Descargando archivos \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Verificando archivos \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Reintentando descargas \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Reintentando verificaciones \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Ocurrió un error al descargar Minecraft</string>
-    <string name="minecraft_download_failed_retried">Antes de esto, el launcher ya había intentado un reintento una vez, pero algunas tareas aún fallaron en la descarga</string>
     <string name="minecraft_download_failed_notfound">Algunos archivos de dependencia no se pudieron descargar. Si el problema persiste después de múltiples intentos, es posible que al juego le falten archivos de biblioteca requeridos. Se recomienda reinstalar el juego.</string>
     <string name="settings_element_selected">Seleccionado: %s</string>
     <string name="settings_label_ignore_if_blank">Dejar vacío para ignorar</string>
@@ -847,8 +842,6 @@
     <string name="settings_launcher_log_share_title">Compartir registros del launcher</string>
     <string name="settings_launcher_log_share_summary">Toca para compartir los archivos de registro del launcher, para que los desarrolladores puedan identificar y solucionar problemas con el launcher</string>
     <string name="settings_launcher_log_share_packing">Empaquetar archivos de registro del launcher</string>
-    <string name="settings_launcher_mirror_modloader_title">Fuente de versión del cargador de mods</string>
-    <string name="settings_launcher_mirror_file_download_title">Fuente de descarga de archivos</string>
     <string name="settings_launcher_mirror_official_first">Preferir fuente oficial</string>
     <string name="settings_launcher_mirror_mirror_first">Preferir fuente espejo</string>
     <string name="settings_launcher_background_title">Fondo del launcher</string>
@@ -1005,4 +998,13 @@
     <string name="upgrade_version_create_at">Actualizado en: %s</string>
     <string name="upgrade_get_remote_failed">Error al buscar actualizaciones. Por favor, inténtalo de nuevo más tarde.</string>
     <string name="upgrade_is_latest">Ya estás en la última versión</string>
+    <string name="generic_copied">Copiado</string>
+    <string name="generic_edit">Editar</string>
+    <string name="generic_view">Ver</string>
+    <string name="page_title_version_manage">Gestionar versiones</string>
+    <string name="files_importing">Importar Archivos</string>
+    <string name="crash_link_share_button">Compartir Enlace</string>
+    <string name="crash_link_share_failed_link_not_found">No se encontró un enlace disponible. Por favor, inténtelo de nuevo más tarde.</string>
+    <string name="error_bad_request">(%s) El servidor no pudo entender la petición</string>
+    <string name="error_forbidden">(%s) No tienes permisos para acceder a este recurso</string>
 </resources>
