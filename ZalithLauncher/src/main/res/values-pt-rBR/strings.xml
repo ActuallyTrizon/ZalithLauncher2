@@ -1373,4 +1373,15 @@
     <string name="fm_calculating">Calculando…</string>
     <string name="fm_name_conflict">Conflito de nomes com uma entrada existente</string>
     <string name="fm_activity_name">Gerenciador de Arquivos</string>
+    <string name="game_menu_option_auto_show_ime">Método de entrada de exibição automática (SDL)</string>
+    <string name="settings_gamepad_input_mode_title">Modo de entrada do gamepad</string>
+    <string name="settings_gamepad_input_mode_mapped">Mapeado (Teclas Virtuais)</string>
+    <string name="settings_gamepad_input_mode_mapped_summary">Os botões e joysticks do gamepad funcionam como teclado e mouse virtuais</string>
+    <string name="settings_gamepad_input_mode_sdl">Passagem SDL</string>
+    <string name="settings_gamepad_input_mode_sdl_summary">A entrada bruta do gamepad é enviada ao jogo através da API de gamepad SDL/GLFW; o remapeamento de botões é ignorado</string>
+    <string name="gamepad_mode_prompt_description">Entrada de gamepad detectada. O iniciador suporta dois modos de entrada de gamepad; escolha o que deseja usar.</string>
+    <string name="gamepad_mode_prompt_hint">Você pode alterar isso mais tarde na aba Gamepad do menu do jogo ou nas configurações do Launcher.</string>
+    <string name="settings_launcher_mirror_game_source_title">Fonte de Download do Jogo</string>
+    <string name="settings_launcher_mirror_asset_platform_source_title">Fonte de Download do Mod</string>
+    <string name="settings_launcher_mirror_auto">Automático</string>
 </resources>
