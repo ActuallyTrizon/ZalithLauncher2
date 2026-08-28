@@ -38,6 +38,7 @@ import com.movtery.zalithlauncher.game.account.microsoft.fetchDeviceCodeResponse
 import com.movtery.zalithlauncher.game.account.microsoft.getTokenResponse
 import com.movtery.zalithlauncher.game.account.microsoft.microsoftAuthAsync
 import com.movtery.zalithlauncher.game.account.microsoft.toLocal
+import com.movtery.zalithlauncher.path.DOWNLOAD_OKHTTP_CLIENT
 import com.movtery.zalithlauncher.path.URL_USER_AGENT
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
@@ -51,10 +52,10 @@ import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONObject
 import java.net.ConnectException
-import java.net.HttpURLConnection
-import java.net.URL
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import java.util.Locale
@@ -412,31 +413,25 @@ fun tryGetFullServerUrl(baseUrl: String): String {
     }
 
     val initialUrl = addHttpsIfMissing(baseUrl)
+
+    fun probe(url: String): Response =
+        DOWNLOAD_OKHTTP_CLIENT.newCall(
+            Request.Builder().url(url).header("User-Agent", URL_USER_AGENT).build()
+        ).execute()
+
     return runCatching {
         var finalUrl = initialUrl
 
-        fun open(url: String): HttpURLConnection =
-            (URL(url).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 5000
-                readTimeout = 5000
-                setRequestProperty("User-Agent", URL_USER_AGENT)
-            }
-
-        var conn: HttpURLConnection? = null
-        try {
-            conn = open(finalUrl)
-            conn.getHeaderField("x-authlib-injector-api-location")?.let { ali ->
-                val absoluteAli = URL(conn.url, ali).toString().addSlashIfMissing()
-                if (absoluteAli != finalUrl.addSlashIfMissing()) {
-                    conn.disconnect()
-                    conn = open(absoluteAli)
-                    finalUrl = absoluteAli
+        probe(finalUrl).use { response ->
+            response.header("x-authlib-injector-api-location")?.let { ali ->
+                val resolved = response.request.url.resolve(ali)?.toString()?.addSlashIfMissing()
+                if (resolved != null && resolved != finalUrl.addSlashIfMissing()) {
+                    finalUrl = resolved
                 }
             }
-            finalUrl.addSlashIfMissing()
-        } finally {
-            conn?.disconnect()
         }
+
+        finalUrl.addSlashIfMissing()
     }.getOrElse { e ->
         Logger.error(TAG, "Failed to get full server url", e)
         initialUrl

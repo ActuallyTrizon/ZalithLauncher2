@@ -61,7 +61,7 @@ import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.file.copyDirectoryContents
 import com.movtery.zalithlauncher.utils.logging.Logger
-import com.movtery.zalithlauncher.utils.network.downloadFromMirrorListSuspend
+import com.movtery.zalithlauncher.utils.network.downloadFileFromSources
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -440,7 +440,7 @@ class GameInstaller(
                                 task.clearSpeed()
                             }
                         ) { report ->
-                            downloadFromMirrorListSuspend(
+                            downloadFileFromSources(
                                 urls = urls,
                                 outputFile = tempJarFile,
                                 sizeCallback = { downloaded ->
@@ -949,7 +949,7 @@ class GameInstaller(
                     task.clearSpeed()
                 }
             ) { report ->
-                downloadFromMirrorListSuspend(
+                downloadFileFromSources(
                     urls = modVersion.file.url.mapMCIMMirrorUrls(),
                     sha1 = modVersion.file.hashes.sha1,
                     outputFile = File(tempModsDir, modVersion.file.fileName),

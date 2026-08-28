@@ -88,10 +88,9 @@ class JvmService : Service() {
                     Logger.info(TAG, "Process exit with code $code")
                     //移除前台通知再停止服务，让系统知道这是正常关闭
                     stopForeground(STOP_FOREGROUND_REMOVE)
-                    scope.launch(Dispatchers.IO) {
-                        sendCode(code)
-                        stopSelf()
-                    }
+                    //必须同步发送退出码
+                    sendCode(code)
+                    stopSelf()
                 }
             )
         }

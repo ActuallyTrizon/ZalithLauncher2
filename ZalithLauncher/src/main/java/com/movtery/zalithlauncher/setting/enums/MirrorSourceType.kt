@@ -22,6 +22,12 @@ import com.movtery.zalithlauncher.R
 
 enum class MirrorSourceType(val textRes: Int) {
     /**
+     * 自动
+     * 依据当前网络环境判定初始偏好，后续由下载引擎按失败情况自适应换源
+     */
+    AUTO(R.string.settings_launcher_mirror_auto),
+
+    /**
      * 官方源优先
      */
     OFFICIAL_FIRST(R.string.settings_launcher_mirror_official_first),

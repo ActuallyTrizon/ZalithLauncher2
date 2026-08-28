@@ -235,7 +235,6 @@
     <string name="download_modpack_install_overrides">解壓模組包檔案</string>
     <string name="download_modpack_download">下載模組包所需內容</string>
     <string name="download_modpack_download_mods">下載所有模組 (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">重試下載所有模組 (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">取得載入器資訊</string>
     <string name="download_modpack_final_move">正在移動模組包檔案</string>
     <!--  資源類別  -->
@@ -368,6 +367,7 @@
     <string name="game_menu_option_force_close_text">強制關閉正在執行的遊戲可能會導致存檔損壞或設定無法儲存，除非特殊情況請避免此操作。</string>
     <string name="game_menu_option_switch_log">日誌輸出</string>
     <string name="game_menu_option_input_method">切換輸入法</string>
+    <string name="game_menu_option_auto_show_ime">自動喚起輸入法（SDL）</string>
     <string name="game_menu_option_switch_fps">幀率顯示</string>
     <string name="game_menu_option_switch_memory">記憶體顯示</string>
     <string name="game_menu_option_menu_ball_opacity">選單懸浮窗不透明度</string>
@@ -613,7 +613,6 @@
     <string name="versions_overview_screenshot_folder">螢幕擷圖資料夾</string>
     <string name="versions_overview_logs_folder">日誌資料夾</string>
     <string name="versions_overview_crash_report_folder">崩潰報告資料夾</string>
-    <string name="versions_overview_cant_share_folder_message">目前裝置上沒有可開啟此資料夾的第三方應用程式！</string>
     <string name="versions_overview_log">執行日誌</string>
     <string name="versions_config_version_settings">版本獨立設定</string>
     <string name="versions_config_game_settings">遊戲獨立設定</string>
@@ -716,7 +715,6 @@
     <string name="mods_update_task_loading">同步模組資料：%s</string>
     <string name="mods_update_no_mods_update">所有模組都是最新版本，無需更新</string>
     <string name="mods_update_updating">正在更新所有模組 (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">重試更新所有模組 (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">更新成功</string>
     <string name="mods_update_success_text">您選擇的模組都已更新到最新版本！</string>
     <string name="mods_update_failed">更新模組失敗</string>
@@ -754,10 +752,7 @@
     <string name="minecraft_download_stat_verify_task">統計驗證任務</string>
     <string name="minecraft_download_downloading_game_files">下載遊戲檔案中 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">驗證並補齊遊戲檔案中 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">重試下載遊戲檔案中 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">重試驗證並補齊遊戲檔案中 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">下載 Minecraft 過程中發生異常</string>
-    <string name="minecraft_download_failed_retried">在此之前，啟動器已嘗試重試一次，但仍有任務下載失敗</string>
     <string name="minecraft_download_failed_notfound">部分依賴檔案無法下載，如果多次嘗試仍失敗，可能是遊戲缺少必要的函式庫檔案，建議重新安裝遊戲。</string>
     <!--  設定  -->
     <string name="settings_title_blur">模糊效果</string>
@@ -888,6 +883,13 @@
     <string name="settings_control_gyroscope_invert_y_summary">啟用後，上下轉動裝置會反向控制視角</string>
     <string name="settings_gamepad_title">手把控制</string>
     <string name="settings_gamepad_summary">啟用或關閉手把控制功能。若您的其他外設被誤識別為手把，請關閉此選項。</string>
+    <string name="settings_gamepad_input_mode_title">手把輸入模式</string>
+    <string name="settings_gamepad_input_mode_mapped">映射（虛擬按鍵）</string>
+    <string name="settings_gamepad_input_mode_mapped_summary">手把按鍵與搖桿作為虛擬鍵盤和滑鼠使用</string>
+    <string name="settings_gamepad_input_mode_sdl">SDL 直通</string>
+    <string name="settings_gamepad_input_mode_sdl_summary">手把輸入經 SDL/GLFW gamepad API 原樣交給遊戲，不經過按鍵映射</string>
+    <string name="gamepad_mode_prompt_description">偵測到手把輸入。啟動器支援兩種手把輸入模式，請選擇您希望使用的模式。</string>
+    <string name="gamepad_mode_prompt_hint">稍後可以在遊戲選單的「手把」分頁或啟動器設定中更改。</string>
     <string name="settings_gamepad_deadzone_title">手把死區縮放</string>
     <string name="settings_gamepad_deadzone_summary">設定搖桿中心無反應區域的比例</string>
     <string name="settings_gamepad_joystick_mode_title">搖桿操作模式</string>
@@ -1035,10 +1037,9 @@
     <string name="settings_launcher_log_share_title">分享啟動器日誌</string>
     <string name="settings_launcher_log_share_summary">點擊以分享啟動器的日誌文件，以供開發者定位並修復啟動器的問題</string>
     <string name="settings_launcher_log_share_packing">打包啟動器日誌文件</string>
-    <string name="settings_launcher_mirror_modloader_title">模組載入器版本來源</string>
-    <string name="settings_launcher_mirror_file_download_title">檔案下載來源</string>
-    <string name="settings_launcher_mirror_assets_search_title">資源平台搜尋來源</string>
-    <string name="settings_launcher_mirror_assets_download_title">資源平台檔案下載來源</string>
+    <string name="settings_launcher_mirror_game_source_title">遊戲內容下載源</string>
+    <string name="settings_launcher_mirror_asset_platform_source_title">資源平台下載源</string>
+    <string name="settings_launcher_mirror_auto">自動</string>
     <string name="settings_launcher_mirror_official_first">優先使用官方來源</string>
     <string name="settings_launcher_mirror_mirror_first">優先使用鏡像來源</string>
     <string name="settings_launcher_background_title">啟動器背景</string>
@@ -1342,7 +1343,6 @@
     <string name="fm_editor_goto_invalid">行號超出範圍</string>
     <string name="fm_editor_replace">取代</string>
     <string name="fm_editor_replace_all">全部取代</string>
-    <string name="fm_editor_replace_hint">取代為</string>
     <string name="fm_editor_undo">復原</string>
     <string name="fm_editor_redo">重做</string>
     <string name="fm_editor_wordwrap">自動換行</string>

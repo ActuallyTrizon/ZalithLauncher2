@@ -276,7 +276,6 @@
     <string name="download_modpack_install_overrides">提取整合包文件</string>
     <string name="download_modpack_download">下载整合包所需内容</string>
     <string name="download_modpack_download_mods">下载所有模组 (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">重试下载所有模组 (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">获取加载器信息</string>
     <string name="download_modpack_final_move">迁移整合包文件中</string>
     <!-- 资源类别 -->
@@ -409,6 +408,7 @@
     <string name="game_menu_option_force_close_text">强制关闭正在运行的游戏可能导致存档损坏或设置无法保存，除特殊情况外请避免此操作。</string>
     <string name="game_menu_option_switch_log">日志输出</string>
     <string name="game_menu_option_input_method">切换输入法</string>
+    <string name="game_menu_option_auto_show_ime">自动唤起输入法（SDL）</string>
     <string name="game_menu_option_switch_fps">帧率显示</string>
     <string name="game_menu_option_switch_memory">内存显示</string>
     <string name="game_menu_option_menu_ball_opacity">菜单悬浮窗不透明度</string>
@@ -665,7 +665,6 @@
     <string name="versions_overview_screenshot_folder">屏幕截图文件夹</string>
     <string name="versions_overview_logs_folder">日志文件夹</string>
     <string name="versions_overview_crash_report_folder">崩溃报告文件夹</string>
-    <string name="versions_overview_cant_share_folder_message">当前设备没有第三方应用可以打开该目录！</string>
     <string name="versions_overview_log">运行日志</string>
     <string name="versions_config_version_settings">版本独立设置</string>
     <string name="versions_config_game_settings">游戏独立设置</string>
@@ -768,7 +767,6 @@
     <string name="mods_update_task_loading">同步模组数据：%s</string>
     <string name="mods_update_no_mods_update">所有模组都是最新版本，无需更新</string>
     <string name="mods_update_updating">更新所有模组 (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">重试更新所有模组 (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">更新成功</string>
     <string name="mods_update_success_text">您选择的模组都更新到了最新版本！</string>
     <string name="mods_update_failed">更新模组失败</string>
@@ -843,10 +841,7 @@
     <string name="minecraft_download_stat_verify_task">统计验证任务</string>
     <string name="minecraft_download_downloading_game_files">下载游戏文件中 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">验证并补全游戏文件中 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">重试下载游戏文件中 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">重试验证并补全游戏文件中 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">下载 Minecraft 过程中出现异常</string>
-    <string name="minecraft_download_failed_retried">在此之前，启动器已经尝试过重试一次，但仍有任务下载失败</string>
     <string name="minecraft_download_failed_notfound">某些依赖文件无法下载，如果多次尝试仍失败，可能是游戏缺少必要的库文件，建议重新安装游戏。</string>
     <!--  设置  -->
     <string name="settings_title_blur">模糊效果</string>
@@ -977,6 +972,13 @@
     <string name="settings_control_gyroscope_invert_y_summary">启用后，上下转动设备会反向控制视角</string>
     <string name="settings_gamepad_title">手柄控制</string>
     <string name="settings_gamepad_summary">启用或关闭手柄控制功能。若您的其他外设被误识别为手柄，请关闭此选项</string>
+    <string name="settings_gamepad_input_mode_title">手柄输入模式</string>
+    <string name="settings_gamepad_input_mode_mapped">映射（虚拟按键）</string>
+    <string name="settings_gamepad_input_mode_mapped_summary">手柄按键与摇杆作为虚拟键盘和鼠标使用</string>
+    <string name="settings_gamepad_input_mode_sdl">SDL 直通</string>
+    <string name="settings_gamepad_input_mode_sdl_summary">手柄输入经 SDL/GLFW gamepad API 原样交给游戏，不经过按键映射</string>
+    <string name="gamepad_mode_prompt_description">检测到手柄输入。启动器支持两种手柄输入模式，请选择您希望使用的模式。</string>
+    <string name="gamepad_mode_prompt_hint">稍后可以在游戏菜单的“手柄”分页或启动器设置中更改。</string>
     <string name="settings_gamepad_deadzone_title">手柄死区缩放</string>
     <string name="settings_gamepad_deadzone_summary">设置摇杆中心无响应区域的比例</string>
     <string name="settings_gamepad_joystick_mode_title">摇杆操作模式</string>
@@ -1037,10 +1039,9 @@
     <string name="settings_launcher_log_share_title">分享启动器日志</string>
     <string name="settings_launcher_log_share_summary">点击以分享启动器的日志文件，以供开发者定位并修复启动器的问题</string>
     <string name="settings_launcher_log_share_packing">打包启动器日志文件</string>
-    <string name="settings_launcher_mirror_modloader_title">模组加载器版本获取源</string>
-    <string name="settings_launcher_mirror_file_download_title">文件下载源</string>
-    <string name="settings_launcher_mirror_assets_search_title">资源平台搜索源</string>
-    <string name="settings_launcher_mirror_assets_download_title">资源平台文件下载源</string>
+    <string name="settings_launcher_mirror_game_source_title">游戏内容下载源</string>
+    <string name="settings_launcher_mirror_asset_platform_source_title">资源平台下载源</string>
+    <string name="settings_launcher_mirror_auto">自动</string>
     <string name="settings_launcher_mirror_official_first">优先使用官方源</string>
     <string name="settings_launcher_mirror_mirror_first">优先使用镜像源</string>
     <string name="settings_launcher_background_title">启动器背景</string>
@@ -1128,7 +1129,6 @@
     <string name="control_editor_edit_category_joystick_events">方向事件</string>
     <string name="control_editor_edit_category_joystick_style">摇杆样式</string>
     <string name="control_editor_edit_size_joystick">摇杆大小</string>
-    <string name="control_editor_edit_size_reference">大小参考</string>
     <string name="control_editor_edit_joystick_dead_zone">死区范围</string>
     <string name="control_editor_edit_joystick_lock_threshold">锁定阈值</string>
     <string name="control_editor_edit_joystick_can_lock">前进锁定</string>
@@ -1323,7 +1323,6 @@
     <string name="fm_editor_goto_invalid">行号超出范围</string>
     <string name="fm_editor_replace">替换</string>
     <string name="fm_editor_replace_all">全部替换</string>
-    <string name="fm_editor_replace_hint">替换为</string>
     <string name="fm_editor_undo">撤销</string>
     <string name="fm_editor_redo">重做</string>
     <string name="fm_editor_wordwrap">自动换行</string>

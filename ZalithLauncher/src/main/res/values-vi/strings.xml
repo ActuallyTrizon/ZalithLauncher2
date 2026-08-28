@@ -261,7 +261,6 @@
     <string name="download_modpack_install_overrides">Giải nén modpack</string>
     <string name="download_modpack_download">Tải những thứ modpack cần</string>
     <string name="download_modpack_download_mods">Tải toàn bộ mod (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Thử lại tải mod (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Lấy thông tin loader</string>
     <string name="download_modpack_final_move">Di chuyển file modpack</string>
     <string name="download_assets_category_biomes">Quần xã</string>
@@ -496,10 +495,7 @@
     <string name="minecraft_download_stat_verify_task">Thống kê kiểm tra</string>
     <string name="minecraft_download_downloading_game_files">Đang tải file game\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Đang kiểm tra\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Thử tải lại\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Thử kiểm tra lại\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Lỗi khi tải Minecraft</string>
-    <string name="minecraft_download_failed_retried">Launcher đã thử lại một lần, vẫn có tác vụ thất bại</string>
     <string name="minecraft_download_failed_notfound">Vài file phụ thuộc tải không được, thử lại mãi vẫn lỗi, nên cài lại game.</string>
     <string name="settings_element_selected">Đã chọn: %s</string>
     <string name="settings_label_ignore_if_blank">Để trống thì bỏ qua</string>
@@ -587,8 +583,6 @@
     <string name="generic_all">Tất cả</string>
     <string name="versions_manage_category_vanilla">Bản gốc</string>
     <string name="versions_manage_category_modloader">Có thể cài mod</string>
-    <string name="settings_launcher_mirror_modloader_title">Nguồn lấy mod loader</string>
-    <string name="settings_launcher_mirror_file_download_title">Nguồn tải file</string>
     <string name="settings_launcher_mirror_official_first">Ưu tiên nguồn chính</string>
     <string name="settings_launcher_mirror_mirror_first">Ưu tiên gương</string>
     <string name="about_acknowledgements_bangbang93_text">%s dùng gương BMCL API</string>
@@ -867,7 +861,6 @@
     <string name="mods_update_task_replace">Thay file</string>
     <string name="mods_update_no_mods_update">Đã mới nhất</string>
     <string name="mods_update_updating">Đang cập nhật (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Thử lại (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Thành công</string>
     <string name="mods_update_success_text">Đã cập nhật lên bản mới nhất!</string>
     <string name="mods_update_failed">Thất bại</string>
@@ -1101,7 +1094,6 @@
     <string name="plugin_download_summary">Tải xuống tiện ích mở rộng và cài đặt dưới dạng một ứng dụng, sau đó mở lại trình khởi chạy (launcher) để nó tự động tải!</string>
     <string name="cape_name_builder">Áo choàng Builder</string>
     <string name="cape_name_crafter">Áo choàng Crafter</string>
-    <string name="versions_overview_cant_share_folder_message">Thiết bị của bạn không có ứng dụng bên thứ ba nào có thể mở thư mục này!</string>
     <string name="versions_overview_log">Nhật ký chạy trò chơi</string>
     <string name="versions_export_alias_shaderpacks">Thư mục Shaderpacks</string>
     <string name="versions_export_alias_config">Thư mục cấu hình mod</string>
@@ -1182,8 +1174,6 @@
     <string name="settings_gamepad_config_no_items">Không cấu hình nào được tạo, không thể chuyển đổi</string>
     <string name="settings_launcher_color_theme_style">Phong cách bảng màu</string>
     <string name="settings_launcher_language">Ngôn ngữ</string>
-    <string name="settings_launcher_mirror_assets_search_title">Nguồn tìm kiếm tài nguyên nền tảng</string>
-    <string name="settings_launcher_mirror_assets_download_title">Nguồn tải tài nguyên nền tảng</string>
     <string name="settings_launcher_background_blur_summary">Điều chỉnh hiệu ứng làm mờ nền. Tùy chọn này tốn nhiều hiệu năng.</string>
     <string name="settings_launcher_festivals_effects_title">Tính năng ẩn lễ hội</string>
     <string name="settings_launcher_festivals_effects_summary">Hiển thị hiệu ứng Easter Egg liên tục trong các khoảng thời gian cụ thể</string>
@@ -1220,7 +1210,6 @@
     <string name="control_editor_edit_category_joystick_style">Kiểu giao diện cần</string>
     <string name="control_editor_edit_size_joystick">Kích cỡ cần điều khiển</string>
     <string name="control_editor_edit_category_joystick_events">Sửa nhóm sự kiện joystick</string>
-    <string name="control_editor_edit_size_reference">Kích thước chuẩn</string>
     <string name="control_editor_edit_joystick_dead_zone">Vùng chết</string>
     <string name="control_editor_edit_joystick_lock_threshold">Mốc khoá hướng</string>
     <string name="control_editor_edit_joystick_can_lock">Cho phép khóa joystick</string>

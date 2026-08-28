@@ -13,6 +13,9 @@
     @androidx.room.* <methods>;
 }
 
+# SDL
+-keep class org.libsdl.app.** { *; }
+
 # Launcher
 -keep class org.lwjgl.glfw.CallbackBridge {
     *;

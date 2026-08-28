@@ -369,8 +369,6 @@
     <string name="settings_element_selected">現在の選択: %s</string>
     <string name="minecraft_download_downloading_game_files">ファイルをダウンロード \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">ファイルを検証 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">ダウンロードを再実行 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">検証を再実行 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="resource_pack_manage_formats">フォーマットのバージョン: %s</string>
     <string name="saves_manage_quick_play">クイックプレイ</string>
     <string name="saves_manage_quick_play_disabled">クイックプレイ (1.20+ のみ)</string>
@@ -394,7 +392,6 @@
     <string name="account_logging_xbox_not_accepted_service">あなたのアカウントはXboxの利用規約に同意していません。</string>
     <string name="game_menu_option_input_method">入力方法の切り替え</string>
     <string name="download_assets_features_environment">環境</string>
-    <string name="download_modpack_download_mods_retry">全てのモッドのダウンロードを再実行 (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">ローダー情報を取得</string>
     <string name="download_modpack_warning2">問題を自分で解決するには関連する知識を学ぶか、他の人に助けてもらう必要があります。</string>
     <string name="download_modpack_warning3">注意: ランチャー開発者は通常モッドパックによって引き起こされる問題を処理しません。</string>
@@ -413,7 +410,6 @@
     <string name="resource_pack_manage_delete_warning">リソースパック %s を削除しますか？この操作はもとに戻せません！</string>
     <string name="resource_pack_manage_no_packs">現在のバージョンで利用可能なリソースパックはありません</string>
     <string name="resource_pack_manage_type">リソースパックの種類: %s</string>
-    <string name="minecraft_download_failed_retried">これ以前にランチャーは一度再試行を行いましたが、いくつかのタスクのダウンロードは依然として失敗しました</string>
     <string name="error_unauthorized">(%s) 権限がありません</string>
     <string name="error_notfound">(%s) リソースが見つかりません</string>
     <string name="splash_screen_installing">ランチャーがこれらのファイルを解凍しています、解凍が完了すると自動的にメイン画面になります。しばらくお待ち下さい。</string>
@@ -438,10 +434,8 @@
     <string name="account_supporting_username_invalid_local_message_hint4">無効なユーザー名: Name@、N ame、name_name_name_name</string>
     <string name="account_change_skin">スキンを変更</string>
     <string name="account_label_password">パスワード</string>
-    <string name="settings_launcher_mirror_file_download_title">ファイルのダウンロードソース</string>
     <string name="settings_launcher_mirror_official_first">公式のソースを優先</string>
     <string name="settings_launcher_mirror_mirror_first">ミラーソースを優先</string>
-    <string name="settings_launcher_mirror_modloader_title">モッドローダーのバージョンソース</string>
     <string name="settings_game_java_runtime_title">Javaランタイム</string>
     <string name="settings_game_java_runtime_summary">使用するデフォルトのJava環境を指定してください</string>
     <string name="versions_overview_version_folder">バージョンフォルダ</string>
@@ -849,7 +843,6 @@
     <string name="mods_update_task_replace">モッドファイルを置き換え</string>
     <string name="mods_update_no_mods_update">すべてのモッドは既に更新済みなので、更新は不要です</string>
     <string name="mods_update_updating">全てのモッドを更新 (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">全てのモッドの更新を再試行しています (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">更新に成功</string>
     <string name="mods_update_success_text">選択したモッドが全て最新バージョンに更新されました！</string>
     <string name="mods_update_failed">モッドの更新に失敗</string>
@@ -1016,8 +1009,6 @@
     <string name="upgrade_get_remote_failed">アップデートの確認に失敗しました。後ほどもう一度お試しください。</string>
     <string name="upgrade_is_latest">すでに最新バージョンです</string>
     <string name="upgrade_cloud_drive">クラウドドライブ</string>
-    <string name="settings_launcher_mirror_assets_search_title">アセットプラットフォームの検索ソース</string>
-    <string name="settings_launcher_mirror_assets_download_title">アセットプラットフォームのダウンロードソース</string>
     <string name="about_acknowledgements_mcim_text">%s はMCIMミラーソースを使っています</string>
     <string name="settings_launcher_language">言語</string>
     <string name="generic_copied">コピー済み</string>
@@ -1090,7 +1081,6 @@
     <string name="versions_export_task_error_message">モッドパックのエクスポート中にエラーが発生しました:</string>
     <string name="versions_export_task_finished">モッドパックが正常にエクスポートされました！</string>
     <string name="version_summary_fools_2_0">アップデートはしません！バグを見つけたら、運が悪いだけです！XD</string>
-    <string name="versions_overview_cant_share_folder_message">このデバイスではこのフォルダを開くためのサードパーティ製アプリは利用できません！</string>
     <string name="settings_gamepad_config_title">コントローラーのマッピング設定</string>
     <string name="settings_gamepad_config_summary">使用するコントローラーのマッピング設定を選択してください</string>
     <string name="settings_gamepad_config_delete">現在の設定を削除</string>

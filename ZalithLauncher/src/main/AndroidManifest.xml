@@ -46,7 +46,7 @@
         tools:ignore="DiscouragedApi">
         <activity
             android:name=".ui.activities.SplashActivity"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.SplashScreen"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"

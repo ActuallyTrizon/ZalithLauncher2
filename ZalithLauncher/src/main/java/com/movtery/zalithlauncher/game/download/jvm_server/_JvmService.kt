@@ -55,22 +55,30 @@ fun startJvmService(
 }
 
 /**
- * 当前是否只有主进程正在运行
+ * 与 JVM 安装运行互斥、开跑前必须清场的子进程名后缀
  */
-fun isOnlyMainProcessesRunning(context: Context): Boolean {
+private val JVM_EXCLUSIVE_SUFFIXES = listOf(":jvm", ":game")
+
+/** 判定进程名是否属于运行安装 JVM 前必须消失的互斥进程 */
+internal fun isJvmExclusiveProcess(processName: String, mainProcessName: String): Boolean =
+    JVM_EXCLUSIVE_SUFFIXES.any { processName == mainProcessName + it }
+
+/**
+ * 列出仍在运行的互斥子进程
+ * @return 空列表代表可以开跑
+ */
+fun listBlockingProcesses(context: Context): List<String> {
     val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val mainProcessName = context.packageName
     val myPid = android.os.Process.myPid()
 
-    val appProcesses = am.runningAppProcesses.filter {
-        it.processName.startsWith(mainProcessName)
-    }
-
-    return appProcesses.all { it.pid == myPid }
+    return am.runningAppProcesses
+        .filter { it.pid != myPid && isJvmExclusiveProcess(it.processName, mainProcessName) }
+        .map { "${it.processName}(${it.pid})" }
 }
 
 /**
- * 停止所有非主进程服务
+ * 停止所有与 JVM 安装互斥的子进程（:jvm、:game）
  */
 fun stopAllNonMainProcesses(context: Context) {
     val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -78,7 +86,7 @@ fun stopAllNonMainProcesses(context: Context) {
     val mainProcessName = context.packageName
 
     am.runningAppProcesses
-        .filter { it.processName.startsWith(mainProcessName) && it.pid != mainPid }
+        .filter { it.pid != mainPid && isJvmExclusiveProcess(it.processName, mainProcessName) }
         .forEach {
             try {
                 android.os.Process.killProcess(it.pid)

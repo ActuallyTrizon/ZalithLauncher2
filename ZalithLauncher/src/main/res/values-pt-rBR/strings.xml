@@ -227,7 +227,6 @@
     <string name="download_modpack_install_overrides">Extrair arquivos do Modpack</string>
     <string name="download_modpack_download">Baixar conteúdo do modpack</string>
     <string name="download_modpack_download_mods">Baixando todos os mods (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Tentar baixar todos os mods novamente (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Recuperar informações do carregador</string>
     <string name="download_modpack_final_move">Movendo arquivos do Modpack</string>
     <string name="download_assets_category_worldgen">Geração do mundo</string>
@@ -645,7 +644,6 @@
     <string name="mods_update_task_replace">Substituir arquivos de mod</string>
     <string name="mods_update_no_mods_update">Todos os mods já estão atualizados, nenhuma atualização necessária</string>
     <string name="mods_update_updating">Atualizando todos os mods (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">Tentando atualizar todos os mods novamente (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">Atualização bem-sucedida</string>
     <string name="mods_update_success_text">Todos os mods selecionados foram atualizados para a versão mais recente!</string>
     <string name="mods_update_failed">Falha na atualização do mod</string>
@@ -710,10 +708,7 @@
     <string name="minecraft_download_stat_verify_task">Preparando verificações</string>
     <string name="minecraft_download_downloading_game_files">Baixando arquivos\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">Verificando arquivos.\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">Tentando novamente os downloads.\n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">Tentando novamente as verificações.\n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Ocorreu um erro ao baixar o Minecraft</string>
-    <string name="minecraft_download_failed_retried">O launcher já tentou uma nova tentativa, mas algumas tarefas ainda não foram baixadas</string>
     <string name="minecraft_download_failed_notfound">Alguns arquivos de dependência não puderam ser baixados. Se o problema persistir após várias tentativas, o jogo pode estar sem as bibliotecas necessárias. Recomendamos reinstalar o jogo.</string>
     <string name="settings_element_selected">Selecionado: %s</string>
     <string name="settings_label_ignore_if_blank">Deixe em branco para ignorar</string>
@@ -883,10 +878,6 @@
     <string name="settings_launcher_log_share_title">Compartilhar Logs do Launcher</string>
     <string name="settings_launcher_log_share_summary">Toque para compartilhar os arquivos de log do launcher para que os desenvolvedores possam identificar e corrigir problemas com o launcher</string>
     <string name="settings_launcher_log_share_packing">Arquivos de log do launcher de pacotes</string>
-    <string name="settings_launcher_mirror_modloader_title">Fonte da versão do ModLoader</string>
-    <string name="settings_launcher_mirror_file_download_title">Fonte de download do arquivo</string>
-    <string name="settings_launcher_mirror_assets_search_title">Fonte de pesquisa da plataforma de ativos</string>
-    <string name="settings_launcher_mirror_assets_download_title">Fonte de download da plataforma de ativos</string>
     <string name="settings_launcher_mirror_official_first">Preferir fonte oficial</string>
     <string name="settings_launcher_mirror_mirror_first">Preferir fonte espelhada</string>
     <string name="settings_launcher_background_title">Plano de fundo do Launcher</string>
@@ -1052,7 +1043,6 @@
     <string name="game_saponsorship_finished_game">O launcher iniciou o jogo com sucesso %s vezes! Se você o achar útil, considere apoiar o desenvolvedor! :)</string>
     <string name="mods_update_task_loading">Sincronizando dados do mod: %s</string>
     <string name="version_summary_fools_2_0">Não vamos atualizá-los! Se você encontrar um bug, azar o seu! XD</string>
-    <string name="versions_overview_cant_share_folder_message">Nenhum aplicativo de terceiros está disponível neste dispositivo para abrir esta pasta!</string>
     <string name="versions_export">Exportar Modpack</string>
     <string name="versions_export_type_mcbbs">MCBBS Modpack.</string>
     <string name="versions_export_type_mcbbs_summary">Pode ser importado por %s, HMCL e outros launchers</string>
@@ -1220,7 +1210,6 @@
     <string name="control_editor_edit_category_joystick_events">Direção de Eventos</string>
     <string name="control_editor_edit_category_joystick_style">Estilo do Joystick</string>
     <string name="control_editor_edit_size_joystick">Tamanho do Joystick</string>
-    <string name="control_editor_edit_size_reference">Referência de tamanho</string>
     <string name="control_editor_edit_joystick_dead_zone">Zona Morta</string>
     <string name="control_editor_edit_joystick_lock_threshold">Limite de bloqueio</string>
     <string name="control_editor_edit_joystick_can_lock">Trava frontal</string>
@@ -1285,7 +1274,6 @@
     <string name="fm_editor_goto_invalid">Número da linha fora do intervalo</string>
     <string name="fm_editor_replace">Substituir</string>
     <string name="fm_editor_replace_all">Substituir tudo</string>
-    <string name="fm_editor_replace_hint">Substituir por</string>
     <string name="fm_editor_undo">­Desfazer</string>
     <string name="fm_editor_redo">Refazer</string>
     <string name="fm_editor_wordwrap">Quebra automática de linha</string>

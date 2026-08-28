@@ -32,6 +32,7 @@ import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
+import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
@@ -248,6 +249,21 @@ object AllSettings : SettingsRegistry() {
     val gamepadControl = boolSetting("gamepadControl", true)
 
     /**
+     * SDL 下是否允许自动唤起输入法
+     */
+    val sdlAutoShowIme = boolSetting("sdlAutoShowIme", true)
+
+    /**
+     * 手柄输入模式（映射虚拟按键 / SDL 直通）
+     */
+    val gamepadInputMode = enumSetting("gamepadInputMode", GamepadInputMode.Mapped)
+
+    /**
+     * 是否已完成手柄输入模式的选择询问
+     */
+    val gamepadInputModePrompted = boolSetting("gamepadInputModePrompted", false)
+
+    /**
      * 摇杆死区缩放
      */
     val gamepadDeadZoneScale = intSetting("gamepadDeadZoneScale", 100, 50..200)
@@ -424,24 +440,14 @@ object AllSettings : SettingsRegistry() {
     val launcherLogRetentionDays = intSetting("launcherLogRetentionDays", 7, 1..14)
 
     /**
-     * 下载版本附加内容镜像源类型
+     * 游戏内容镜像源
      */
-    val fetchModLoaderSource = enumSetting("fetchModLoaderSource", MirrorSourceType.OFFICIAL_FIRST)
+    val gameDownloadSource = enumSetting("gameDownloadSource", MirrorSourceType.AUTO)
 
     /**
-     * 文件下载镜像源类型
+     * 资源平台镜像源
      */
-    val fileDownloadSource = enumSetting("fileDownloadSource", MirrorSourceType.OFFICIAL_FIRST)
-
-    /**
-     * 资源搜索镜像源类型
-     */
-    val assetSearchSource = enumSetting("assetSearchSource", MirrorSourceType.OFFICIAL_FIRST)
-
-    /**
-     * 资源下载镜像源类型
-     */
-    val assetDownloadSource = enumSetting("assetDownloadSource", MirrorSourceType.OFFICIAL_FIRST)
+    val assetPlatformSource = enumSetting("assetPlatformSource", MirrorSourceType.AUTO)
 
     //Control
     /**
@@ -578,22 +584,22 @@ object AllSettings : SettingsRegistry() {
     /**
      * 搜索模组的初始搜索平台
      */
-    val searchModPlatform = enumSetting("searchModPlatform", Platform.MODRINTH)
+    val searchModPlatform = enumSetting("searchModPlatform", Platform.CURSEFORGE)
 
     /**
      * 搜索整合包的初始搜索平台
      */
-    val searchModpackPlatform = enumSetting("searchModpackPlatform", Platform.MODRINTH)
+    val searchModpackPlatform = enumSetting("searchModpackPlatform", Platform.CURSEFORGE)
 
     /**
      * 搜索资源包的初始搜索平台
      */
-    val searchResourcePackPlatform = enumSetting("searchResourcePackPlatform", Platform.MODRINTH)
+    val searchResourcePackPlatform = enumSetting("searchResourcePackPlatform", Platform.CURSEFORGE)
 
     /**
      * 搜索光影的初始搜索平台
      */
-    val searchShadersPlatform = enumSetting("searchShadersPlatform", Platform.MODRINTH)
+    val searchShadersPlatform = enumSetting("searchShadersPlatform", Platform.CURSEFORGE)
 
     /**
      * 启动 MC26.2+ 时，自动检查 Vulkan

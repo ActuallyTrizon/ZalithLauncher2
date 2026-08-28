@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.game.download.jvm_server
 
+import android.content.Intent
 import com.movtery.zalithlauncher.components.jre.Jre
 import com.movtery.zalithlauncher.context.GlobalContext
 import com.movtery.zalithlauncher.notification.NoticeProgress
@@ -26,9 +27,24 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import java.io.IOException
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "GameJVMRunner"
+
+/** 等待互斥进程自行退出的时长，超过后按 pid 强杀 */
+private val WAIT_BEFORE_FORCE_KILL: Duration = 15.seconds
+/** 强杀后再宽限一轮的时长，仍无法清场则以可见错误结束 */
+private val KILL_GRACE: Duration = 5.seconds
+/** 等待日志的打印间隔 */
+private val WAIT_LOG_INTERVAL: Duration = 2.seconds
+/** 单次 JVM 运行等待退出码的总时限 */
+private val JVM_EXIT_TIMEOUT: Duration = 15.minutes
 
 /**
  * 运行一个简易的JVM环境，安装ModLoader，同时在jvm退出时，尝试使用其他的Java环境重试
@@ -45,10 +61,7 @@ suspend fun runJvmRetryRuntimes(
     postProgress: NoticeProgress? = null,
     start: () -> Unit = {}
 ): Unit = withContext(Dispatchers.Default) {
-    while (!isOnlyMainProcessesRunning(context = GlobalContext)) {
-        Logger.info(TAG, "$logId Waiting for other processes stop...")
-        delay(100L.milliseconds)
-    }
+    waitForJvmExclusiveProcessesStopped(logId)
 
     start()
 
@@ -86,6 +99,42 @@ suspend fun runJvmRetryRuntimes(
     }
 }
 
+/**
+ * 等待互斥进程（:jvm、:game）退出后再开跑
+ */
+private suspend fun waitForJvmExclusiveProcessesStopped(logId: String) {
+    val startNanos = System.nanoTime()
+    var lastLog = -WAIT_LOG_INTERVAL
+    var forceKilled = false
+
+    while (true) {
+        val blocking = listBlockingProcesses(GlobalContext)
+        if (blocking.isEmpty()) return
+
+        val elapsed = (System.nanoTime() - startNanos).nanoseconds
+        when {
+            elapsed >= WAIT_BEFORE_FORCE_KILL + KILL_GRACE ->
+                throw IOException(
+                    "Timed out waiting for exclusive processes to stop: ${blocking.joinToString()}"
+                )
+
+            elapsed >= WAIT_BEFORE_FORCE_KILL -> {
+                if (!forceKilled) {
+                    forceKilled = true
+                    Logger.warning(TAG, "$logId Force stopping blocking processes: $blocking")
+                }
+                stopAllNonMainProcesses(GlobalContext)
+            }
+
+            elapsed - lastLog >= WAIT_LOG_INTERVAL -> {
+                lastLog = elapsed
+                Logger.info(TAG, "$logId Waiting for other processes stop... [$blocking]")
+            }
+        }
+        delay(100L.milliseconds)
+    }
+}
+
 suspend fun startJvmServiceAndWaitExit(
     jvmArgs: String,
     jreName: String? = null,
@@ -95,23 +144,39 @@ suspend fun startJvmServiceAndWaitExit(
 ): Int = withContext(Dispatchers.IO) {
     val doneSignal = CompletableDeferred<Unit>()
 
-    startJvmService(
-        context = GlobalContext,
-        jvmArgs = jvmArgs,
-        userHome = userHome,
-        jreName = jreName,
-        postSummary = postSummary,
-        postProgress = postProgress
-    )
-
-    JVMSocketServer.start { receiveMsg ->
-        Logger.info(TAG, "receive msg: $receiveMsg, stopping server...")
-        if (!doneSignal.isCompleted) {
-            doneSignal.complete(Unit)
+    try {
+        // 先起接收端再拉起服务
+        // JVM 秒退时退出码不会因 socket 尚未绑定而丢失
+        JVMSocketServer.start { receiveMsg ->
+            Logger.info(TAG, "receive msg: $receiveMsg, stopping server...")
+            if (!doneSignal.isCompleted) {
+                doneSignal.complete(Unit)
+            }
+            JVMSocketServer.stop()
         }
+
+        startJvmService(
+            context = GlobalContext,
+            jvmArgs = jvmArgs,
+            userHome = userHome,
+            jreName = jreName,
+            postSummary = postSummary,
+            postProgress = postProgress
+        )
+
+        if (withTimeoutOrNull(JVM_EXIT_TIMEOUT) { doneSignal.await() } == null) {
+            // 超时，停掉服务与接收端，让安装以可见错误结束而不是永久挂起
+            Logger.error(TAG, "Timed out ($JVM_EXIT_TIMEOUT) waiting for JVM exit code, stopping service...")
+            runCatching {
+                GlobalContext.stopService(Intent(GlobalContext, JvmService::class.java))
+            }
+            throw IOException("Timed out waiting for the JVM process to exit.")
+        }
+    } finally {
+        // 无论成败、取消还是超时都收掉接收端
+        // 单例状态跨轮残留会毒化下一次运行
         JVMSocketServer.stop()
     }
-    doneSignal.await()
 
     val code = JVMSocketServer.receiveMsg?.toIntOrNull()
     Logger.info(TAG, "receive exit code: ${code ?: "unknown, default 0"}")

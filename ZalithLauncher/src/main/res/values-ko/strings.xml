@@ -238,7 +238,6 @@
     <string name="download_modpack_install_overrides">모드팩 파일 압축 해제 중</string>
     <string name="download_modpack_download">모드팩 콘텐츠 다운로드</string>
     <string name="download_modpack_download_mods">모든 모드 다운로드 중 (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">모든 모드 다운로드 재시도 중 (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">로더 정보 가져오는 중</string>
     <string name="download_modpack_final_move">모드팩 파일 이동 중</string>
     <string name="download_assets_category_worldgen">월드 구성 요소</string>
@@ -595,7 +594,6 @@
     <string name="versions_overview_screenshot_folder">스크린샷 폴더</string>
     <string name="versions_overview_logs_folder">로그 폴더</string>
     <string name="versions_overview_crash_report_folder">충돌 보고서 폴더</string>
-    <string name="versions_overview_cant_share_folder_message">파일을 열 수 있는 앱이 없습니다!</string>
     <string name="versions_config_version_settings">버전별 설정</string>
     <string name="versions_config_game_settings">게임별 설정</string>
     <string name="versions_config_support_settings">추가 지원 설정</string>
@@ -695,7 +693,6 @@
     <string name="mods_update_task_loading">모드 데이터 동기화 중: %s</string>
     <string name="mods_update_no_mods_update">모든 모드가 이미 최신 버전입니다. 업데이트가 필요하지 않습니다</string>
     <string name="mods_update_updating">모든 모드 업데이트 중 (%1$d/%2$d, %3$s)</string>
-    <string name="mods_update_updating_retry">모든 모드 업데이트 재시도 중 (%1$d/%2$d, %3$s)</string>
     <string name="mods_update_success">업데이트 성공</string>
     <string name="mods_update_success_text">선택한 모든 모드가 최신 버전으로 업데이트되었습니다!</string>
     <string name="mods_update_failed">모드 업데이트 실패</string>
@@ -773,8 +770,6 @@
     <string name="servers_list_copy_server_address">서버 주소 복사</string>
     <string name="minecraft_download_downloading_game_files">게임 파일 다운로드중  \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_verifying_and_repairing_files">파일 검증중 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_downloading_files">다운로드 재시도중 \n(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_progress_retry_verifying_files">검증 재시도중 \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="generic_view">보기</string>
     <string name="error_bad_gateway">(%s) 서버가 업스트림에서 유효하지 않은 응답을 받았습니다</string>
     <string name="error_service_unavailable">(%s) 현재 서버가 일시적으로 요청을 처리할 수 없습니다</string>
@@ -802,7 +797,6 @@
     <string name="minecraft_download_stat_download_task">다운로드 준비중</string>
     <string name="minecraft_download_stat_verify_task">검증 준비중</string>
     <string name="minecraft_download_failed">Minecraft를 다운로드하는 중에 오류가 발생했습니다</string>
-    <string name="minecraft_download_failed_retried">한 번 더 시도했지만 여전히 몇몇 다운로드가 실패했습니다</string>
     <string name="minecraft_download_failed_notfound">몇몇 필수 파일을 다운로드할 수 없습니다. 문제가 계속되는 경우, 게임에 필요한 라이브러리가 누락되었을 수 있습니다. 게임을 재설치해 보세요.</string>
     <string name="settings_title_blur">블러 효과</string>
     <string name="settings_element_selected">현재 선택: %s</string>
@@ -974,8 +968,6 @@
     <string name="settings_launcher_background_title">런처 배경</string>
     <string name="settings_launcher_mirror_mirror_first">미러 소스 선호</string>
     <string name="settings_launcher_mirror_official_first">공식 소스 선호</string>
-    <string name="settings_launcher_mirror_file_download_title">파일 다운로드 소스</string>
-    <string name="settings_launcher_mirror_modloader_title">모드로더 버전 소스</string>
     <string name="settings_launcher_log_share_packing">패키지 런처 로그 파일</string>
     <string name="settings_launcher_log_share_title">런처 로그 공유</string>
     <string name="settings_launcher_log_retention_days_title">로그 보관일</string>

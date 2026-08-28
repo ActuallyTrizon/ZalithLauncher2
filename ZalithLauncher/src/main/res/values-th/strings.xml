@@ -322,7 +322,6 @@
     <string name="download_assets_install_assets_for_versions">ต้องการติดตั้งสำหรับเกมเวอร์ชันใด?</string>
     <string name="download_modpack_download">ดาวน์โหลดเนื้อหาที่จำเป็นสำหรับมอดแพ็ค</string>
     <string name="download_modpack_download_mods">ดาวน์โหลดมอดทั้งหมด (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">กำลังลองดาวน์โหลดมอดทั้งหมดอีกครั้ง (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">ดึงข้อมูลตัวรันเกม</string>
     <string name="download_modpack_final_move">กำลังย้ายไฟล์มอดแพ็ค</string>
     <string name="download_assets_category_worldgen">การสร้างโลก</string>

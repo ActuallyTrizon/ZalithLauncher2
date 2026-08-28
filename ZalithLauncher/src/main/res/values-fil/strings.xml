@@ -228,7 +228,6 @@
     <string name="download_modpack_install_overrides">Kunin ang mga file ng modpack</string>
     <string name="download_modpack_download">I-download ang kinakailangang nilalaman para sa modpack</string>
     <string name="download_modpack_download_mods">I-download ang lahat ng mod (%1$d/%2$d, %3$s)</string>
-    <string name="download_modpack_download_mods_retry">Subukang i-download muli ang lahat ng mod (%1$d/%2$d, %3$s)</string>
     <string name="download_modpack_get_loaders">Kunin ang impormasyon ng loader</string>
     <string name="download_modpack_final_move">Inililipat ang mga file ng modpack</string>
     <string name="download_assets_category_worldgen">Henerasyon ng Mundo</string>
