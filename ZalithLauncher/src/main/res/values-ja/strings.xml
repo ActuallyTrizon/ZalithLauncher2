@@ -333,8 +333,6 @@
     <string name="settings_control_mouse_hide_title">仮想マウスを非表示</string>
     <string name="settings_control_mouse_size_title">仮想マウスのサイズ</string>
     <string name="settings_control_mouse_sensitivity_title">仮想マウスの感度</string>
-    <string name="settings_renderer_force_big_core_title">高性能コアを強制</string>
-    <string name="settings_renderer_force_big_core_summary">MinecraftのレンダリングスレッドをCPUの高性能コア (ビッグコア) に割り当てます。有効にすると、消費電力や発熱が増える可能性があります</string>
     <string name="settings_renderer_resolution_scale_title">画面の解像度</string>
     <string name="about_launcher_title">ランチャーについて</string>
     <string name="about_launcher_version">ランチャーバージョン: %s</string>

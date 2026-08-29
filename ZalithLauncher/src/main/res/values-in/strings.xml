@@ -580,8 +580,6 @@
     <string name="settings_renderer_zink_driver_adreno">Launcher mendeteksi perangkatmu menggunakan GPU Adreno. Mengaktifkan opsi ini dapat menyebabkan perender Zink tidak berfungsi. Apakah Anda yakin ingin mengaktifkannya?</string>
     <string name="settings_renderer_vsync_in_zink_title">Sinkronisasi Vertikal Zink</string>
     <string name="settings_renderer_vsync_in_zink_summary">Aktifkan sinkronisasi vertikal untuk perender Zink melalui antarmuka sistem</string>
-    <string name="settings_renderer_force_big_core_title">Paksa Core performa tinggi</string>
-    <string name="settings_renderer_force_big_core_summary">Memaksa rendering Minecraft memakai core CPU performa tinggi (big core). Kalau diaktifkan bisa bikin baterai makin boros dan panas</string>
     <string name="settings_game_version_isolation_title">Isolasi Versi Secara Global</string>
     <string name="settings_game_skip_game_integrity_check_title">Lewati Pengecekan File</string>
     <string name="settings_game_skip_game_integrity_check_summary">Saat meluncurkan game, file game yang tidak sesuai tidak akan diunduh ulang</string>

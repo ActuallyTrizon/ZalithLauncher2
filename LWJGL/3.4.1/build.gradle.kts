@@ -35,6 +35,8 @@ dependencies {
         "lwjglModules",
         fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar")))
     )
+    add("lwjglModules", project(":LWJGL:patches"))
+    implementation(project(":LWJGL:patches"))
     implementation(libs.jspecify) // lwjgl3.3.3 has jsr305 included as a jar
 
 }

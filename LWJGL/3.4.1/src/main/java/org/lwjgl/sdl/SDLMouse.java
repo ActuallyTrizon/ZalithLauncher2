@@ -10,6 +10,7 @@ import org.jspecify.annotations.*;
 import java.nio.*;
 
 import org.lwjgl.glfw.CallbackBridge;
+import com.movtery.zalithlauncher.SdlCursorRegistry;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.APIUtil.*;
@@ -325,7 +326,9 @@ public class SDLMouse {
     @NativeType("SDL_Cursor *")
     public static long SDL_CreateSystemCursor(@NativeType("SDL_SystemCursor") int id) {
         long __functionAddress = Functions.CreateSystemCursor;
-        return invokeP(id, __functionAddress);
+        long __result = invokeP(id, __functionAddress);
+        SdlCursorRegistry.register(__result, id);
+        return __result;
     }
 
     // --- [ SDL_SetCursor ] ---
@@ -336,6 +339,10 @@ public class SDLMouse {
         long __functionAddress = Functions.SetCursor;
         if (CHECKS) {
             check(cursor);
+        }
+        int glfwShape = SdlCursorRegistry.toGlfwShape(cursor);
+        if (glfwShape >= 0) {
+            CallbackBridge.nativeSetCursorShape(glfwShape);
         }
         return invokePZ(cursor, __functionAddress);
     }
@@ -355,7 +362,9 @@ public class SDLMouse {
     @NativeType("SDL_Cursor *")
     public static long SDL_GetDefaultCursor() {
         long __functionAddress = Functions.GetDefaultCursor;
-        return invokeP(__functionAddress);
+        long __result = invokeP(__functionAddress);
+        SdlCursorRegistry.register(__result, 0 /* SDL_SYSTEM_CURSOR_DEFAULT */);
+        return __result;
     }
 
     // --- [ SDL_DestroyCursor ] ---
@@ -367,6 +376,7 @@ public class SDLMouse {
             check(cursor);
         }
         invokePV(cursor, __functionAddress);
+        SdlCursorRegistry.unregister(cursor);
     }
 
     // --- [ SDL_ShowCursor ] ---

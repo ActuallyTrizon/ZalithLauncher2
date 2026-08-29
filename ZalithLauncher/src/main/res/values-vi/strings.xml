@@ -523,8 +523,6 @@
     <string name="settings_renderer_zink_driver_adreno">Launcher thấy bạn dùng Adreno GPU, bật cái này có thể làm Zink chết, chắc chưa?</string>
     <string name="settings_renderer_vsync_in_zink_title">Bật V-Sync Zink</string>
     <string name="settings_renderer_vsync_in_zink_summary">Bật V-Sync cho Zink qua hệ thống</string>
-    <string name="settings_renderer_force_big_core_title">Ép chạy trên lõi to</string>
-    <string name="settings_renderer_force_big_core_summary">Gán thread render của Minecraft lên lõi mạnh nhất, tốn điện và nóng hơn</string>
     <string name="settings_game_version_isolation_title">Cách ly tất cả</string>
     <string name="settings_game_version_isolation_summary">Cách ly toàn bộ phiên bản, không chung dữ liệu</string>
     <string name="settings_game_skip_game_integrity_check_title">Bỏ qua kiểm tra game</string>

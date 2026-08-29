@@ -38,6 +38,8 @@ dependencies {
         exclude("jsr305.jar")
     }
     add("lwjglModules", lwjglModules)
+    add("lwjglModules", project(":LWJGL:patches"))
+    implementation(project(":LWJGL:patches"))
 }
 
 tasks.jar {

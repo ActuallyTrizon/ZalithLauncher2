@@ -72,6 +72,7 @@ import com.movtery.layer_controller.layout.TextButton
 import com.movtery.layer_controller.observable.ObservableButtonStyle
 import com.movtery.layer_controller.observable.ObservableControlLayer
 import com.movtery.layer_controller.observable.ObservableControlLayout
+import com.movtery.layer_controller.observable.ObservableJoystickData
 import com.movtery.layer_controller.observable.ObservableJoystickStyle
 import com.movtery.layer_controller.observable.ObservableWidget
 import com.movtery.layer_controller.utils.getWidgetPosition
@@ -79,6 +80,7 @@ import com.movtery.layer_controller.utils.snap.GuideLine
 import com.movtery.layer_controller.utils.snap.LineDirection
 import com.movtery.layer_controller.utils.snap.SnapMode
 import com.movtery.layer_controller.utils.toPercentagePosition
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -341,7 +343,17 @@ fun ControlEditorLayer(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
                                             if (isTopLeft) {
-                                                val newTL = dragTL + dragAmount
+                                                var newTL = dragTL + dragAmount
+                                                if (widget is ObservableJoystickData) {
+                                                    val oldSide = dragBR.x - dragTL.x
+                                                    val distX = dragBR.x - newTL.x
+                                                    val distY = dragBR.y - newTL.y
+                                                    val deltaX = distX - oldSide
+                                                    val deltaY = distY - oldSide
+                                                    val side = (if (abs(deltaX) > abs(deltaY)) oldSide + deltaX else oldSide + deltaY)
+                                                        .coerceIn(minWidth, minOf(maxWidth, maxHeight, dragBR.x, dragBR.y))
+                                                    newTL = Offset(dragBR.x - side, dragBR.y - side)
+                                                }
                                                 val finalTL = Offset(
                                                     newTL.x.coerceIn(maxOf(0f, dragBR.x - maxWidth), dragBR.x - minWidth),
                                                     newTL.y.coerceIn(maxOf(0f, dragBR.y - maxHeight), dragBR.y - minHeight)
@@ -354,7 +366,17 @@ fun ControlEditorLayer(
                                                 )
                                                 updateSizeAndPos(finalTL, finalSize)
                                             } else {
-                                                val newBR = dragBR + dragAmount
+                                                var newBR = dragBR + dragAmount
+                                                if (widget is ObservableJoystickData) {
+                                                    val oldSide = dragBR.x - dragTL.x
+                                                    val distX = newBR.x - dragTL.x
+                                                    val distY = newBR.y - dragTL.y
+                                                    val deltaX = distX - oldSide
+                                                    val deltaY = distY - oldSide
+                                                    val side = (if (abs(deltaX) > abs(deltaY)) oldSide + deltaX else oldSide + deltaY)
+                                                        .coerceIn(minWidth, minOf(maxWidth, maxHeight, screenSize.width - dragTL.x, screenSize.height - dragTL.y))
+                                                    newBR = Offset(dragTL.x + side, dragTL.y + side)
+                                                }
                                                 val finalBR = Offset(
                                                     newBR.x.coerceIn(dragTL.x + minWidth, minOf(screenSize.width.toFloat(), dragTL.x + maxWidth)),
                                                     newBR.y.coerceIn(dragTL.y + minHeight, minOf(screenSize.height.toFloat(), dragTL.y + maxHeight))

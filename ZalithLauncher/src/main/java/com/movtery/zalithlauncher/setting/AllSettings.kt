@@ -92,11 +92,6 @@ object AllSettings : SettingsRegistry() {
     val vsyncInZink = boolSetting("vsyncInZink", false)
 
     /**
-     * 强制在高性能核心运行
-     */
-    val bigCoreAffinity = boolSetting("bigCoreAffinity", false)
-
-    /**
      * 启用着色器日志输出
      */
     val dumpShaders = boolSetting("dumpShaders", false)

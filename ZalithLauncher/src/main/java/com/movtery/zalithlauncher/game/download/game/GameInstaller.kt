@@ -95,7 +95,7 @@ class GameInstaller(
     /**
      * 基础下载器
      */
-    private val downloader = BaseMinecraftDownloader(verifyIntegrity = true)
+    private val downloader = BaseMinecraftDownloader()
 
     /**
      * 目标游戏客户端目录（缓存）
@@ -763,7 +763,6 @@ class GameInstaller(
             context = context,
             version = info.gameVersion,
             customName = info.customVersionName,
-            verifyIntegrity = true,
             downloader = downloader,
             onThrowable = { throw it }
         )

@@ -48,7 +48,6 @@ suspend fun <T> downloadAndParseJson(
     targetFile: File,
     url: String,
     expectedSHA: String?,
-    verifyIntegrity: Boolean,
     classOfT: Class<T>
 ): T {
     suspend fun downloadAndParse(): T {
@@ -69,7 +68,7 @@ suspend fun <T> downloadAndParseJson(
     }
 
     if (targetFile.exists()) {
-        if (!verifyIntegrity || compareSHA1(targetFile, expectedSHA)) {
+        if (compareSHA1(targetFile, expectedSHA)) {
             return runCatching {
                 targetFile.readText().parseTo(classOfT)
             }.getOrElse {

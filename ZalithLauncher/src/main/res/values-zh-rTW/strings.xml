@@ -412,6 +412,14 @@
     <string name="account_logging_in_saving">獲取玩家皮膚、儲存帳號資訊</string>
     <string name="account_logging_time_out">網路連線逾時，請檢查網路環境。</string>
     <string name="account_logging_not_purchased_minecraft">未偵測到 Minecraft 購買資訊，請前往 Minecraft 官方網站購買。</string>
+    <string name="account_relogin_title">需要重新登入</string>
+    <string name="account_relogin_microsoft_message">啟動器無法重新整理該 Microsoft 帳號的登入憑證，帳號密碼可能已被修改，或登入授權已失效，需要重新登入 Microsoft 帳號。</string>
+    <string name="account_relogin_password_message">驗證伺服器拒絕了目前登入，密碼可能已被修改，請重新輸入 %s 的密碼。</string>
+    <string name="account_relogin">重新登入</string>
+    <string name="account_refresh_failed_title">帳戶重新整理失敗</string>
+    <string name="account_refresh_failed_skip_message">無法連線驗證伺服器。可以跳過帳戶重新整理，使用目前憑證繼續啟動遊戲，但需要線上驗證的伺服器可能會拒絕本次登入。</string>
+    <string name="account_refresh_failed_skip">跳過重新整理</string>
+    <string name="account_refresh_failed_retry">再次重新整理</string>
     <string name="account_type_microsoft">Microsoft 帳號</string>
     <string name="account_type_local">離線帳號</string>
     <string name="account_add_new_server">新增驗證伺服器</string>
@@ -785,8 +793,6 @@
     <string name="settings_renderer_zink_driver_adreno">啟動器偵測到您的裝置為 Adreno GPU，開啟此選項可能會導致 Zink 渲染器無法正常運作，您確定要開啟此選項嗎？</string>
     <string name="settings_renderer_vsync_in_zink_title">啟用 Zink 垂直同步</string>
     <string name="settings_renderer_vsync_in_zink_summary">透過系統介面為 Zink 渲染器啟用垂直同步</string>
-    <string name="settings_renderer_force_big_core_title">強制在高效能核心執行</string>
-    <string name="settings_renderer_force_big_core_summary">將 Minecraft 的渲染執行緒綁定到 CPU 的高效能核心（大核）上，啟用後可能增加功耗與發熱</string>
     <string name="settings_renderer_surface_title">使用 SurfaceView 渲染</string>
     <string name="settings_renderer_surface_summary">使用獨立於介面之外的圖層進行渲染</string>
     <string name="settings_game_version_isolation_title">全域版本隔離</string>

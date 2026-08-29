@@ -463,6 +463,14 @@
     <string name="account_logging_blocked_ip">The current IP address has been blocked from logging in.</string>
     <string name="account_logging_profile_not_exists">Please create a Minecraft player profile first, then try logging in again!</string>
     <string name="account_logging_not_purchased_minecraft">Minecraft ownership not verified. Please purchase it from Minecraft\'s official website.</string>
+    <string name="account_relogin_title">Sign In Required</string>
+    <string name="account_relogin_microsoft_message">The launcher failed to refresh this Microsoft account\'s sign-in credentials. The password may have been changed or the authorization has been revoked, so you need to sign in to the Microsoft account again.</string>
+    <string name="account_relogin_password_message">The auth server rejected the current sign-in, possibly because the password has been changed. Please enter the password of %s again.</string>
+    <string name="account_relogin">Sign In Again</string>
+    <string name="account_refresh_failed_title">Account Refresh Failed</string>
+    <string name="account_refresh_failed_skip_message">Unable to reach the authentication server. You can skip the refresh and launch with the current credentials, but servers that require online authentication may reject the login.</string>
+    <string name="account_refresh_failed_skip">Skip Refresh</string>
+    <string name="account_refresh_failed_retry">Refresh Again</string>
     <string name="account_type_microsoft">Microsoft</string>
     <string name="account_type_local">Offline</string>
     <string name="account_add_new_server">Add Auth Server</string>
@@ -874,8 +882,6 @@
     <string name="settings_renderer_zink_driver_adreno">The launcher detected your device has an Adreno GPU. Enabling this option may cause the Zink renderer to malfunction. Are you sure you want to enable it?</string>
     <string name="settings_renderer_vsync_in_zink_title">Zink Vsync</string>
     <string name="settings_renderer_vsync_in_zink_summary">Enable vertical sync for the Zink renderer via the system interface</string>
-    <string name="settings_renderer_force_big_core_title">Force High-Performance Cores</string>
-    <string name="settings_renderer_force_big_core_summary">Bind Minecraft\'s rendering thread to the CPU\'s high-performance cores (big cores). Enabling this may increase power consumption and heat</string>
     <string name="settings_renderer_surface_title">Use SurfaceView Rendering</string>
     <string name="settings_renderer_surface_summary">Renders using a separate layer outside the UI</string>
     <string name="settings_game_version_isolation_title">Global Version Isolation</string>
