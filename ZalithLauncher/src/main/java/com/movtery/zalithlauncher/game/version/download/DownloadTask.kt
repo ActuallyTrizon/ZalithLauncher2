@@ -66,7 +66,7 @@ class DownloadTask(
         }
     }
 
-    /** 目标已存在且校验可用时返回 true（不可下载的文件视为天然可用） */
+    /** 目标已存在且校验可用时返回 true */
     fun existingFileValid(): Boolean {
         val file = targetFile
         if (!file.exists()) return false

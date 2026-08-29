@@ -362,8 +362,6 @@
     <string name="settings_renderer_zink_driver_adreno">Лаунчер обнаружил, что ваше устройство имеет GPU Adreno. Включение этой опции может привести к сбоям в работе визуализатора Zink. Вы уверены, что хотите включить её?</string>
     <string name="settings_renderer_vsync_in_zink_title">Вертикальная синхронизация Zink</string>
     <string name="settings_renderer_vsync_in_zink_summary">Включить вертикальную синхронизацию для визуализатора Zink</string>
-    <string name="settings_renderer_force_big_core_title">Принудительное использование мощных ядер</string>
-    <string name="settings_renderer_force_big_core_summary">Заставляет использовать самые мощные ядра при работе процессора</string>
     <string name="settings_game_version_isolation_title">Изоляция версий</string>
     <string name="settings_game_version_isolation_summary">Изолировать все версии, чтобы их данные не пересекались друг с другом</string>
     <string name="settings_game_skip_game_integrity_check_title">Пропустить проверку целостности</string>

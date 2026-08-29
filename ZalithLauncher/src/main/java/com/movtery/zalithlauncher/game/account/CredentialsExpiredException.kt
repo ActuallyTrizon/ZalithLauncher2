@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
  */
 
-package com.movtery.zalithlauncher.game.account.auth_server
+package com.movtery.zalithlauncher.game.account
 
-class ResponseException(
-    val responseMessage: String,
-    val statusCode: Int? = null
-) : RuntimeException(
-    responseMessage
-)
+/**
+ * 本地存储的登录凭据已被服务端拒绝
+ * 无法通过刷新恢复，必须重新登录账号
+ */
+class CredentialsExpiredException : RuntimeException("Login credentials have expired")

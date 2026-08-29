@@ -27,6 +27,7 @@ import com.movtery.zalithlauncher.context.COPY_LABEL_DEVICE_CODE
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.account.auth_server.AuthServerHelper
+import com.movtery.zalithlauncher.game.account.auth_server.ResponseException
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.auth_server.getAuthServeInfo
 import com.movtery.zalithlauncher.game.account.microsoft.AsyncStatus
@@ -48,7 +49,7 @@ import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.toLocal
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ResponseException as KtorResponseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
@@ -107,7 +108,8 @@ fun microsoftLogin(
     checkIfInWebScreen: () -> Boolean,
     updateOperation: (MicrosoftLoginOperation) -> Unit,
     showToast: (AndroidStringText, duration: Int) -> Unit,
-    submitError: (ErrorViewModel.ThrowableMessage) -> Unit
+    submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
+    onSuccess: () -> Unit = {}
 ) {
     val task = Task.runTask(
         id = MICROSOFT_LOGGING_TASK,
@@ -151,7 +153,9 @@ fun microsoftLogin(
             task.updateMessage(androidText(R.string.account_logging_in_saving))
             account.downloadYggdrasil()
             AccountsManager.saveAccount(account)
+            AccountsManager.markSessionValidated(account)
             Logger.info(TAG, "Microsoft account login successful: ${account.username}")
+            onSuccess()
         },
         onError = { th ->
             if (th !is CancellationException) {
@@ -164,7 +168,7 @@ fun microsoftLogin(
                 is XboxLoginException -> th.toLocal()
                 is UnknownHostException, is UnresolvedAddressException -> androidText(R.string.error_network_unreachable)
                 is ConnectException -> androidText(R.string.error_connection_failed)
-                is ResponseException -> th.toLocal()
+                is KtorResponseException -> th.toLocal()
                 is CancellationException -> { null }
                 else -> {
                     androidText(
@@ -289,6 +293,31 @@ fun otherLogin(
         onFailed = onFailed,
         onFinally = onFinally
     ).justLogin(context, account)
+}
+
+/**
+ * 该异常代表本地存储的凭据已被服务端拒绝，无法通过刷新恢复，需要重新登录账号
+ */
+fun Throwable.isReloginRequired(): Boolean {
+    return this is CredentialsExpiredException ||
+            (this is ResponseException && statusCode == 403)
+}
+
+fun accountErrorText(th: Throwable): AndroidStringText = when (th) {
+    is NotPurchasedMinecraftException -> toLocal()
+    is MinecraftProfileException -> th.toLocal()
+    is XboxLoginException -> th.toLocal()
+    is HttpRequestTimeoutException -> androidText(R.string.error_timeout)
+    is UnknownHostException, is UnresolvedAddressException -> androidText(R.string.error_network_unreachable)
+    is ConnectException -> androidText(R.string.error_connection_failed)
+    is KtorResponseException -> th.toLocal()
+    is ResponseException -> androidText(th.responseMessage)
+    else -> {
+        Logger.error(TAG, "An unknown exception was caught!", th)
+        androidText(
+            th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
+        )
+    }
 }
 
 /**

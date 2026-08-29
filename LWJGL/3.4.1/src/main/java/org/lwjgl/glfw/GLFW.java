@@ -14,6 +14,7 @@ import java.nio.*;
 
 
 import org.lwjgl.*;
+import com.movtery.zalithlauncher.CursorRegistry;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -1422,13 +1423,15 @@ public class GLFW
     }*/
 
     public static long glfwCreateCursor(@NativeType("const GLFWimage *") GLFWImage image, int xhot, int yhot) {
-        return 4L;
+        return CursorRegistry.getDefaultCursor();
     }
     public static long glfwCreateStandardCursor(int shape) {
-        return 4L;
+        return CursorRegistry.registerCursor(shape);
     }
     public static void glfwDestroyCursor(@NativeType("GLFWcursor *") long cursor) {}
-    public static void glfwSetCursor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWcursor *") long cursor) {}
+    public static void glfwSetCursor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWcursor *") long cursor) {
+        CallbackBridge.nativeSetCursorShape(CursorRegistry.getShape(cursor));
+    }
 
     public static boolean glfwRawMouseMotionSupported() {
         // Should be not supported?

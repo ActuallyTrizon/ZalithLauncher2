@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 private const val TAG = "AccountManager"
@@ -65,6 +66,9 @@ object AccountsManager {
 
     private val _isOffline = MutableStateFlow(false)
     val isOffline = _isOffline
+
+    //本次启动器会话内已通过服务端校验的账号
+    private val sessionValidatedAccounts: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     private lateinit var database: AppDatabase
     private lateinit var accountDao: AccountDao
@@ -180,11 +184,32 @@ object AccountsManager {
                 onSuccess = { account, task ->
                     task.updateMessage(androidText(R.string.account_logging_in_saving))
                     account.downloadYggdrasil()
+                    markSessionValidated(account)
                     suspendSaveAccount(account)
                 },
                 onFailed = onFailed
             )
         }
+    }
+
+    /**
+     * 该账号在本次会话中是否已通过服务端校验
+     */
+    fun isSessionValidated(account: Account): Boolean =
+        sessionValidatedAccounts.contains(account.uniqueUUID)
+
+    fun markSessionValidated(account: Account) {
+        sessionValidatedAccounts.add(account.uniqueUUID)
+    }
+
+    /**
+     * 是否需要执行启动前的账号校验
+     */
+    fun isLaunchCheckNeeded(account: Account): Boolean = when {
+        account.isNoLoginRequired() -> false
+        account.isMicrosoftAccount() -> !isSessionValidated(account) ||
+                System.currentTimeMillis() > account.expiresAt - 5 * 60 * 1000
+        else -> !isSessionValidated(account)
     }
 
     /**

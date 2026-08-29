@@ -284,14 +284,6 @@ fun RendererSettingsScreen(
                     SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Middle,
-                        unit = AllSettings.bigCoreAffinity,
-                        title = stringResource(R.string.settings_renderer_force_big_core_title),
-                        summary = stringResource(R.string.settings_renderer_force_big_core_summary)
-                    )
-
-                    SwitchSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
                         unit = AllSettings.useSurfaceView,
                         title = stringResource(R.string.settings_renderer_surface_title),
                         summary = stringResource(R.string.settings_renderer_surface_summary)

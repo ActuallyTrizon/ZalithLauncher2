@@ -93,9 +93,12 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginTipDialog
+import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftReloginDialog
+import com.movtery.zalithlauncher.ui.screens.content.elements.OtherAccountReloginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherServerLoginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.ServerOperation
+import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.utils.copyText
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
@@ -851,6 +854,48 @@ private fun AccountOperation(
                     )
                 )
                 actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
+            }
+        }
+
+        is AccountOperation.OnRelogin -> {
+            if (operation.account.isMicrosoftAccount()) {
+                MicrosoftReloginDialog(
+                    onDismissRequest = {
+                        actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
+                    },
+                    onConfirm = {
+                        actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
+                        actions.onIntent(
+                            AccountManageIntent.PerformMicrosoftLogin(
+                                toWeb = actions.navigateToWeb,
+                                backToMain = actions.backToMainScreen,
+                                checkIfInWebScreen = actions.checkIfInWebScreen
+                            )
+                        )
+                    }
+                )
+            } else {
+                OtherAccountReloginDialog(
+                    account = operation.account,
+                    logging = operation.logging,
+                    error = operation.error,
+                    onDismissRequest = {
+                        actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
+                    },
+                    onConfirm = { password ->
+                        actions.onIntent(
+                            AccountManageIntent.UpdateAccountOp(
+                                AccountOperation.OnRelogin(operation.account, logging = true)
+                            )
+                        )
+                        actions.onIntent(
+                            AccountManageIntent.ReloginOtherAccount(
+                                account = operation.account,
+                                password = password
+                            )
+                        )
+                    }
+                )
             }
         }
 

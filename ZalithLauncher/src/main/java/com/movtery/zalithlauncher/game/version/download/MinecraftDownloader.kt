@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.game.version.download
 
 import android.content.Context
-import androidx.annotation.StringRes
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.game.versioninfo.models.GameManifest
@@ -48,8 +47,7 @@ class MinecraftDownloader(
     private val context: Context,
     private val version: String,
     private val customName: String = version,
-    private val verifyIntegrity: Boolean,
-    private val downloader: BaseMinecraftDownloader = BaseMinecraftDownloader(verifyIntegrity = verifyIntegrity),
+    private val downloader: BaseMinecraftDownloader = BaseMinecraftDownloader(),
     private val mode: DownloadMode = DownloadMode.DOWNLOAD,
     private val onCompletion: suspend (Task) -> Unit = {},
     private val onError: (message: String) -> Unit = {},
@@ -58,13 +56,10 @@ class MinecraftDownloader(
 ) {
     private var allDownloadTasks = mutableListOf<DownloadTask>()
 
-    @StringRes
-    private fun getTaskMessage(
-        @StringRes
-        download: Int,
-        @StringRes
-        verify: Int
-    ): Int =
+    private fun <R> getTaskMessage(
+        download: R,
+        verify: R
+    ): R =
         when (mode) {
             DownloadMode.DOWNLOAD -> download
             DownloadMode.VERIFY_AND_REPAIR -> verify
@@ -82,9 +77,9 @@ class MinecraftDownloader(
             dispatcher = Dispatchers.Default,
             task = { task ->
                 task.updateProgress(-1f)
-                task.updateMessage(androidText(
-                    getTaskMessage(R.string.minecraft_download_stat_download_task, R.string.minecraft_download_stat_verify_task)
-                ))
+                task.updateMessage(
+                    getTaskMessage(androidText(R.string.minecraft_download_stat_download_task), null)
+                )
                 if (mode == DownloadMode.DOWNLOAD) {
                     progressNewDownloadTasks(clientName, clientVersionsDir)
                 } else {
@@ -216,7 +211,7 @@ class MinecraftDownloader(
         allDownloadTasks.add(
             DownloadTask(
                 urls = urls,
-                verifyIntegrity = verifyIntegrity,
+                verifyIntegrity = true,
                 targetFile = targetFile,
                 sha1 = sha1,
                 size = size,

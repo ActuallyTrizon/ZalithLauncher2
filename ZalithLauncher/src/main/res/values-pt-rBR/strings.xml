@@ -737,8 +737,6 @@
     <string name="settings_renderer_zink_driver_adreno">O launcher detectou que seu dispositivo possui uma GPU Adreno. Habilitar esta opção pode causar mau funcionamento do renderizador Zink. Tem certeza de que deseja habilitá-la?</string>
     <string name="settings_renderer_vsync_in_zink_title">Sincronização vertical do Zink</string>
     <string name="settings_renderer_vsync_in_zink_summary">Ative a sincronização vertical para o Renderizador Zink através da interface do sistema</string>
-    <string name="settings_renderer_force_big_core_title">Forçar os núcleos de alto desempenho</string>
-    <string name="settings_renderer_force_big_core_summary">Vincule o thread de renderização do Minecraft aos núcleos de alto desempenho da sua CPU (núcleos grandes). Habilitar isso pode aumentar o consumo de energia e o calor geral do seu dispositivo. (Não recomendado para CPUs com núcleos de menos de 3GHz)</string>
     <string name="settings_game_version_isolation_title">Isolamento da versão global</string>
     <string name="settings_game_version_isolation_summary">Isola todas as versões para que seus dados não interfiram umas com as outras</string>
     <string name="settings_game_skip_game_integrity_check_title">Ignorar verificação de integridade</string>
