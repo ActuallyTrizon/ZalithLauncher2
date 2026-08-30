@@ -1382,4 +1382,12 @@
     <string name="settings_launcher_mirror_game_source_title">Fonte de Download do Jogo</string>
     <string name="settings_launcher_mirror_asset_platform_source_title">Fonte de Download do Mod</string>
     <string name="settings_launcher_mirror_auto">Automático</string>
+    <string name="account_relogin_title">Login necessário</string>
+    <string name="account_relogin_microsoft_message">O Launcher não conseguiu atualizar as credenciais de entrada desta conta Microsoft. A senha pode ter sido alterada ou a autorização revogada; portanto, você precisa entrar na conta Microsoft novamente.</string>
+    <string name="account_relogin_password_message">O servidor de autenticação rejeitou o login atual, possivelmente porque a senha foi alterada. Digite a senha %s novamente.</string>
+    <string name="account_relogin">Entrar novamente</string>
+    <string name="account_refresh_failed_title">Falha na atualização da conta</string>
+    <string name="account_refresh_failed_skip_message">Não foi possível acessar o servidor de autenticação. Você pode ignorar a atualização e iniciar com as credenciais atuais, mas servidores que exigem autenticação online podem rejeitar o login.</string>
+    <string name="account_refresh_failed_skip">Ignorar atualização</string>
+    <string name="account_refresh_failed_retry">Atualizar novamente</string>
 </resources>
