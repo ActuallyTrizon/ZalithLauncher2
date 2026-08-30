@@ -47,6 +47,7 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.RandomAccessFile
 
 /**
  * 导航到日志查看器
@@ -57,6 +58,31 @@ fun NavBackStack<TitledNavKey>.navigateToLogView(
     screenKey = NormalNavKey.LogView(logPath = logPath),
     useClassEquality = true
 )
+
+/** 日志查看器加载的日志体积上限，超过则只读取末尾部分 */
+private const val MAX_LOG_VIEW_SIZE: Long = 8L * 1024 * 1024
+
+private fun readLog(file: File): String {
+    val size = file.length()
+    if (size <= MAX_LOG_VIEW_SIZE) return file.readText()
+    RandomAccessFile(file, "r").use { raf ->
+        raf.seek(size - MAX_LOG_VIEW_SIZE)
+        val bytes = ByteArray(MAX_LOG_VIEW_SIZE.toInt())
+        raf.readFully(bytes)
+        val text = String(bytes, Charsets.UTF_8)
+            // 截断位置可能留下不完整的字符，解码成替换字符后去掉
+            .trimStart('\uFFFD')
+
+        // 从首个换行处开始，避免截断处留下半个字符导致首行乱码
+        // 窗口内没有换行时（超长单行）则不截断，保留内容
+        val firstNewline = text.indexOf('\n')
+        return if (firstNewline >= 0 && firstNewline < text.length - 1) {
+            text.substring(firstNewline + 1)
+        } else {
+            text
+        }
+    }
+}
 
 @Composable
 fun LogViewScreen(
@@ -72,7 +98,7 @@ fun LogViewScreen(
         editorState = EditorState.Loading
         val content = withContext(Dispatchers.IO) {
             runCatching {
-                File(key.logPath).readText()
+                readLog(File(key.logPath))
             }.getOrElse { e ->
                 Logger.warning("ViewLog", "Unable to read log file!", e)
                 e.message

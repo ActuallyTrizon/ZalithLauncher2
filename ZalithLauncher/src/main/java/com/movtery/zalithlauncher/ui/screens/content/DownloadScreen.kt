@@ -307,7 +307,7 @@ private fun NavigationUI(
                                         NormalNavKey.DownloadAssets(
                                             platform = platform,
                                             projectId = projectId,
-                                            classes = PlatformClasses.MOD,
+                                            classes = classes,
                                             iconUrl = iconUrl
                                         )
                                     )

@@ -33,7 +33,9 @@ fun NavBackStack<FmNavKey>.openTrash() {
  * 退出回收站页返回主页面
  */
 fun NavBackStack<FmNavKey>.closeTrash() {
-    removeLastOrNull()
+    if (lastOrNull() == FmNavKey.Trash) {
+        removeLastOrNull()
+    }
 }
 
 /**
@@ -49,5 +51,7 @@ fun NavBackStack<FmNavKey>.openEditor(path: Path) {
  * 退出文本编辑器页返回主页面
  */
 fun NavBackStack<FmNavKey>.closeEditor() {
-    removeLastOrNull()
+    if (lastOrNull() is FmNavKey.Editor) {
+        removeLastOrNull()
+    }
 }

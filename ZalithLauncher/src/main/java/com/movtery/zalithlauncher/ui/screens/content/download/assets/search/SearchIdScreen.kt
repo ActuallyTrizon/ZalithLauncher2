@@ -73,8 +73,8 @@ import com.movtery.zalithlauncher.game.download.assets.utils.getMcMod
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
 import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
-import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
@@ -327,10 +327,10 @@ private fun ContentResult(
                         modifier = Modifier.align(Alignment.Center),
                         text = {
                             AndroidStringText(
-                                text = buildAppendedText {
-                                    append(R.string.download_assets_failed_to_get_result)
-                                    append(operation.message)
-                                }
+                                text = androidText(
+                                    R.string.download_assets_failed_to_get_result,
+                                    operation.message
+                                )
                             )
                         },
                         onClick = onReload

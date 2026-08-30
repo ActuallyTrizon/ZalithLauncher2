@@ -110,14 +110,48 @@ object TextMateRegistry {
     private val themeRegistry = ThemeRegistry.getInstance()
     private val languageCache = mutableMapOf<String, TextMateLanguage>()
     private var loaded = false
+    private var textMateEnabled = true
     private val lock = ReentrantLock()
+
+    /**
+     * jcodings 的 unicode 表格通过类加载器资源加载
+     * 若 APK 中资源缺失，[org.jcodings.unicode.UnicodeEncoding.CaseFold] 等类的
+     * 静态初始化会抛 [org.jcodings.exception.InternalException]
+     * 高亮线程因此产生未捕获异常并杀掉整个进程
+     *
+     * 这里在加载语法前提前触发这些类的初始化，失败则禁用高亮
+     */
+    private fun jcodingsTablesAvailable(): Boolean {
+        val tableClasses = listOf(
+            "org.jcodings.unicode.UnicodeEncoding",
+            "org.jcodings.unicode.UnicodeEncoding\$CaseFold",
+            "org.jcodings.unicode.UnicodeEncoding\$CaseUnfold11",
+            "org.jcodings.unicode.UnicodeEncoding\$CaseUnfold12",
+            "org.jcodings.unicode.UnicodeEncoding\$CaseUnfold13",
+            "org.jcodings.unicode.UnicodeEncoding\$CaseMappingSpecials"
+        )
+        val missing = tableClasses.filter { cls ->
+            runCatching { Class.forName(cls) }.isFailure
+        }
+        return if (missing.isEmpty()) {
+            true
+        } else {
+            FmLog.warn(TAG, "jcodings tables unavailable: $missing, TextMate highlighting disabled")
+            false
+        }
+    }
 
     /**
      * 注册 assets 中的语法与主题
      */
     private suspend fun ensureLoaded(context: Context) = withContext(Dispatchers.IO) {
         lock.withLock {
+            if (!textMateEnabled) return@withLock
             if (loaded) return@withLock
+            if (!jcodingsTablesAvailable()) {
+                textMateEnabled = false
+                return@withLock
+            }
             val assets = context.assets
 
             grammarScopes.forEach { (file, scopeName) ->
@@ -164,6 +198,7 @@ object TextMateRegistry {
      */
     suspend fun languageFor(scopeName: String, context: Context): TextMateLanguage? {
         ensureLoaded(context)
+        if (!textMateEnabled) return null
         return withContext(Dispatchers.IO) {
             lock.withLock {
                 runCatching {

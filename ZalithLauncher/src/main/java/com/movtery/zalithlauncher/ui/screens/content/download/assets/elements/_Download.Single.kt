@@ -153,8 +153,10 @@ fun DownloadSingleOperation(
             )
         }
         is DownloadSingleOperation.Install -> {
-            doInstall(operation.classes, operation.version, operation.versions)
-            changeOperation(DownloadSingleOperation.None)
+            LaunchedEffect(Unit) {
+                doInstall(operation.classes, operation.version, operation.versions)
+                changeOperation(DownloadSingleOperation.None)
+            }
         }
     }
 }

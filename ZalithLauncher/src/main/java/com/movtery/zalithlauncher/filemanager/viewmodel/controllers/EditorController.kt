@@ -146,12 +146,28 @@ class EditorController(
     fun hasDirty(): Boolean = store.editorUiValue().dirty
 
     private fun loadFile(path: Path): Content {
-        if (Files.size(path) > MAX_EDIT_SIZE) {
-            throw EditorFileTooLargeException(store.stringResolver(R.string.fm_editor_file_too_large))
+        val size = Files.size(path)
+        if (size > MAX_EDIT_SIZE || !hasEnoughMemoryFor(size)) {
+            throw EditorFileTooLargeException(
+                store.stringResolver(
+                    if (size > MAX_EDIT_SIZE) R.string.fm_editor_file_too_large
+                    else R.string.fm_editor_out_of_memory
+                )
+            )
         }
         val bytes = Files.readAllBytes(path)
         val text = decode(bytes)
         return Content(text)
+    }
+
+    /**
+     * 判断剩余堆内存能否容纳该文件的加载峰值，内存不足时直接拒绝加载
+     */
+    private fun hasEnoughMemoryFor(fileSize: Long): Boolean {
+        val runtime = Runtime.getRuntime()
+        val available = runtime.maxMemory() - (runtime.totalMemory() - runtime.freeMemory())
+        val estimated = fileSize * MEMORY_MULTIPLIER + MEMORY_OVERHEAD
+        return estimated <= available * MEMORY_SAFE_RATIO
     }
 
     /**
@@ -200,5 +216,11 @@ class EditorController(
 
     companion object {
         private const val TAG = "EditorController"
+        /** 加载文本文件时的内存放大系数（字节数组 + UTF-16 字符串 + 编辑器行结构等） */
+        private const val MEMORY_MULTIPLIER: Long = 6
+        /** 加载过程中的固定内存开销（语法分析等其他分配） */
+        private const val MEMORY_OVERHEAD: Long = 16L * 1024 * 1024
+        /** 允许占用的可用堆内存比例，保留余量给应用其他部分 */
+        private const val MEMORY_SAFE_RATIO = 0.75
     }
 }
