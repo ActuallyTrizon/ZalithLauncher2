@@ -160,49 +160,51 @@ fun FileManagerRootScreen(
                         color = fmBackgroundColor(),
                         contentColor = fmOnBackgroundColor(),
                     ) {
-                        NavDisplay(
-                            modifier = Modifier.fillMaxSize(),
-                            backStack = backStack,
-                            entryProvider = entryProvider {
-                                entry<FmNavKey.FileManager> {
-                                    saveableStateHolder.SaveableStateProvider("fm_main") {
-                                        FmMainPage(
+                        if (backStack.isNotEmpty()) {
+                            NavDisplay(
+                                modifier = Modifier.fillMaxSize(),
+                                backStack = backStack,
+                                entryProvider = entryProvider {
+                                    entry<FmNavKey.FileManager> {
+                                        saveableStateHolder.SaveableStateProvider("fm_main") {
+                                            FmMainPage(
+                                                vm = vm,
+                                                snackHost = snackHost,
+                                                contentAlpha = gestureAlpha,
+                                                onOpenTrash = { backStack.openTrash() },
+                                                onOpenEditor = { backStack.openEditor(it) },
+                                                onExit = onExit,
+                                                onToggleOrientation = onToggleOrientation
+                                            )
+                                        }
+                                    }
+                                    entry<FmNavKey.Trash> {
+                                        FmTrashScreen(
                                             vm = vm,
                                             snackHost = snackHost,
                                             contentAlpha = gestureAlpha,
-                                            onOpenTrash = { backStack.openTrash() },
-                                            onOpenEditor = { backStack.openEditor(it) },
+                                            onBack = {
+                                                vm.closeTrash()
+                                                backStack.closeTrash()
+                                            },
+                                            onExit = onExit,
+                                            onToggleOrientation = onToggleOrientation
+                                        )
+                                    }
+                                    entry<FmNavKey.Editor> { editorKey ->
+                                        FmEditorScreen(
+                                            path = Paths.get(editorKey.path),
+                                            vm = vm,
+                                            snackHost = snackHost,
+                                            contentAlpha = gestureAlpha,
+                                            onBack = { backStack.closeEditor() },
                                             onExit = onExit,
                                             onToggleOrientation = onToggleOrientation
                                         )
                                     }
                                 }
-                                entry<FmNavKey.Trash> {
-                                    FmTrashScreen(
-                                        vm = vm,
-                                        snackHost = snackHost,
-                                        contentAlpha = gestureAlpha,
-                                        onBack = {
-                                            vm.closeTrash()
-                                            backStack.closeTrash()
-                                        },
-                                        onExit = onExit,
-                                        onToggleOrientation = onToggleOrientation
-                                    )
-                                }
-                                entry<FmNavKey.Editor> { editorKey ->
-                                    FmEditorScreen(
-                                        path = Paths.get(editorKey.path),
-                                        vm = vm,
-                                        snackHost = snackHost,
-                                        contentAlpha = gestureAlpha,
-                                        onBack = { backStack.closeEditor() },
-                                        onExit = onExit,
-                                        onToggleOrientation = onToggleOrientation
-                                    )
-                                }
-                            }
-                        )
+                            )
+                        }
 
                         if (gestureActive) {
                             Box(

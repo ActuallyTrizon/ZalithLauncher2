@@ -88,7 +88,7 @@ import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.AndroidStringText
-import com.movtery.zalithlauncher.ui.buildAppendedText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -201,10 +201,10 @@ fun ResultListLayout(
                     modifier = Modifier.align(Alignment.Center),
                     text = {
                         AndroidStringText(
-                            text = buildAppendedText {
-                                append(R.string.download_assets_failed_to_get_result)
-                                append(searchState.message)
-                            }
+                            text = androidText(
+                                R.string.download_assets_failed_to_get_result,
+                                searchState.message
+                            )
                         )
                     },
                     onClick = onReload

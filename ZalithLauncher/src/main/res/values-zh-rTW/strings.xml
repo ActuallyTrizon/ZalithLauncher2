@@ -1339,6 +1339,7 @@
     <string name="fm_editor_discard">不儲存退出</string>
     <string name="fm_editor_read_only">唯讀</string>
     <string name="fm_editor_file_too_large">檔案過大，無法作為文字編輯</string>
+    <string name="fm_editor_out_of_memory">檔案過大，裝置記憶體不足</string>
     <string name="fm_editor_open_failed">開啟檔案失敗</string>
     <string name="fm_editor_save_failed">儲存檔案失敗</string>
     <string name="fm_editor_goto_line">前往指定行</string>

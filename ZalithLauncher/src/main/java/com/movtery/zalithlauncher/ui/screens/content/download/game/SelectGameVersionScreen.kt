@@ -79,7 +79,6 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
-import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.CheckChip
 import com.movtery.zalithlauncher.ui.components.EdgeDirection
 import com.movtery.zalithlauncher.ui.components.LittleTextLabel
@@ -237,10 +236,10 @@ fun SelectGameVersionScreen(
                             modifier = Modifier.align(Alignment.Center),
                             text = {
                                 AndroidStringText(
-                                    text = buildAppendedText {
-                                        append(R.string.download_game_failed_to_get_versions)
-                                        append(state.message)
-                                    }
+                                    text = androidText(
+                                        R.string.download_game_failed_to_get_versions,
+                                        state.message
+                                    )
                                 )
                             },
                             onClick = {

@@ -1262,6 +1262,7 @@
     <string name="fm_editor_discard">Descartar alterações</string>
     <string name="fm_editor_read_only">Somente leitura</string>
     <string name="fm_editor_file_too_large">O arquivo é muito grande para ser editado como texto</string>
+    <string name="fm_editor_out_of_memory">Arquivo grande demais para a memória do dispositivo</string>
     <string name="fm_editor_open_failed">Falha ao abrir o arquivo</string>
     <string name="fm_editor_save_failed">Falha ao salvar o arquivo</string>
     <string name="fm_editor_goto_line">Ir para a linha</string>

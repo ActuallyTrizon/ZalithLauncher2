@@ -74,8 +74,8 @@ import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
 import com.movtery.zalithlauncher.game.versioninfo.filterRelease
 import com.movtery.zalithlauncher.ui.AndroidStringText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseScreen
-import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.CheckChip
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
@@ -492,10 +492,10 @@ private fun Versions(
                     modifier = Modifier.align(Alignment.Center),
                     text = {
                         AndroidStringText(
-                            text = buildAppendedText {
-                                append(R.string.download_assets_failed_to_get_versions)
-                                append(versions.message)
-                            }
+                            text = androidText(
+                                R.string.download_assets_failed_to_get_versions,
+                                versions.message
+                            )
                         )
                     },
                     onClick = onReload
@@ -657,10 +657,10 @@ private fun ProjectInfo(
                         modifier = Modifier.align(Alignment.Center),
                         text = {
                             AndroidStringText(
-                                text = buildAppendedText {
-                                    append(R.string.download_assets_failed_to_get_project)
-                                    append(result.message)
-                                }
+                                text = androidText(
+                                    R.string.download_assets_failed_to_get_project,
+                                    result.message
+                                )
                             )
                         },
                         onClick = onReload

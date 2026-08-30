@@ -76,7 +76,7 @@ import com.movtery.zalithlauncher.game.addons.modloader.modlike.ModVersion
 import com.movtery.zalithlauncher.game.addons.modloader.optifine.OptiFineVersion
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.AndroidStringText
-import com.movtery.zalithlauncher.ui.buildAppendedText
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.influencedByBackgroundColor
 import com.movtery.zalithlauncher.ui.components.rememberMaxHeight
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -361,10 +361,10 @@ private fun <E> AddonListHeader(
                     title = title,
                     summary = {
                         AndroidStringText(
-                            text = buildAppendedText {
-                                append(R.string.download_game_addon_list_load_error)
-                                append(state.message)
-                            }
+                            text = androidText(
+                                R.string.download_game_addon_list_load_error,
+                                state.message
+                            )
                         )
                     },
                 )

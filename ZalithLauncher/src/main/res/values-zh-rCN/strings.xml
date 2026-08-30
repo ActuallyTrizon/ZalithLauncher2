@@ -1319,6 +1319,7 @@
     <string name="fm_editor_discard">不保存退出</string>
     <string name="fm_editor_read_only">只读</string>
     <string name="fm_editor_file_too_large">文件过大，无法作为文本编辑</string>
+    <string name="fm_editor_out_of_memory">文件过大，设备内存不足</string>
     <string name="fm_editor_open_failed">打开文件失败</string>
     <string name="fm_editor_save_failed">保存文件失败</string>
     <string name="fm_editor_goto_line">转到指定行</string>
