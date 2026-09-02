@@ -201,7 +201,7 @@ final class SdlImeController {
     private static void doHide() {
         if (mEdit == null) {
             Log.i(TAG, "IME: no text edit available, hide ignored");
-            refocusGameSurface();
+            SdlBridge.requestComposeFocus();
             return;
         }
         forceHideIme();
@@ -236,25 +236,14 @@ final class SdlImeController {
             InputMethodManager imm = (InputMethodManager) SDLActivity.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(layout.getWindowToken(), 0);
         }
-        refocusGameSurface();
-    }
-
-    private static void refocusGameSurface() {
-        SdlBridge.requestGameSurfaceFocus();
-        SDLSurface surface = SDLActivity.mSurface;
-        if (surface != null) {
-            surface.requestFocus();
-        }
+        SdlBridge.requestComposeFocus();
     }
 
     private static boolean isUnwantedImeVisible() {
         if (!SdlBridge.getSdlEnabled() || mTextInputActive) {
             return false;
         }
-        if (mEdit != null && mEdit.hasFocus()) {
-            return true;
-        }
-        return SdlBridge.isGameSurfaceFocused();
+        return mEdit != null && mEdit.hasFocus();
     }
 
     private static void recheckHidden() {
