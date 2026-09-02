@@ -808,8 +808,6 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                         SurfaceView(context).apply {
                             holder.addCallback(this@VMActivity)
                             // SDL 模式需要父 ViewGroup（输入法 EditText 附加用）
-                            isFocusable = true
-                            isFocusableInTouchMode = true
                             gameSurfaceView = this
                         }.also { surface ->
                             applySizeToSurface = { width, height ->
@@ -820,8 +818,6 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                         TextureView(context).apply {
                             isOpaque = true
                             alpha = 1.0f
-                            isFocusable = true
-                            isFocusableInTouchMode = true
 
                             surfaceTextureListener = this@VMActivity
                         }.also { texture ->
@@ -831,7 +827,6 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                             }
                         }
                     }
-                    SdlBridge.registerGameSurfaceView(view)
                     view.setOnApplyWindowInsetsListener { v, insets ->
                         if (SdlBridge.sdlEnabled && android.os.Build.VERSION.SDK_INT >= 30) {
                             SDLActivity.notifyImeVisibilityChanged(

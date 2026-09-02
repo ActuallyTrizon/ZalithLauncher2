@@ -20,13 +20,13 @@ package com.movtery.zalithlauncher.game.sdl
 
 import android.app.Activity
 import android.view.Surface
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.Keep
 import androidx.annotation.MainThread
 import com.movtery.zalithlauncher.setting.AllSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.libsdl.app.SDL
 import org.libsdl.app.SDLActivity
 import org.libsdl.app.SDLSurface
@@ -40,12 +40,14 @@ import java.lang.ref.WeakReference
 object SdlBridge {
     private val _enabled = MutableStateFlow(false)
     val enabled = _enabled.asStateFlow()
+
+    private val _composeFocus = MutableStateFlow(0)
+    val composeFocus = _composeFocus.asStateFlow()
+
     private var activityRef: WeakReference<Activity>? = null
     private var layoutRef: WeakReference<ViewGroup>? = null
     private var currentSurface: Surface? = null
 
-    /** 实际渲染游戏画面的view */
-    private var gameViewRef: WeakReference<View>? = null
 
     /** 当前注册 Surface 的来源 */
     private var currentSource: Any? = null
@@ -120,35 +122,9 @@ object SdlBridge {
         currentSurface = surface
     }
 
-    /**
-     * 注册实际渲染游戏画面的view
-     */
     @JvmStatic
-    @MainThread
-    fun registerGameSurfaceView(view: View?) {
-        gameViewRef = view?.let { v ->
-            WeakReference(v)
-        }
-    }
-
-    /**
-     * 将焦点交还给游戏画面的view
-     */
-    @JvmStatic
-    fun requestGameSurfaceFocus() {
-        gameViewRef?.get()?.let { view ->
-            view.post {
-                if (view.isAttachedToWindow) {
-                    view.requestFocus()
-                }
-            }
-        }
-    }
-
-    /** 游戏画面的view当前是否持有窗口焦点 */
-    @JvmStatic
-    fun isGameSurfaceFocused(): Boolean {
-        return gameViewRef?.get()?.isFocused == true
+    fun requestComposeFocus() {
+        _composeFocus.update { it + 1 }
     }
 
     @JvmStatic
@@ -175,7 +151,6 @@ object SdlBridge {
         surfaceGeneration = 0L
         activityRef = null
         layoutRef = null
-        gameViewRef = null
         jniReady = false
         sdlInitialized = false
         sdlEnabled = false

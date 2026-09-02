@@ -26,6 +26,7 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -45,12 +46,15 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.platform.LocalView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.movtery.zalithlauncher.game.sdl.SdlBridge
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.ui.components.FocusableBox
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.libsdl.app.SDLActivity
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -107,6 +111,8 @@ fun TouchpadLayout(
     requestFocusKey: Any? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+
+    val composeFocusCount by SdlBridge.composeFocus.collectAsStateWithLifecycle()
 
     //确保 pointerInput 中总是调用到最新的回调，避免闭包捕获旧值
     val currentOnTouch by rememberUpdatedState(onTouch)
@@ -347,7 +353,8 @@ fun TouchpadLayout(
                     onMouseButton = onMouseButton
                 )
             ),
-        requestKey = requestFocusKey
+        requestKey = requestFocusKey to composeFocusCount,
+        canRequestFocus = { !SDLActivity.isUsingSDLTextEdit() }
     )
 
     SimpleMouseCapture(
@@ -375,11 +382,26 @@ private fun SimpleMouseCapture(
     onMouseScroll: (Offset) -> Unit,
     onMouseButton: (button: Int, pressed: Boolean) -> Unit
 ) {
-    val view = LocalView.current
+    val view by rememberUpdatedState(LocalView.current)
     val currentOnMouse by rememberUpdatedState(onMouse)
     val currentOnMouseMove by rememberUpdatedState(onMouseMove)
     val currentOnMouseScroll by rememberUpdatedState(onMouseScroll)
     val currentOnMouseButton by rememberUpdatedState(onMouseButton)
+
+    fun syncCaptureState() {
+        if (enabled) {
+            if (view.hasWindowFocus()) {
+                view.requestPointerCapture()
+            }
+        } else {
+            view.releasePointerCapture()
+        }
+    }
+
+    val composeFocus by SdlBridge.composeFocus.collectAsStateWithLifecycle()
+    LaunchedEffect(composeFocus) {
+        syncCaptureState()
+    }
 
     DisposableEffect(view, enabled) {
         view.setOnCapturedPointerListener(null)
@@ -391,12 +413,9 @@ private fun SimpleMouseCapture(
         }
         view.viewTreeObserver.addOnWindowFocusChangeListener(focusListener)
 
-        if (enabled) {
-            view.requestFocus()
-            if (view.hasWindowFocus()) {
-                view.requestPointerCapture()
-            }
+        syncCaptureState()
 
+        if (enabled) {
             val pointerListener = View.OnCapturedPointerListener { _, event ->
                 when (event.actionMasked) {
                     MotionEvent.ACTION_HOVER_MOVE, MotionEvent.ACTION_MOVE -> {
@@ -441,7 +460,6 @@ private fun SimpleMouseCapture(
 
             view.setOnCapturedPointerListener(pointerListener)
         } else {
-            view.releasePointerCapture()
             view.setOnCapturedPointerListener(null)
         }
 
