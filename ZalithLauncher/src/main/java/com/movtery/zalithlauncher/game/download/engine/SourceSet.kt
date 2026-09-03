@@ -83,8 +83,8 @@ internal class SourceSet(
 
     /**
      * 从游标处轮转挑出下一个健康源，要求支持 Range 时跳过不支持的源。
-     * 第一轮会跳过处于熔断冷却中的主机
-     * 若所有源都被熔断（或不可用），退回"仅按健康状态"再扫一遍，保证极端情况下仍有源可试。
+     * 只返回未处于熔断冷却的源
+     * 全部源都在冷却中时返回 null，调用方按 [cooldownRemainingMillis] 等待后重试
      */
     fun acquire(requireRange: Boolean): Source? {
         val size = sources.size
@@ -94,6 +94,14 @@ internal class SourceSet(
                 return candidate
             }
         }
+        return null
+    }
+
+    /**
+     * 无视熔断冷却，保证末路阶段仍会真实尝试每一个候选源
+     */
+    fun acquireDegraded(requireRange: Boolean): Source? {
+        val size = sources.size
         repeat(size) {
             val candidate = sources[Math.floorMod(cursor.getAndAdd(1), size)]
             if (isUsable(candidate, requireRange)) {
@@ -101,6 +109,17 @@ internal class SourceSet(
             }
         }
         return null
+    }
+
+    /**
+     * 全部可用候选源都处于熔断冷却时，返回最早的到期剩余毫秒
+     */
+    fun cooldownRemainingMillis(): Long {
+        val remaining = sources.asSequence()
+            .filter { !it.disabled && !it.fatal }
+            .minOfOrNull { health.remainingCooldownNanos(it.url) }
+            ?: return 0L
+        return (remaining / 1_000_000L).coerceAtLeast(1L)
     }
 
     private fun isUsable(source: Source, requireRange: Boolean): Boolean =

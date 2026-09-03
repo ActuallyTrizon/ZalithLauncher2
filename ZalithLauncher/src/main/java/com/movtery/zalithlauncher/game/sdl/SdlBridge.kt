@@ -21,11 +21,12 @@ package com.movtery.zalithlauncher.game.sdl
 import android.app.Activity
 import android.view.Surface
 import android.view.ViewGroup
-import androidx.annotation.MainThread
 import androidx.annotation.Keep
+import androidx.annotation.MainThread
 import com.movtery.zalithlauncher.setting.AllSettings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.libsdl.app.SDL
 import org.libsdl.app.SDLActivity
 import org.libsdl.app.SDLSurface
@@ -39,9 +40,14 @@ import java.lang.ref.WeakReference
 object SdlBridge {
     private val _enabled = MutableStateFlow(false)
     val enabled = _enabled.asStateFlow()
+
+    private val _composeFocus = MutableStateFlow(0)
+    val composeFocus = _composeFocus.asStateFlow()
+
     private var activityRef: WeakReference<Activity>? = null
     private var layoutRef: WeakReference<ViewGroup>? = null
     private var currentSurface: Surface? = null
+
 
     /** 当前注册 Surface 的来源 */
     private var currentSource: Any? = null
@@ -114,6 +120,11 @@ object SdlBridge {
         activityRef = WeakReference(activity)
         layoutRef = WeakReference(layout)
         currentSurface = surface
+    }
+
+    @JvmStatic
+    fun requestComposeFocus() {
+        _composeFocus.update { it + 1 }
     }
 
     @JvmStatic

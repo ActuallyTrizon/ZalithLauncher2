@@ -43,6 +43,7 @@ import com.movtery.zalithlauncher.utils.device.Architecture
 import com.movtery.zalithlauncher.utils.device.Architecture.ARCH_X86
 import com.movtery.zalithlauncher.utils.device.Architecture.is64BitsDevice
 import com.movtery.zalithlauncher.utils.logging.Logger
+import com.movtery.zalithlauncher.utils.network.getSystemDnsServerAddresses
 import com.movtery.zalithlauncher.utils.string.splitPreservingQuotes
 import com.oracle.dalvik.VMLauncher
 import org.apache.commons.io.FileUtils
@@ -236,26 +237,37 @@ abstract class Launcher(
      */
     private fun ensureDNSConfig(): File {
         val resolvFile = File(PathManager.DIR_GAME, "resolv.conf")
-        if (!resolvFile.exists()) {
-            val configText = if (LocaleList.getDefault().get(0).displayName != Locale.CHINA.displayName) {
-                """
-                    nameserver 1.1.1.1
-                    nameserver 1.0.0.1
-                """.trimIndent()
-            } else {
-                """
-                    nameserver 8.8.8.8
-                    nameserver 8.8.4.4
-                """.trimIndent()
-            }
-            runCatching {
+        val servers = buildResolvConfSet()
+        Logger.info(TAG, "Using DNS servers for game: $servers")
+        val configText = servers.joinToString(separator = "\n") { "nameserver $it" }
+        runCatching {
+            // 配置文件不存在或内容不一致时覆写一次
+            if (!resolvFile.exists() || resolvFile.readText().trim() != configText.trim()) {
                 resolvFile.writeText(configText)
-            }.onFailure {
-                Logger.warning(TAG, "Failed to create resolv.conf", it)
-                FileUtils.deleteQuietly(resolvFile)
             }
+        }.onFailure {
+            Logger.warning(TAG, "Failed to create resolv.conf", it)
+            FileUtils.deleteQuietly(resolvFile)
         }
         return resolvFile
+    }
+
+    private fun buildResolvConfSet(): Set<String> {
+        return buildSet {
+            getSystemDnsServerAddresses()
+                // JNDI DNS 的 nameserver 解析无法处理裸 IPv6 地址，仅保留 IPv4
+                ?.filterNot { it.contains(':') }
+                ?.let { addAll(it) }
+
+            // 按地区获取公共 DNS
+            if (LocaleList.getDefault().get(0).displayName != Locale.CHINA.displayName) {
+                add("1.1.1.1")
+                add("1.0.0.1")
+            } else {
+                add("223.5.5.5")
+                add("119.29.29.29")
+            }
+        }
     }
 
     /**

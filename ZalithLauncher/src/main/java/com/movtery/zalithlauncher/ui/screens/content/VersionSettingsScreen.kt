@@ -71,6 +71,7 @@ import com.movtery.zalithlauncher.game.download.game.GameDownloadInfo
 import com.movtery.zalithlauncher.game.download.game.GameInstaller
 import com.movtery.zalithlauncher.game.download.game.optifine.CantFetchingOptiFineUrlException
 import com.movtery.zalithlauncher.game.download.jvm_server.JvmCrashException
+import com.movtery.zalithlauncher.game.download.jvm_server.isProcessStartRefused
 import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
@@ -650,8 +651,9 @@ private fun UpdateLoaderOperation(
                 is CantFetchingOptiFineUrlException -> stringResource(R.string.download_install_error_cant_fetch_optifine_download_url)
                 is JvmCrashException -> stringResource(R.string.download_install_error_jvm_crash, th.code)
                 is DownloadFailedException -> stringResource(R.string.download_install_error_download_failed)
-                else -> {
-                    th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
+                else -> when {
+                    th.isProcessStartRefused() -> stringResource(R.string.download_install_error_process_start)
+                    else -> th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
                 }
             }
             val dismiss = {

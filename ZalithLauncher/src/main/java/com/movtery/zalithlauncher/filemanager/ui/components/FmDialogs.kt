@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.filemanager.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -63,12 +62,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmCardColor
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmOnCardColor
+import com.movtery.zalithlauncher.ui.components.ImePanContainer
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
 import com.movtery.zalithlauncher.ui.components.fadeEdge
+import com.movtery.zalithlauncher.ui.components.imePanAnchor
 import com.movtery.zalithlauncher.ui.components.rememberDialogMaxHeight
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 
@@ -82,9 +84,10 @@ internal fun FmDialogSurface(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Dialog(
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(decorFitsSystemWindows = false)
     ) {
-        BoxWithConstraints(
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),
@@ -404,6 +407,7 @@ fun FmEditDialog(
             val focusManager = LocalFocusManager.current
             OutlinedTextField(
                 modifier = Modifier
+                    .imePanAnchor()
                     .fillMaxWidth()
                     .let { if (focusRequester != null) it.focusRequester(focusRequester) else it },
                 value = value,

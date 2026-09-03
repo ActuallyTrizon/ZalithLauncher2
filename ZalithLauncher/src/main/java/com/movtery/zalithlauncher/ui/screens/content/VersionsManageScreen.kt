@@ -56,6 +56,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.inset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -485,17 +492,23 @@ private fun VersionsLayout(
 
             // 操作栏阴影跟随滚动线性过渡
             val listState = rememberLazyListState()
-            val topShadowRampPx = with(density) { 100.dp.toPx() } // 列表滚离顶部超过该距离后阴影达到最大
-            val listScrolledFraction = remember(listState, topShadowRampPx) {
+            val listScrolledFraction = remember(listState, headerTopPaddingPx) {
                 derivedStateOf {
                     if (listState.firstVisibleItemIndex > 0) 1f
-                    else (listState.firstVisibleItemScrollOffset / topShadowRampPx).coerceIn(0f, 1f)
+                    else {
+                        val rampPx = headerTopPaddingPx + (listState.layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0)
+                        (listState.firstVisibleItemScrollOffset / rampPx.coerceAtLeast(1f)).coerceIn(0f, 1f)
+                    }
                 }
             }
             val barShownFraction = remember(topAppBarState) {
                 derivedStateOf { 1f - topAppBarState.collapsedFraction }
             }
             val actionBarShadowElevation = 5.dp * barShownFraction.value * listScrolledFraction.value
+
+            val listTopFadePx = (headerHeightPx + headerTopPaddingPx + 80f) *
+                    listScrolledFraction.value *
+                    barShownFraction.value
 
             Box(modifier = Modifier.fillMaxSize()) {
                 if (versions.isNotEmpty()) {
@@ -507,10 +520,8 @@ private fun VersionsLayout(
                                 state = listState.scrollIndicatorState!!,
                                 orientation = Orientation.Vertical,
                             )
-                            .clipToBounds(),
-                        // 顶部内边距随操作栏收起高度联动：
-                        // 基础 24dp = 操作栏顶部边距 12dp + 间距 12dp，
-                        // 残差允许为负（下限为顶部边距），使完全收起时首项正好回落到 12dp
+                            .clipToBounds()
+                            .topFade(listTopFadePx),
                         contentPadding = PaddingValues(
                             start = 12.dp,
                             top = 24.dp + with(density) {
@@ -645,3 +656,24 @@ private fun VersionsLayout(
         }
     }
 }
+
+/**
+ * 在组件顶部绘制指定像素高度的线性渐隐
+ */
+private fun Modifier.topFade(heightPx: Float): Modifier = this
+    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .drawWithContent {
+        drawContent()
+        if (heightPx <= 0f) return@drawWithContent
+        inset(
+            left = 0f,
+            top = 0f,
+            right = 0f,
+            bottom = (size.height - heightPx).coerceAtLeast(0f)
+        ) {
+            drawRect(
+                brush = Brush.verticalGradient(0f to Color.Black, 1f to Color.Transparent),
+                blendMode = BlendMode.DstOut
+            )
+        }
+    }

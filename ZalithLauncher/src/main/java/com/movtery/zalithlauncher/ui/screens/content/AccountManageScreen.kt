@@ -106,6 +106,7 @@ import com.movtery.zalithlauncher.viewmodel.AccountManageEffect
 import com.movtery.zalithlauncher.viewmodel.AccountManageIntent
 import com.movtery.zalithlauncher.viewmodel.AccountManageViewModel
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
+import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 
@@ -148,9 +149,7 @@ enum class FirstLoginMenu {
  * @param backStackViewModel 屏幕堆栈管理器
  * @param backToMainScreen 返回主屏幕的回调
  * @param openLink 外部链接跳转回调
- * @param showToast 展示一个 Toast
  * @param submitError 全局错误提交回调
- * @param viewModel 账号管理 ViewModel (Hilt 自动注入)
  */
 @Composable
 fun AccountManageScreen(
@@ -158,10 +157,13 @@ fun AccountManageScreen(
     backStackViewModel: ScreenBackStackViewModel,
     backToMainScreen: () -> Unit,
     openLink: (url: String) -> Unit,
-    showToast: (AndroidStringText, duration: Int) -> Unit,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
-    viewModel: AccountManageViewModel = hiltViewModel()
+    eventViewModel: EventViewModel
 ) {
+    val viewModel: AccountManageViewModel = hiltViewModel { factory: AccountManageViewModel.Factory ->
+        factory.create(eventViewModel)
+    }
+
     val loginUiState by viewModel.loginUiState.collectAsStateWithLifecycle()
     val profileUiState by viewModel.profileUiState.collectAsStateWithLifecycle()
     val operationUiState by viewModel.operationUiState.collectAsStateWithLifecycle()
@@ -199,10 +201,6 @@ fun AccountManageScreen(
             when (effect) {
                 is AccountManageEffect.ShowError -> {
                     submitError(ErrorViewModel.ThrowableMessage(effect.title, effect.message))
-                }
-
-                is AccountManageEffect.ShowToast -> {
-                    showToast(effect.text, effect.duration)
                 }
             }
         }

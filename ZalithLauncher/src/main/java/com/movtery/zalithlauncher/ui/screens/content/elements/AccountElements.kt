@@ -138,6 +138,7 @@ import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BaseIconTextButton
 import com.movtery.zalithlauncher.ui.components.IconTextButton
+import com.movtery.zalithlauncher.ui.components.ImePanContainer
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.ModelAnimation
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
@@ -748,8 +749,11 @@ fun LocalLoginDialog(
 
     var editUUID by rememberSaveable { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismissRequest) {
-        BoxWithConstraints(
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(decorFitsSystemWindows = false)
+    ) {
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),
@@ -975,8 +979,11 @@ fun OtherServerLoginDialog(
         }
     }
 
-    Dialog(onDismissRequest = onDismissRequest) {
-        BoxWithConstraints(
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(decorFitsSystemWindows = false)
+    ) {
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),
@@ -1175,9 +1182,10 @@ fun OtherAccountReloginDialog(
     var showPassword by rememberSaveable { mutableStateOf(false) }
 
     Dialog(
-        onDismissRequest = { if (!logging) onDismissRequest() }
+        onDismissRequest = { if (!logging) onDismissRequest() },
+        properties = DialogProperties(decorFitsSystemWindows = false)
     ) {
-        BoxWithConstraints(
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),

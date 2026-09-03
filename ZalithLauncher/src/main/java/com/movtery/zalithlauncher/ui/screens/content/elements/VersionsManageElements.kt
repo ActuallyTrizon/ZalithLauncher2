@@ -86,6 +86,7 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.version.installed.cleanup.CleanFailedException
 import com.movtery.zalithlauncher.game.version.installed.cleanup.GameAssetCleaner
+import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.LittleTextLabel
 import com.movtery.zalithlauncher.ui.components.MarqueeText
@@ -678,8 +679,10 @@ fun VersionItemLayout(
     selected: Boolean,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
     modifier: Modifier = Modifier,
-    color: Color = cardColor(),
+    influencedByBackground: Boolean = true,
+    color: Color = cardColor(influencedByBackground),
     contentColor: Color = onCardColor(),
+    blur: Int = AllSettings.backgroundBlur.state,
     onSelected: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onRenameClick: () -> Unit = {},
@@ -706,6 +709,7 @@ fun VersionItemLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shape = MaterialTheme.shapes.large)
+                .backgroundGlass(blur, color, influencedByBackground)
                 .padding(all = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

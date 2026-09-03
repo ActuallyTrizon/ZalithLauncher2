@@ -205,11 +205,20 @@ public class CallbackBridge {
         try {
             if (isDown) {
                 SDLActivity.onNativeKeyDown(androidKeycode);
+                // 游戏只在 SDL_EVENT_TEXT_INPUT 里插入字符，仅 KEYDOWN 不会有任何输入
+                if (isTextEventChar(keychar, modifiers) && SDLActivity.isSDLTextInputActive()) {
+                    SDLActivity.onNativeTextInput(String.valueOf(keychar));
+                }
             } else {
                 SDLActivity.onNativeKeyUp(androidKeycode);
             }
         } catch (Throwable ignored) {
         }
+    }
+
+    private static boolean isTextEventChar(char keychar, int modifiers) {
+        if (Character.isISOControl(keychar)) return false;
+        return (modifiers & LwjglGlfwKeycode.GLFW_MOD_CONTROL) == 0;
     }
 
     public static void sendChar(char keychar, int modifiers){

@@ -67,6 +67,9 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.OtherLoginOperatio
 import com.movtery.zalithlauncher.ui.screens.content.elements.ServerOperation
 import com.movtery.zalithlauncher.utils.network.toLocal
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +84,6 @@ import kotlinx.coroutines.launch
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.UUID
-import javax.inject.Inject
 import io.ktor.client.plugins.ResponseException as KtorResponseException
 import kotlinx.coroutines.flow.combine as kotlinxCombine
 
@@ -173,14 +175,11 @@ sealed interface AccountManageIntent {
 
 /**
  * 账号管理界面单次副作用 (MVI Effect)
- * 用于处理 Toast、错误弹窗或 UI 通知等瞬时事件
+ * 用于处理错误弹窗等瞬时事件
  */
 sealed class AccountManageEffect {
     /** 在 UI 层显示错误信息对话框 */
     data class ShowError(val title: AndroidStringText, val message: AndroidStringText) : AccountManageEffect()
-
-    /** 在 UI 层显示 Toast 提示 */
-    data class ShowToast(val text: AndroidStringText, val duration: Int) : AccountManageEffect()
 }
 
 /**
@@ -191,10 +190,15 @@ sealed class AccountManageEffect {
  * 
  * @property context 全局应用上下文
  */
-@HiltViewModel
-class AccountManageViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = AccountManageViewModel.Factory::class)
+class AccountManageViewModel @AssistedInject constructor(
+    @Assisted private val eventViewModel: EventViewModel,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
+    @AssistedFactory
+    interface Factory {
+        fun create(eventViewModel: EventViewModel): AccountManageViewModel
+    }
     private val _loginMenuOp = MutableStateFlow<LoginMenuOperation>(LoginMenuOperation.None)
 
     private val _microsoftLoginOp =
@@ -430,9 +434,7 @@ class AccountManageViewModel @Inject constructor(
         text: AndroidStringText,
         duration: Int = Toast.LENGTH_SHORT
     ) {
-        viewModelScope.launch(Dispatchers.Main) {
-            _effect.send(AccountManageEffect.ShowToast(text, duration))
-        }
+        eventViewModel.sendToast(text, duration)
     }
 
     /** 执行微软登录流程 */
@@ -770,7 +772,9 @@ class AccountManageViewModel @Inject constructor(
                     )
                 )
             }
-        ).justLogin(context, account)
+        ).let { helper ->
+            TaskSystem.submitTask(helper.justLogin(context, account))
+        }
     }
 
     /** 保存离线账号皮肤到本地存储 */

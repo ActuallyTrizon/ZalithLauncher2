@@ -18,7 +18,9 @@
 
 package com.movtery.zalithlauncher.game.download.engine
 
+import com.movtery.zalithlauncher.utils.network.isInterruptedIOException
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -67,6 +69,12 @@ internal class SourceHealth(
         return System.nanoTime() >= host.trippedUntilNanos.get()
     }
 
+    /** 距冷却到期的剩余时间，未熔断或从未见过的主机为 0 */
+    fun remainingCooldownNanos(url: String): Long {
+        val host = hosts[hostOf(url)] ?: return 0L
+        return (host.trippedUntilNanos.get() - System.nanoTime()).coerceAtLeast(0L)
+    }
+
     private fun hostOf(url: String): String =
         //host:port 作为分键：同一主机的不同端口通常对应不同的服务（测试台架/自建镜像）
         url.toHttpUrlOrNull()?.let { "${it.host}:${it.port}" } ?: url
@@ -74,10 +82,19 @@ internal class SourceHealth(
     companion object {
         internal const val TRIP_THRESHOLD = 4
         internal val TRIP_WINDOW_NANOS = 10_000_000_000L
-        internal val COOLDOWN_NANOS = 45_000_000_000L
+        internal val COOLDOWN_NANOS = 15_000_000_000L
     }
 }
 
 /** 沿因果链识别读/连接超时，作为熔断的计数依据 */
 internal fun Throwable.isTimeoutError(): Boolean =
-    generateSequence(this) { it.cause }.any { it is SocketTimeoutException }
+    generateSequence(this) { it.cause }.any {
+        it is SocketTimeoutException ||
+                (it is InterruptedIOException && it.message == TIMEOUT_MESSAGE)
+    }
+
+/** 线程级中断（协程取消），而非网络超时；超时的 InterruptedIOException 不属此类 */
+internal fun Throwable.isInterruptedByCancellation(): Boolean =
+    this.isInterruptedIOException() && !this.isTimeoutError()
+
+private const val TIMEOUT_MESSAGE = "timeout"

@@ -64,6 +64,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
@@ -73,15 +74,16 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * 返回对话框内容可用的最大高度，以窗口容器高度为上界
+ *
+ * 输入法动画期间窗口高度可能被系统短暂压缩，这里记录最大值，避免对话框高度随之抖动
  */
 @Composable
 fun rememberDialogMaxHeight(): Dp {
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
-    val containerHeight = windowInfo.containerSize.height
-    return remember(windowInfo, containerHeight, density) {
-        with(density) { containerHeight.toDp() }
-    }
+    var maxHeight by remember(windowInfo) { mutableStateOf(windowInfo.containerSize.height) }
+    maxHeight = maxOf(maxHeight, windowInfo.containerSize.height)
+    return with(density) { maxHeight.toDp() }
 }
 
 /**
@@ -238,8 +240,11 @@ fun SimpleEditDialog(
     onCancel: () -> Unit = onDismissRequest,
     onConfirm: () -> Unit = {},
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        BoxWithConstraints(
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(decorFitsSystemWindows = false)
+    ) {
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),
@@ -312,8 +317,11 @@ fun SimpleEditDialog(
     extraContent: @Composable (() -> Unit)? = null,
     onConfirm: () -> Unit = {},
 ) {
-    Dialog(onDismissRequest = {}) {
-        BoxWithConstraints(
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(decorFitsSystemWindows = false)
+    ) {
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),

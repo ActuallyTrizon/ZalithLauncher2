@@ -5,9 +5,6 @@
 
 package org.libsdl.app;
 
-import static android.text.InputType.TYPE_CLASS_TEXT;
-import static android.text.InputType.TYPE_TEXT_VARIATION_NORMAL;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.UiModeManager;
@@ -43,9 +40,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -55,7 +50,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.movtery.zalithlauncher.game.sdl.SdlBridge;
-import com.movtery.zalithlauncher.ui.control.input.TouchCharInput;
 import com.movtery.zalithlauncher.utils.logging.Logger;
 
 import java.io.FileNotFoundException;
@@ -226,7 +220,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     // Main components
     protected static Activity mSingleton;
     protected static SDLSurface mSurface;
-    protected static SDLDummyEdit mTextEdit;
     protected static ViewGroup mLayout;
     protected static SDLClipboardHandler mClipboardHandler;
     protected static Hashtable<Integer, PointerIcon> mCursors;
@@ -342,7 +335,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         // Otherwise, when exiting the app and returning to it, these variables *keep* their pre exit values
         mSingleton = null;
         mSurface = null;
-        mTextEdit = null;
+        SdlImeController.reset();
         mLayout = null;
         mClipboardHandler = null;
         mCursors = new Hashtable<Integer, PointerIcon>();
@@ -364,7 +357,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         mSingleton = getContext();
         mSurface = surface; // Must set here before set native surface
         SDLSurface.setNativeSurface(nativeSurface);
-        mTextEdit = null;
+        SdlImeController.reset();
         mLayout = layout;
         SDL.setContext(mSingleton); // Important!! SDLClipboardHandler needs it.
         mClipboardHandler = new SDLClipboardHandler();
@@ -387,38 +380,19 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
     public static boolean isUsingSDLTextEdit(){
-        return mTextEdit != null;
+        return SdlImeController.isEditAvailable();
+    }
+
+    public static boolean isSDLTextInputActive(){
+        return SdlImeController.isTextInputActive();
     }
 
     public static void enableSDLEditKeyboard(){
-        if (mTextEdit == null) return;
-
-        mTextEdit.setInputType(TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_NORMAL);
-        mTextEdit.setVisibility(View.VISIBLE);
-        if (!mTextEdit.hasFocus()) {
-            mTextEdit.requestFocus();
-        }
-
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(mTextEdit, 0);
-        if (imm.isAcceptingText()) {
-            onNativeScreenKeyboardShown();
-        }
+        SdlImeController.requestShow(SdlImeController.Source.LAUNCHER);
     }
 
     public static void disableSDLEditKeyboard(){
-        if (mTextEdit == null) return;
-        mTextEdit.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
-        mTextEdit.setVisibility(View.INVISIBLE);
-        mTextEdit.clearFocus();
-
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mTextEdit.getWindowToken(), 0);
-        onNativeScreenKeyboardHidden();
-
-        if (mSurface != null) {
-            mSurface.requestFocus();
-        }
+        SdlImeController.requestHide(SdlImeController.Source.LAUNCHER);
     }
 
 
@@ -1045,7 +1019,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 //                }
                 break;
             case COMMAND_TEXTEDIT_HIDE:
-                disableSDLEditKeyboard();
+                SdlImeController.requestHide(SdlImeController.Source.GAME);
                 break;
             case COMMAND_SET_KEEP_SCREEN_ON:
             {
@@ -1472,74 +1446,32 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         return mLayout;
     }
 
-    static class ShowTextInputTask implements Runnable {
-        /*
-         * This is used to regulate the pan&scan method to have some offset from
-         * the bottom edge of the input region and the top edge of an input
-         * method (soft keyboard)
-         */
-        static final int HEIGHT_PADDING = 15;
-
-        public int input_type;
-        public int x, y, w, h;
-
-        public ShowTextInputTask(int input_type, int x, int y, int w, int h) {
-            this.input_type = input_type;
-            this.x = x;
-            this.y = y;
-            this.w = w;
-            this.h = h;
-
-            /* Minimum size of 1 pixel, so it takes focus. */
-            if (this.w <= 0) {
-                this.w = 1;
-            }
-            if (this.h + HEIGHT_PADDING <= 0) {
-                this.h = 1 - HEIGHT_PADDING;
-            }
-        }
-
-        @Override
-        public void run() {
-            if (!SdlBridge.getSdlEnabled()) return;
-            TouchCharInput.disableActiveInput();
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(w, h + HEIGHT_PADDING);
-            params.leftMargin = x;
-            params.topMargin = y;
-
-            if (mTextEdit == null) {
-                mTextEdit = new SDLDummyEdit(getContext());
-
-                mLayout.addView(mTextEdit, params);
-            } else {
-                mTextEdit.setLayoutParams(params);
-            }
-            mTextEdit.setInputType(input_type);
-
-            mTextEdit.setVisibility(View.VISIBLE);
-            mTextEdit.requestFocus();
-
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            // Launcher-side setting may reject auto-showing the IME.
-            // The focused DummyEdit must stay in place either way: soft keyboard
-            // text only reaches the game through its InputConnection, so skipping
-            // the whole task would break manual input entirely.
-            if (SdlBridge.getSdlImeAutoShowEnabled()) {
-                imm.showSoftInput(mTextEdit, 0);
-            }
-
-            if (imm.isAcceptingText()) {
-                onNativeScreenKeyboardShown();
-            }
-        }
-    }
-
     /**
      * This method is called by SDL using JNI.
      */
     public static boolean showTextInput(int input_type, int x, int y, int w, int h) {
-        // Transfer the task to the main thread as a Runnable
-        return commandHandler.post(new ShowTextInputTask(input_type, x, y, w, h));
+        return SdlImeController.requestShow(SdlImeController.Source.GAME, input_type, x, y, w, h);
+    }
+
+    /**
+     * VMActivity 的 TextureView/SurfaceView 的 IME 可见性上报入口
+     */
+    public static void notifyImeVisibilityChanged(boolean visible) {
+        SdlImeController.notifyVisibilityChanged(visible);
+    }
+
+    /**
+     * SDL 侧文本输入通道
+     * 合成 SDL_EVENT_TEXT_INPUT 向 native端提交文本
+     */
+    public static void onNativeTextInput(String text) {
+        if (!SdlBridge.getSdlEnabled() || text == null || text.isEmpty()) {
+            return;
+        }
+        try {
+            SDLInputConnection.nativeCommitText(text, 1);
+        } catch (UnsatisfiedLinkError ignored) {
+        }
     }
 
     public static boolean isTextInputEvent(KeyEvent event) {
@@ -1611,7 +1543,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             onNativeKeyDown(keyCode);
 
-            if (isTextInputEvent(event)) {
+            //仅当 SDL 文本输入通道激活时才合成文本，通道关闭时按键按事件原样上交
+            if (isTextInputEvent(event) && SdlImeController.isTextInputActive()) {
                 if (ic != null) {
                     ic.commitText(String.valueOf((char) event.getUnicodeChar()), 1);
                 } else {

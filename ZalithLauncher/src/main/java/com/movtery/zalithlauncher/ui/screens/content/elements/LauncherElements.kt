@@ -63,6 +63,7 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.account.accountErrorText
@@ -405,7 +406,9 @@ fun LaunchGameOperation(
                                         ))
                                 }
                             }
-                        ).justLogin(activity, operation.account)
+                        ).let { helper ->
+                            TaskSystem.submitTask(helper.justLogin(activity, operation.account))
+                        }
                     }
                 )
             }
