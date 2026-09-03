@@ -1391,4 +1391,5 @@
     <string name="account_refresh_failed_skip_message">Não foi possível acessar o servidor de autenticação. Você pode ignorar a atualização e iniciar com as credenciais atuais, mas servidores que exigem autenticação online podem rejeitar o login.</string>
     <string name="account_refresh_failed_skip">Ignorar atualização</string>
     <string name="account_refresh_failed_retry">Atualizar novamente</string>
+    <string name="download_install_error_process_start">O sistema recusou-se a criar o processo de instalação. Isso geralmente é causado por memória insuficiente ou restrições em segundo plano no dispositivo. Feche os aplicativos em segundo plano e tente novamente ou force a parada do launcher e abra-o novamente.</string>
 </resources>
