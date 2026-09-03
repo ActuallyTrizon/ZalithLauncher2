@@ -21,9 +21,11 @@ package com.movtery.zalithlauncher.game.download.engine
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 
 class SourceHealthTest {
@@ -88,13 +90,28 @@ class SourceHealthTest {
     }
 
     @Test
-    fun `all hosts tripped still yields a candidate via fallback pass`() {
+    fun `all hosts tripped yields nothing and waits for cooldown`() {
         val health = SourceHealth(tripThreshold = 1, cooldownNanos = 10_000_000_000L)
         health.recordTimeout("https://official.example/f")
         health.recordTimeout("https://mirror.example/f")
 
         val sources = SourceSet(listOf("https://official.example/f", "https://mirror.example/f"), health)
-        assertNotNull(sources.acquire(false))
+        //熔断期内 acquire 不再派发注定空转的候选人，由调用方等待最早的冷却到期
+        assertNull(sources.acquire(false))
+        assertTrue(sources.cooldownRemainingMillis() > 0)
+        //降级通道无视熔断，保证末路阶段仍会真实尝试
+        assertNotNull(sources.acquireDegraded(false))
+    }
+
+    @Test
+    fun `okio read timeout trips the breaker on http11`() {
+        val health = SourceHealth(tripThreshold = 2, cooldownNanos = 600_000_000L)
+        val sources = SourceSet(listOf("https://official.example/f", "https://mirror.example/f"), health)
+        val official = sources.acquire(false)!!
+
+        //HTTP/1.1 的读超时是 okio 抛出的 InterruptedIOException("timeout")，必须计入熔断
+        repeat(2) { official.recordFailure(InterruptedIOException("timeout")) }
+        assertFalse(health.isViable("https://official.example/f"))
     }
 
     @Test
@@ -111,7 +128,16 @@ class SourceHealthTest {
     fun `timeout is detected through the cause chain`() {
         assertTrue(SocketTimeoutException("timeout").isTimeoutError())
         assertTrue(IOException("wrapped", SocketTimeoutException("read timed out")).isTimeoutError())
+        assertTrue(InterruptedIOException("timeout").isTimeoutError())
+        assertTrue(IOException("wrapped", InterruptedIOException("timeout")).isTimeoutError())
         assertFalse(IOException("plain").isTimeoutError())
         assertFalse(HttpResultException(500, "synthetic").isTimeoutError())
+    }
+
+    @Test
+    fun `only timeouts are treated as failures not cancellations`() {
+        assertFalse(SocketTimeoutException("timeout").isInterruptedByCancellation())
+        assertFalse(InterruptedIOException("timeout").isInterruptedByCancellation())
+        assertTrue(InterruptedIOException("plain interrupt").isInterruptedByCancellation())
     }
 }

@@ -803,15 +803,15 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                         IntOffset(0, -bottomPadding)
                     },
                 factory = { context ->
-                    if (AllSettings.useSurfaceView.getValue()) {
+                    val view = if (AllSettings.useSurfaceView.getValue()) {
                         //使用 SurfaceView 渲染
                         SurfaceView(context).apply {
                             holder.addCallback(this@VMActivity)
                             // SDL 模式需要父 ViewGroup（输入法 EditText 附加用）
                             gameSurfaceView = this
-                        }.also { view ->
+                        }.also { surface ->
                             applySizeToSurface = { width, height ->
-                                view.holder.setFixedSize(width, height)
+                                surface.holder.setFixedSize(width, height)
                             }
                         }
                     } else {
@@ -820,13 +820,22 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                             alpha = 1.0f
 
                             surfaceTextureListener = this@VMActivity
-                        }.also { view ->
-                            gameSurfaceView = view
+                        }.also { texture ->
+                            gameSurfaceView = texture
                             applySizeToSurface = { width, height ->
-                                view.surfaceTexture?.setDefaultBufferSize(width, height)
+                                texture.surfaceTexture?.setDefaultBufferSize(width, height)
                             }
                         }
                     }
+                    view.setOnApplyWindowInsetsListener { v, insets ->
+                        if (SdlBridge.sdlEnabled && android.os.Build.VERSION.SDK_INT >= 30) {
+                            SDLActivity.notifyImeVisibilityChanged(
+                                insets.isVisible(android.view.WindowInsets.Type.ime())
+                            )
+                        }
+                        v.onApplyWindowInsets(insets)
+                    }
+                    view
                 }
             )
 

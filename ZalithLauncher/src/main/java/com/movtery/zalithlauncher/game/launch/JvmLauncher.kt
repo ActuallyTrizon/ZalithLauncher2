@@ -42,14 +42,23 @@ import java.io.IOException
 
 private const val TAG = "JvmLauncher"
 
+/** 安装器等轻量任务的内存上限 */
+private const val INSTALL_RAM_ALLOCATION = 512
+
 open class JvmLauncher(
     private val context: Context,
     private val jvmLaunchInfo: JvmLaunchInfo,
     onExit: (code: Int, isSignal: Boolean) -> Unit,
     openPath: (folder: File) -> Unit
 ) : Launcher(onExit, openPath) {
-    override fun exit() {
+    override fun exit() {}
 
+    override fun progressFinalUserArgs(args: MutableList<String>, ramAllocation: Int) {
+        if (jvmLaunchInfo.useUserJvm) {
+            super.progressFinalUserArgs(args, ramAllocation)
+        } else {
+            super.progressFinalUserArgs(args, INSTALL_RAM_ALLOCATION)
+        }
     }
 
     override suspend fun launch(screenSize: IntSize): Int {

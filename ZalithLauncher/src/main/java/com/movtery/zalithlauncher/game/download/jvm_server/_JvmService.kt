@@ -55,6 +55,12 @@ fun startJvmService(
 }
 
 /**
+ * 判定是否为系统拒绝创建安装进程（:jvm）导致的启动失败
+ */
+fun Throwable.isProcessStartRefused(): Boolean =
+    this is SecurityException && message?.contains("process is bad") == true
+
+/**
  * 与 JVM 安装运行互斥、开跑前必须清场的子进程名后缀
  */
 private val JVM_EXCLUSIVE_SUFFIXES = listOf(":jvm", ":game")

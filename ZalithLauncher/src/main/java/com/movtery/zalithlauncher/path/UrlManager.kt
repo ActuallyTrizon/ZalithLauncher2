@@ -43,7 +43,7 @@ val URL_USER_AGENT: String = "${BuildKeys.LAUNCHER_SHORT_NAME}/Android_${BuildCo
 val TIME_OUT = TimeUnit.SECONDS.toMillis(30L)
 
 /** 海量小文件多路复用客户端的读超时：比大文件更短，尽快触发换源 */
-const val SMALL_FILE_READ_TIMEOUT_MS = 8_000L
+const val SMALL_FILE_READ_TIMEOUT_MS = 5_000L
 
 const val HOST_CURSEFORGE_API = "api.curseforge.com"
 const val HOST_CURSEFORGE_EDGE = "edge.forgecdn.net"

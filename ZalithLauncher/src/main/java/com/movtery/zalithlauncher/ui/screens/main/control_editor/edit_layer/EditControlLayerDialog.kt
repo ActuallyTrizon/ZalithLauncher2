@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.ui.screens.main.control_editor.edit_layer
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,6 +53,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.movtery.layer_controller.data.VisibilityType
 import com.movtery.layer_controller.observable.ObservableControlLayer
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ui.components.ImePanContainer
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
 import com.movtery.zalithlauncher.ui.components.SingleLineTextCheck
@@ -80,9 +80,10 @@ fun EditControlLayerDialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
             dismissOnClickOutside = false,
+            decorFitsSystemWindows = false
         )
     ) {
-        BoxWithConstraints(
+        ImePanContainer(
             modifier = Modifier
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),

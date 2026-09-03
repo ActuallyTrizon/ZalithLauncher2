@@ -18,11 +18,10 @@
 
 package com.movtery.zalithlauncher.game.download.engine
 
-import com.movtery.zalithlauncher.path.DOWNLOAD_OKHTTP_CLIENT
 import com.movtery.zalithlauncher.path.createRequestBuilder
 import com.movtery.zalithlauncher.utils.file.calculateFileSha1
 import com.movtery.zalithlauncher.utils.file.ensureParentDirectory
-import com.movtery.zalithlauncher.utils.network.isInterruptedIOException
+import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -57,6 +56,7 @@ internal class FileDownloader(
     private val stats: DownloadStats,
     private val allowExtraConnection: () -> Boolean = { true },
     private val maxWorkersPerFile: Int = MAX_WORKERS_PER_FILE,
+    private val maxAllSourcesWaits: Int = MAX_ALL_SOURCES_WAITS,
     private val client: OkHttpClient? = null,
     /** 整批共享的主机级熔断状态，缺省时本文件独立计数 */
     private val sourceHealth: SourceHealth = SourceHealth()
@@ -139,6 +139,7 @@ internal class FileDownloader(
         }
 
         var stalledTicks = 0
+        var cooldownWaits = 0
 
         while (true) {
             workers.entries.removeAll { (_, job) -> job.isCompleted }
@@ -168,22 +169,33 @@ internal class FileDownloader(
                 }
             }
 
-            //等待在循环尾部：首轮分派立即发生，避免海量小文件各自空付一个调度周期
-            delay(SPLIT_TICK_MS.milliseconds)
+            if (workers.isNotEmpty()) {
+                stalledTicks = 0
+                delay(SPLIT_TICK_MS.milliseconds)
+                continue
+            }
 
-            stalledTicks = if (workers.isEmpty()) stalledTicks + 1 else 0
+            val waitingMs = sources.cooldownRemainingMillis()
+            if (waitingMs > 0 && cooldownWaits < maxAllSourcesWaits) {
+                cooldownWaits++
+                stalledTicks = 0
+                delay(waitingMs.milliseconds)
+                continue
+            }
+
+            stalledTicks++
             if (stalledTicks > STALLED_TICK_LIMIT) return@coroutineScope
+            delay(SPLIT_TICK_MS.milliseconds)
         }
     }
 
     /** 降级阶段：按源顺序各做一次无 Range 的完整单流下载 */
     private suspend fun phaseSingleStream(chain: SegmentChain, channel: FileChannel) {
         while (!chain.isComplete()) {
-            val source = sources.acquire(requireRange = false) ?: break
+            val source = sources.acquireDegraded(requireRange = false) ?: break
             chain.resetForSingleStream()
             connections.withPermit {
                 runInterruptible {
-                    if (!sourceHealth.isViable(source.url)) return@runInterruptible
                     guardFailure(source) {
                         executeWhole(source, chain, channel)
                     }
@@ -196,6 +208,7 @@ internal class FileDownloader(
 
     /** 统一的失败归类：换源由调度循环在下一拍自动发生 */
     private fun guardFailure(source: SourceSet.Source, block: () -> Unit) {
+        Logger.info(TAG, "Downloading: ${source.url}")
         try {
             block()
             source.recordSuccess()
@@ -205,7 +218,8 @@ internal class FileDownloader(
         } catch (e: ClosedByInterruptException) {
             throw cancellationOf(e)
         } catch (e: Exception) {
-            if (e.isInterruptedIOException()) throw cancellationOf(e)
+            if (e.isInterruptedByCancellation()) throw cancellationOf(e)
+            Logger.warning(TAG, "Failed: ${source.url}")
             source.recordFailure(e)
         }
     }
@@ -360,6 +374,8 @@ internal class FileDownloader(
     })
 
     companion object {
+        private const val TAG = "FileDownloader"
+
         const val BUFFER_SIZE = 64 * 1024
         const val MIN_SPLIT_TAIL = 256L * 1024L
         const val MIN_FILE_SIZE_FOR_SPLIT = 1024L * 1024L
@@ -367,6 +383,8 @@ internal class FileDownloader(
         const val SPLIT_TICK_MS = 200L
 
         private const val STALLED_TICK_LIMIT = 5
+        /** 全部源熔断冷却时最多原地等待的轮数，之后进入降级通道真实尝试 */
+        const val MAX_ALL_SOURCES_WAITS = 2
         private const val RANGE_HEADER = "Range"
         private const val CONTENT_RANGE = "Content-Range"
 

@@ -7,10 +7,12 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 
-import org.libsdl.app.SDLActivity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.movtery.zalithlauncher.game.sdl.SdlBridge;
+
+import org.libsdl.app.SDLActivity;
 
 /**
  * [From PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/customcontrols/keyboard/TouchCharInput.java)
@@ -35,7 +37,7 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
     private InputListener mListener;
 
     public void enableKeyboard() {
-        if (SDLActivity.isUsingSDLTextEdit()) {
+        if (SdlBridge.getSdlEnabled()) {
             SDLActivity.enableSDLEditKeyboard();
             return;
         }
@@ -53,6 +55,13 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
     }
 
     public void disableKeyboard() {
+        if (SdlBridge.getSdlEnabled()) {
+            SDLActivity.disableSDLEditKeyboard();
+            if (sActiveInput == this) {
+                sActiveInput = null;
+            }
+            return;
+        }
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
         clearFocus();

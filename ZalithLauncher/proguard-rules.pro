@@ -56,3 +56,6 @@
 
 # Libraries
 -keep class com.github.steveice10.opennbt.** { *; }
+
+# SoraEditor language-textmate
+-keep class org.jcodings.** { *; }

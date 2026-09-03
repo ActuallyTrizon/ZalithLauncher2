@@ -62,6 +62,7 @@ import com.google.gson.JsonSyntaxException
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.jvm_server.JvmCrashException
+import com.movtery.zalithlauncher.game.download.jvm_server.isProcessStartRefused
 import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
 import com.movtery.zalithlauncher.game.version.mod.LocalMod
 import com.movtery.zalithlauncher.game.version.mod.RemoteMod
@@ -200,8 +201,9 @@ fun ModsUpdateOperation(
                 is SerializationException, is JsonSyntaxException -> stringResource(R.string.error_parse_failed)
                 is JvmCrashException -> stringResource(R.string.download_install_error_jvm_crash, th.code)
                 is DownloadFailedException -> stringResource(R.string.download_install_error_download_failed)
-                else -> {
-                    th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
+                else -> when {
+                    th.isProcessStartRefused() -> stringResource(R.string.download_install_error_process_start)
+                    else -> th.localizedMessage ?: th.message ?: th::class.qualifiedName ?: "Unknown error"
                 }
             }
             val dismiss = {

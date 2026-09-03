@@ -80,9 +80,10 @@ fun SimpleTextInputField(
     textStyle: TextStyle = TextStyle(color = contentColor).copy(fontSize = 12.sp),
     cursorBrush: Brush = SolidColor(LocalTextSelectionColors.current.handleColor),
     singleLine: Boolean = false,
+    imePanEnabled: Boolean = true,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = if (imePanEnabled) modifier.imePanAnchor() else modifier,
         color = color,
         contentColor = contentColor,
         shape = shape
@@ -148,6 +149,7 @@ fun SmallOutlinedEditField(
     keyboardActions: KeyboardActions? = null,
     singleLine: Boolean = false,
     interactionSource: MutableInteractionSource? = null,
+    imePanEnabled: Boolean = true,
 ) {
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val isFocused = interactionSource.collectIsFocusedAsState().value
@@ -169,7 +171,7 @@ fun SmallOutlinedEditField(
     }
 
     BasicTextField(
-        modifier = modifier,
+        modifier = if (imePanEnabled) modifier.imePanAnchor() else modifier,
         value = value,
         onValueChange = { new ->
             onValueChange(
@@ -278,6 +280,7 @@ fun OwnOutlinedTextField(
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = OutlinedTextFieldDefaults.shape,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    imePanEnabled: Boolean = true,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -290,7 +293,7 @@ fun OwnOutlinedTextField(
                 onValueChange(string)
             }
         },
-        modifier = modifier,
+        modifier = if (imePanEnabled) modifier.imePanAnchor() else modifier,
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,

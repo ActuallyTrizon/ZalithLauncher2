@@ -120,7 +120,6 @@ import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
-import com.movtery.zalithlauncher.viewmodel.sendToast
 
 @Composable
 fun MainScreen(
@@ -562,9 +561,7 @@ private fun NavigationUI(
                         openLink = { url ->
                             eventViewModel.sendEvent(EventViewModel.Event.OpenLink(url))
                         },
-                        showToast = { text, duration ->
-                            eventViewModel.sendToast(text, duration)
-                        },
+                        eventViewModel = eventViewModel,
                         submitError = submitError
                     )
                 }
