@@ -595,9 +595,4 @@ object AllSettings : SettingsRegistry() {
      * 搜索光影的初始搜索平台
      */
     val searchShadersPlatform = enumSetting("searchShadersPlatform", Platform.CURSEFORGE)
-
-    /**
-     * 启动 MC26.2+ 时，自动检查 Vulkan
-     */
-    val autoVulkanChecker = boolSetting("autoVulkanChecker", true)
 }
