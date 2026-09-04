@@ -76,6 +76,8 @@ import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerVer
+import com.movtery.zalithlauncher.game.version.installed.utils.isLowerVer
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -92,8 +94,6 @@ import com.movtery.zalithlauncher.utils.checkStoragePermissions
 import com.movtery.zalithlauncher.utils.file.InvalidFilenameException
 import com.movtery.zalithlauncher.utils.file.checkFilenameValidity
 import com.movtery.zalithlauncher.utils.hasStoragePermission
-import com.movtery.zalithlauncher.utils.string.isBiggerTo
-import com.movtery.zalithlauncher.utils.string.isLowerTo
 import com.movtery.zalithlauncher.viewmodel.BackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
@@ -312,8 +312,8 @@ fun LaunchGameOperation(
                 val mcVer = version.getVersionInfo()!!.minecraftVersion
 
                 val isRendererUnsupported =
-                    (rendererMinVer?.let { mcVer.isLowerTo(it) } ?: false) ||
-                            (rendererMaxVer?.let { mcVer.isBiggerTo(it) } ?: false)
+                    (rendererMinVer?.let { mcVer.isLowerVer(it) } ?: false) ||
+                            (rendererMaxVer?.let { mcVer.isBiggerVer(it) } ?: false)
 
                 if (isRendererUnsupported) {
                     launchGameViewModel.updateOperation(LaunchGameOperation.UnsupportedRenderer(currentRenderer, version, quickPlay))
@@ -321,8 +321,8 @@ fun LaunchGameOperation(
                 }
 
                 val unsupportedPlugins = NativePluginManager.getCheckedPlugins().filter { plugin ->
-                    (plugin.minMCVer?.let { mcVer.isLowerTo(it) } ?: false) ||
-                            (plugin.maxMCVer?.let { mcVer.isBiggerTo(it) } ?: false)
+                    (plugin.minMCVer?.let { mcVer.isLowerVer(it) } ?: false) ||
+                            (plugin.maxMCVer?.let { mcVer.isBiggerVer(it) } ?: false)
                 }
                 if (unsupportedPlugins.isNotEmpty()) {
                     launchGameViewModel.updateOperation(LaunchGameOperation.UnsupportedPlugins(unsupportedPlugins, version, quickPlay))
