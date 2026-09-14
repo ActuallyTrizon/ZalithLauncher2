@@ -396,6 +396,7 @@ private fun ModPackInstallOperation(
         is ModPackInstallOperation.Install -> {
             if (installer != null) {
                 val tasks = installer.tasksFlow.collectAsStateWithLifecycle()
+                val installLog = installer.logOutput.collectAsStateWithLifecycle()
                 if (tasks.value.isNotEmpty()) {
                     //安装整合包流程对话框
                     TitleTaskFlowDialog(
@@ -404,7 +405,8 @@ private fun ModPackInstallOperation(
                         onCancel = {
                             onCancel()
                             updateOperation(ModPackInstallOperation.None)
-                        }
+                        },
+                        logOutput = installLog.value
                     )
                 }
             }

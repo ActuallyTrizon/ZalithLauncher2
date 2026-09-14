@@ -22,6 +22,7 @@ import android.content.Context
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
+import com.movtery.zalithlauncher.coroutine.TaskLogOutput
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
@@ -42,7 +43,9 @@ import com.movtery.zalithlauncher.utils.network.isUsingMobileData
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -67,6 +70,10 @@ class ModPackInstaller(
 ) {
     private val taskExecutor = TaskFlowExecutor(scope)
     val tasksFlow: StateFlow<List<TitledTask>> = taskExecutor.tasksFlow
+
+    private val _logOutput = MutableStateFlow<TaskLogOutput?>(null)
+    /** 安装 JVM 实时日志输出 */
+    val logOutput: StateFlow<TaskLogOutput?> = _logOutput.asStateFlow()
 
     /**
      * 整合包文件解析出的信息
@@ -242,7 +249,12 @@ class ModPackInstaller(
                     )
 
                     //开始安装游戏！切换到下一阶段！
-                    val gameInstaller = GameInstaller(context, gameDownloadInfo, scope)
+                    val gameInstaller = GameInstaller(
+                        context = context,
+                        info = gameDownloadInfo,
+                        scope = scope,
+                        logOutputHolder = _logOutput
+                    )
                     taskExecutor.addPhases(
                         phases = gameInstaller.getTaskPhase(
                             createIsolation = false,

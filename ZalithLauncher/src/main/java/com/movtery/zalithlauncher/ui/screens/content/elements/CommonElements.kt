@@ -80,12 +80,14 @@ import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.context.getFileName
 import com.movtery.zalithlauncher.contract.extensionToMimeType
 import com.movtery.zalithlauncher.coroutine.Task
+import com.movtery.zalithlauncher.coroutine.TaskLogOutput
 import com.movtery.zalithlauncher.coroutine.TaskStage
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.IconTextButton
 import com.movtery.zalithlauncher.ui.components.MarqueeText
+import com.movtery.zalithlauncher.ui.components.TaskLogCard
 import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.components.rememberDialogMaxHeight
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -344,12 +346,14 @@ fun <I, O> ImportFileButton(
 fun TitleTaskFlowDialog(
     title: String,
     tasks: List<TitledTask>,
-    onCancel: () -> Unit = {}
+    onCancel: () -> Unit = {},
+    logOutput: TaskLogOutput? = null
 ) {
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
-            dismissOnClickOutside = false
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = logOutput == null
         )
     ) {
         BoxWithConstraints(
@@ -362,49 +366,89 @@ fun TitleTaskFlowDialog(
                 modifier = Modifier
                     .padding(all = 6.dp)
                     .heightIn(max = (maxHeight - 12.dp).coerceAtMost(rememberDialogMaxHeight()))
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .then(
+                        if (logOutput != null) {
+                            Modifier.fillMaxWidth(0.8f)
+                        } else Modifier
+                    ),
                 shape = MaterialTheme.shapes.extraLarge,
                 color = cardColor(false),
                 contentColor = onCardColor(),
                 shadowElevation = 6.dp
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium
+                if (logOutput == null) {
+                    TaskFlowListColumn(
+                        title = title,
+                        tasks = tasks,
+                        onCancel = onCancel,
+                        modifier = Modifier.padding(16.dp)
                     )
-
-                    val scrollState = rememberLazyListState()
-                    LazyColumn(
-                        modifier = Modifier
-                            .fadeEdge(state = scrollState)
-                            .weight(1f, fill = false),
-                        state = scrollState
+                } else {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(tasks) { task ->
-                            InstallingTaskItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 6.dp),
-                                title = task.title,
-                                runningIcon = task.runningIcon,
-                                task = task.task
-                            )
-                        }
-                    }
-
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onCancel
-                    ) {
-                        MarqueeText(text = stringResource(R.string.generic_cancel))
+                        TaskFlowListColumn(
+                            title = title,
+                            tasks = tasks,
+                            onCancel = onCancel,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TaskLogCard(
+                            logOutput = logOutput,
+                            modifier = Modifier
+                                .width(280.dp)
+                                .fillMaxHeight()
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TaskFlowListColumn(
+    title: String,
+    tasks: List<TitledTask>,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        val scrollState = rememberLazyListState()
+        LazyColumn(
+            modifier = Modifier
+                .fadeEdge(state = scrollState)
+                .weight(1f, fill = false),
+            state = scrollState
+        ) {
+            items(tasks) { task ->
+                InstallingTaskItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    title = task.title,
+                    runningIcon = task.runningIcon,
+                    task = task.task
+                )
+            }
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onCancel
+        ) {
+            MarqueeText(text = stringResource(R.string.generic_cancel))
         }
     }
 }
