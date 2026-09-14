@@ -35,13 +35,11 @@ import com.movtery.zalithlauncher.game.launch.Launcher
 import com.movtery.zalithlauncher.notification.NOTIFICATION_ID_JVM_SERVICE
 import com.movtery.zalithlauncher.notification.NoticeProgress
 import com.movtery.zalithlauncher.notification.NotificationChannelData
-import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -187,7 +185,7 @@ class JvmService : Service() {
             }
 
             //开始记录日志
-            val logFile = File(PathManager.DIR_FILES_EXTERNAL, "latest_process.log")
+            val logFile = LATEST_PROCESS_LOG_FILE
             if (!logFile.exists() && !logFile.createNewFile()) throw IOException("Failed to create a new log file")
             LoggerBridge.start(logFile.absolutePath)
 

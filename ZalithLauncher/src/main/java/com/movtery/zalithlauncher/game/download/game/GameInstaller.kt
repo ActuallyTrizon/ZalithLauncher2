@@ -24,6 +24,7 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.GlobalContext
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
+import com.movtery.zalithlauncher.coroutine.TaskLogOutput
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
@@ -65,7 +66,9 @@ import com.movtery.zalithlauncher.utils.network.downloadFileFromSources
 import com.movtery.zalithlauncher.utils.network.withSpeedReport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
@@ -83,14 +86,21 @@ private class GameAlreadyInstalledException : RuntimeException()
  * @param context 用于获取任务描述信息
  * @param info 安装游戏所需要的信息，包括 Minecraft id、自定义版本名称、Addon 列表
  * @param scope 在有生命周期管理的scope中执行安装任务
+ * @param logOutputHolder 安装 JVM 日志输出的容器
  */
 class GameInstaller(
     private val context: Context,
     private val info: GameDownloadInfo,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val logOutputHolder: MutableStateFlow<TaskLogOutput?> = MutableStateFlow(null)
 ) {
     private val taskExecutor = TaskFlowExecutor(scope)
     val tasksFlow: StateFlow<List<TitledTask>> = taskExecutor.tasksFlow
+
+    /**
+     * 安装 JVM 实时日志输出，仅在执行前台安装任务期间存在
+     */
+    val logOutput: StateFlow<TaskLogOutput?> = logOutputHolder.asStateFlow()
 
     /**
      * 基础下载器
@@ -549,7 +559,8 @@ class GameInstaller(
                         tempMinecraftDir = tempMinecraftDir,
                         tempInstallerJar = targetInstaller,
                         isNewVersion = isNewVersion,
-                        optifineVersion = optifineVersion
+                        optifineVersion = optifineVersion,
+                        logOutputHolder = logOutputHolder
                     )
                 )
             } else {
@@ -837,7 +848,8 @@ class GameInstaller(
                 tempInstaller = tempInstaller,
                 tempGameFolder = tempGameDir,
                 tempMinecraftDir = tempMinecraftDir,
-                inherit = processedInherit
+                inherit = processedInherit,
+                logOutputHolder = logOutputHolder
             )
         )
     }
@@ -929,7 +941,8 @@ class GameInstaller(
                 tempInstaller = tempInstaller,
                 tempGameFolder = tempGameDir,
                 tempMinecraftDir = tempMinecraftDir,
-                inherit = "1.12.2"
+                inherit = "1.12.2",
+                logOutputHolder = logOutputHolder
             )
         )
     }

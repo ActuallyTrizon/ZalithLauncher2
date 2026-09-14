@@ -323,6 +323,7 @@ private fun GameInstallOperation(
         is GameInstallOperation.Install -> {
             if (installer != null) {
                 val installGame = installer.tasksFlow.collectAsStateWithLifecycle()
+                val installLog = installer.logOutput.collectAsStateWithLifecycle()
                 if (installGame.value.isNotEmpty()) {
                     //安装游戏流程对话框
                     TitleTaskFlowDialog(
@@ -331,7 +332,8 @@ private fun GameInstallOperation(
                         onCancel = {
                             onCancel()
                             updateOperation(GameInstallOperation.None)
-                        }
+                        },
+                        logOutput = installLog.value
                     )
                 }
             }
