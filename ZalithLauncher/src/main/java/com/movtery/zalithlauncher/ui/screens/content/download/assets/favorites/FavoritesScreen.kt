@@ -94,6 +94,7 @@ import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.viewmodel.backgroundVisible
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -159,8 +160,11 @@ private class FavoritesScreenViewModel : ViewModel() {
     }
 
     fun onScreenEntered() {
-        FavoriteProjectsRepository.reload()
-        FavoriteProjectsRepository.refreshRemote(viewModelScope)
+        viewModelScope.launch {
+            //先完成数据同步，再基于最新数据池刷新远端数据
+            FavoriteProjectsRepository.reload()
+            FavoriteProjectsRepository.refreshRemote()
+        }
     }
 }
 
@@ -233,10 +237,13 @@ private fun FavoritesContent(
     viewModel: FavoritesScreenViewModel,
     swapToDownload: (Platform, PlatformClasses, projectId: String, iconUrl: String?) -> Unit
 ) {
+    val repositoryLoaded = FavoriteProjectsRepository.initialized
     val repositoryEmpty = FavoriteProjectsRepository.projects.isEmpty()
 
     Box(modifier = modifier) {
-        if (repositoryEmpty) {
+        if (!repositoryLoaded) {
+            //收藏数据装载中
+        } else if (repositoryEmpty) {
             //暂无任何收藏
             Column(
                 modifier = Modifier

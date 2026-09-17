@@ -18,7 +18,10 @@
 
 package com.movtery.zalithlauncher.game.download.assets.favorites
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
@@ -27,11 +30,17 @@ import com.movtery.zalithlauncher.game.download.assets.platform.getProjectByVers
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 
 /**
  * 收藏键，平台与项目Id唯一确定一个收藏项
@@ -60,17 +69,20 @@ object FavoriteProjectsRepository {
     /** 所有收藏项目，键为 [FavoriteKey] */
     val projects = mutableStateMapOf<FavoriteKey, FavoriteEntry>()
 
-    private var initialized = false
+    /** 收藏数据是否已完成装载 */
+    var initialized by mutableStateOf(false)
+        private set
+
+    //仓库内部协程作用域，承载非挂起入口的异步任务
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    //串行化数据装载与读写，避免并发修改导致的状态错乱
+    private val mutex = Mutex()
 
     /**
-     * 确保收藏数据已装载，未初始化时从 MMKV 全量装载一次
+     * 仅读取内存数据池；数据未装载时触发一次异步装载
      */
-    fun ensureLoaded() {
-        if (!initialized) reload()
-    }
-
     fun isFavorite(platform: Platform, projectId: String): Boolean {
-        ensureLoaded()
+        if (!initialized) scope.launch { ensureLoaded() }
         return projects.containsKey(FavoriteKey(platform, projectId))
     }
 
@@ -78,38 +90,32 @@ object FavoriteProjectsRepository {
      * 收藏一个搜索结果项目
      */
     fun favorite(data: PlatformSearchData, classes: PlatformClasses) {
-        saveFavorite(data.platform(), data.toFavoriteProject(classes))
+        scope.launch { saveFavorite(data.platform(), data.toFavoriteProject(classes)) }
     }
 
     /**
      * 收藏一个远端项目
      */
     fun favorite(project: PlatformProject, defaultClasses: PlatformClasses) {
-        saveFavorite(project.platform(), project.toFavoriteProject(defaultClasses))
-    }
-
-    private fun saveFavorite(platform: Platform, project: FavoriteProject) {
-        ensureLoaded()
-        favoritesMMKV(platform).encode(project.projectId, project)
-        projects[FavoriteKey(platform, project.projectId)] = FavoriteEntry(platform, project)
+        scope.launch { saveFavorite(project.platform(), project.toFavoriteProject(defaultClasses)) }
     }
 
     fun unfavorite(platform: Platform, projectId: String) {
-        ensureLoaded()
-        favoritesMMKV(platform).remove(projectId)
-        projects.remove(FavoriteKey(platform, projectId))
+        scope.launch { removeFavorite(platform, projectId) }
     }
 
     /**
      * 切换搜索结果项目的收藏状态
      */
     fun toggle(data: PlatformSearchData, classes: PlatformClasses) {
-        val platform = data.platform()
-        val projectId = data.platformId()
-        if (isFavorite(platform, projectId)) {
-            unfavorite(platform, projectId)
-        } else {
-            favorite(data, classes)
+        scope.launch {
+            val platform = data.platform()
+            val projectId = data.platformId()
+            if (checkFavorite(platform, projectId)) {
+                removeFavorite(platform, projectId)
+            } else {
+                saveFavorite(platform, data.toFavoriteProject(classes))
+            }
         }
     }
 
@@ -117,20 +123,54 @@ object FavoriteProjectsRepository {
      * 切换远端项目的收藏状态
      */
     fun toggle(project: PlatformProject, defaultClasses: PlatformClasses) {
-        val platform = project.platform()
-        val projectId = project.platformId()
-        if (isFavorite(platform, projectId)) {
-            unfavorite(platform, projectId)
-        } else {
-            favorite(project, defaultClasses)
+        scope.launch {
+            val platform = project.platform()
+            val projectId = project.platformId()
+            if (checkFavorite(platform, projectId)) {
+                removeFavorite(platform, projectId)
+            } else {
+                saveFavorite(platform, project.toFavoriteProject(defaultClasses))
+            }
+        }
+    }
+
+    /**
+     * 确保收藏数据已装载
+     */
+    suspend fun ensureLoaded() {
+        if (initialized) return
+        mutex.withLock {
+            if (!initialized) reloadLocked()
         }
     }
 
     /**
      * 从 MMKV 重新加载收藏数据
      */
-    fun reload() {
-        val latest = readAll()
+    suspend fun reload() = mutex.withLock {
+        reloadLocked()
+    }
+
+    /**
+     * 并发刷新所有收藏项目的远端数据，逐条更新内存与本地缓存
+     */
+    suspend fun refreshRemote() = coroutineScope {
+        val pending = projects.values.toList()
+        if (pending.isEmpty()) return@coroutineScope
+
+        val semaphore = Semaphore(REFRESH_CONCURRENCY)
+        pending.map { entry ->
+            async {
+                semaphore.withPermit { refreshEntry(entry) }
+            }
+        }.awaitAll()
+    }
+
+    /**
+     * 装载数据，须持有互斥锁调用
+     */
+    private suspend fun reloadLocked() {
+        val latest = withContext(Dispatchers.IO) { readAll() }
         if (!initialized) {
             initialized = true
             projects.clear()
@@ -143,19 +183,28 @@ object FavoriteProjectsRepository {
         }
     }
 
-    /**
-     * 并发刷新所有收藏项目的远端数据，逐条更新内存与本地缓存
-     */
-    fun refreshRemote(scope: CoroutineScope) {
-        val pending = projects.values.toList()
-        if (pending.isEmpty()) return
-        scope.launch {
-            val semaphore = Semaphore(REFRESH_CONCURRENCY)
-            pending.map { entry ->
-                async {
-                    semaphore.withPermit { refreshEntry(entry) }
-                }
-            }.awaitAll()
+    private suspend fun checkFavorite(platform: Platform, projectId: String): Boolean {
+        ensureLoaded()
+        return projects.containsKey(FavoriteKey(platform, projectId))
+    }
+
+    private suspend fun saveFavorite(platform: Platform, project: FavoriteProject) {
+        mutex.withLock {
+            if (!initialized) reloadLocked()
+            withContext(Dispatchers.IO) {
+                favoritesMMKV(platform).encode(project.projectId, project)
+            }
+            projects[FavoriteKey(platform, project.projectId)] = FavoriteEntry(platform, project)
+        }
+    }
+
+    private suspend fun removeFavorite(platform: Platform, projectId: String) {
+        mutex.withLock {
+            if (!initialized) reloadLocked()
+            withContext(Dispatchers.IO) {
+                favoritesMMKV(platform).remove(projectId)
+            }
+            projects.remove(FavoriteKey(platform, projectId))
         }
     }
 
@@ -168,9 +217,11 @@ object FavoriteProjectsRepository {
                 printLog = false
             )
             //条目可能在刷新过程中被移除，仅更新仍然存在的条目
-            projects[key]?.let { current ->
-                val merged = mergeCache(current.project, remote)
-                projects[key] = current.copy(project = merged, remote = remote)
+            mutex.withLock {
+                projects[key]?.let { current ->
+                    val merged = mergeCache(current.project, remote)
+                    projects[key] = current.copy(project = merged, remote = remote)
+                }
             }
         } catch (e: CancellationException) {
             throw e
@@ -182,7 +233,7 @@ object FavoriteProjectsRepository {
     /**
      * 以远端数据校正本地缓存，数据有变化时回写 MMKV，收藏时间保持不变
      */
-    private fun mergeCache(cached: FavoriteProject, remote: PlatformProject): FavoriteProject {
+    private suspend fun mergeCache(cached: FavoriteProject, remote: PlatformProject): FavoriteProject {
         val classes = remote.platformClasses(cached.classes)
         val iconUrl = remote.platformIconUrl()
         val title = remote.platformTitle()
@@ -205,7 +256,9 @@ object FavoriteProjectsRepository {
             classes = classes,
             followTime = cached.followTime
         )
-        favoritesMMKV(remote.platform()).encode(merged.projectId, merged)
+        withContext(Dispatchers.IO) {
+            favoritesMMKV(remote.platform()).encode(merged.projectId, merged)
+        }
         return merged
     }
 

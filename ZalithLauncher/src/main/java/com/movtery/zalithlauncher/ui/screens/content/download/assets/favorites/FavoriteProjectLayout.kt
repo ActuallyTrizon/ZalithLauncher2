@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.ui.screens.content.download.assets.favorites
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,11 +50,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteEntry
-import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformFilterCode
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.AssetsIcon
-import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.ClassesIdentifier
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.FavoriteToggleLabel
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.ProjectTitleHead
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
