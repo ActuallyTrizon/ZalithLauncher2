@@ -50,6 +50,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.ui.base.BaseScreen
@@ -126,6 +127,11 @@ fun DownloadScreen(
     eventViewModel: EventViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
+    //进入下载屏幕时确保收藏仓库完成初始化
+    LaunchedEffect(Unit) {
+        FavoriteProjectsRepository.ensureLoaded()
+    }
+
     BaseScreen(
         screenKey = key,
         currentKey = backScreenViewModel.mainScreen.currentKey,

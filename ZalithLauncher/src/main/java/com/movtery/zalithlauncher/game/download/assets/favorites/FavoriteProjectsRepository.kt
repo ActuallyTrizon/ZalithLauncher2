@@ -62,7 +62,15 @@ object FavoriteProjectsRepository {
 
     private var initialized = false
 
+    /**
+     * 确保收藏数据已装载，未初始化时从 MMKV 全量装载一次
+     */
+    fun ensureLoaded() {
+        if (!initialized) reload()
+    }
+
     fun isFavorite(platform: Platform, projectId: String): Boolean {
+        ensureLoaded()
         return projects.containsKey(FavoriteKey(platform, projectId))
     }
 
@@ -81,11 +89,13 @@ object FavoriteProjectsRepository {
     }
 
     private fun saveFavorite(platform: Platform, project: FavoriteProject) {
+        ensureLoaded()
         favoritesMMKV(platform).encode(project.projectId, project)
         projects[FavoriteKey(platform, project.projectId)] = FavoriteEntry(platform, project)
     }
 
     fun unfavorite(platform: Platform, projectId: String) {
+        ensureLoaded()
         favoritesMMKV(platform).remove(projectId)
         projects.remove(FavoriteKey(platform, projectId))
     }
