@@ -332,7 +332,9 @@ private fun FavoritesContent(
                 }
                 items(entries, key = { "${it.platform}:${it.project.projectId}" }) { entry ->
                     FavoriteProjectLayout(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItem(),
                         entry = entry,
                         onClick = {
                             swapToDownload(
