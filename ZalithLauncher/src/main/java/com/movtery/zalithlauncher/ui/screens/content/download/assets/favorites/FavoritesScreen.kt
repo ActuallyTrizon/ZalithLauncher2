@@ -469,7 +469,8 @@ private fun FavoritesFilter(
                 selectionMode = FilterSelectionMode.Single,
                 selectedItems = listOf(viewModel.platformFilter),
                 onSelectionChange = { new ->
-                    new.firstOrNull()?.takeIf { it != viewModel.platformFilter }?.let { value ->
+                    val value = new.firstOrNull()
+                    if (value != viewModel.platformFilter) {
                         viewModel.platformFilter = value
                     }
                 },
