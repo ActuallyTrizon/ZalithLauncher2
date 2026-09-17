@@ -524,7 +524,10 @@ private fun Versions(
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     state = scrollState
                 ) {
-                    items(versions.result) { info ->
+                    items(
+                        items = versions.result,
+                        key = { "${it.gameVersion}_${it.loader?.getDisplayName()}" }
+                    ) { info ->
                         AssetsVersionItemLayout(
                             modifier = Modifier
                                 .fillMaxWidth()
