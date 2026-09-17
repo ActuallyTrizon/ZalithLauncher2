@@ -254,7 +254,7 @@ private fun FavoritesContent(
             ) {
                 Icon(
                     modifier = Modifier.size(68.dp),
-                    painter = painterResource(R.drawable.ic_favorite_outlined),
+                    painter = painterResource(R.drawable.ic_box),
                     contentDescription = null
                 )
                 Text(
