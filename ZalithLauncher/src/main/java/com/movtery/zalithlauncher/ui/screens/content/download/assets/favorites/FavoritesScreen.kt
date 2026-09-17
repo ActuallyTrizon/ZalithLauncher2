@@ -436,7 +436,7 @@ private fun FavoritesFilter(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(all = 12.dp),
+        contentPadding = PaddingValues(top = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         //名称搜索，直接从数据池过滤，无需主动触发
