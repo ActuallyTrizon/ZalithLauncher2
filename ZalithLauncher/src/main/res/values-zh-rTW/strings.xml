@@ -166,6 +166,7 @@
     <string name="download_category_saves">存檔</string>
     <string name="download_category_shaders">光影包</string>
     <string name="download_category_by_id">搜尋ID</string>
+    <string name="download_category_favorites">收藏</string>
     <string name="download_game_failed_to_get_versions">獲取版本失敗：%s，點擊重試。</string>
     <string name="download_game_type_release">正式版</string>
     <string name="download_game_type_snapshot">快照版</string>
@@ -225,6 +226,12 @@
     <string name="download_assets_filter_sort_by_recently_created">最近建立</string>
     <string name="download_assets_filter_sort_by_recently_updated">最近更新</string>
     <string name="download_assets_result_authors">作者：%s</string>
+    <string name="favorite_add">收藏</string>
+    <string name="favorite_added">已收藏</string>
+    <string name="favorites_empty">還沒有收藏的項目，去搜尋並收藏喜歡的資源吧！</string>
+    <string name="favorites_empty_filtered">沒有符合當前過濾條件的收藏項目</string>
+    <string name="favorites_sort_follow_time">收藏時間</string>
+    <string name="favorites_sort_title">項目名稱</string>
     <string name="download_assets_result_previous_page">上一頁</string>
     <string name="download_assets_result_next_page">下一頁</string>
     <string name="download_assets_failed_to_get_result">取得搜尋結果失敗：%s，點擊重試。</string>

@@ -50,6 +50,8 @@ class CurseForgeProject(
 
     override fun platformAuthor(): String = data.authors[0].name
 
+    override fun platformAuthors(): List<String> = data.platformAuthors()
+
     override fun platformDownloadCount(): Long = data.downloadCount
 
     override fun platformFollows(): Long? = null

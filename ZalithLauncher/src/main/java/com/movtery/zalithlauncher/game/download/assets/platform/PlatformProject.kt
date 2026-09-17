@@ -63,6 +63,11 @@ interface PlatformProject {
     fun platformAuthor(): String?
 
     /**
+     * 该项目在平台上的作者列表
+     */
+    fun platformAuthors(): List<String> = listOfNotNull(platformAuthor()?.takeIf { it.isNotBlank() })
+
+    /**
      * 该项目在平台上的总下载量
      */
     fun platformDownloadCount(): Long
