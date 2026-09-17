@@ -79,6 +79,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
@@ -379,10 +380,10 @@ private fun ResultList(
             val iconUrl = remember(item) { item.platformIconUrl() }
             val author = remember(item) { item.platformAuthor() }
             val downloads = remember(item) { item.platformDownloadCount() }
-            val follows = remember(item) { item.platformFollows() }
             val modloaders = remember(item) { item.platformModLoaders() }
             val categories = remember(item, classes) { item.platformCategories(classes) }
             val isInstalled = installedInfo?.invoke(platform, item.platformId()) != null
+            val isFavorite = FavoriteProjectsRepository.isFavorite(platform, item.platformId())
 
             ResultProjectLayout(
                 modifier = Modifier
@@ -394,10 +395,13 @@ private fun ResultList(
                 iconUrl = iconUrl,
                 author = author,
                 downloads = downloads,
-                follows = follows,
                 modloaders = modloaders,
                 categories = categories?.sortedWith { o1, o2 -> o1.index() - o2.index() },
                 isInstalled = isInstalled,
+                isFavorite = isFavorite,
+                onFavoriteClick = {
+                    FavoriteProjectsRepository.toggle(item, classes)
+                },
                 onClick = {
                     swapToDownload(platform, item.platformId(), iconUrl)
                 }
@@ -416,10 +420,11 @@ fun ResultProjectLayout(
     iconUrl: String? = null,
     author: String? = null,
     downloads: Long = 0L,
-    follows: Long? = null,
     modloaders: List<PlatformDisplayLabel>? = null,
     categories: List<PlatformFilterCode>? = null,
     isInstalled: Boolean = false,
+    isFavorite: Boolean = false,
+    onFavoriteClick: (() -> Unit)? = null,
     shape: Shape = MaterialTheme.shapes.large,
     influencedByBackground: Boolean = true,
     color: Color = cardColor(influencedByBackground),
@@ -479,43 +484,21 @@ fun ResultProjectLayout(
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    //下载量、收藏量
-                    Column(
+                    //下载量
+                    Row(
                         modifier = Modifier.alpha(0.7f),
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(16.dp),
-                                painter = painterResource(R.drawable.ic_download_2_outlined),
-                                contentDescription = null
-                            )
-                            Text(
-                                text = formatNumberByLocale(context, downloads),
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-
-                        follows?.let {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(14.dp),
-                                    painter = painterResource(R.drawable.ic_favorite_outlined),
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = formatNumberByLocale(context, it),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        }
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(R.drawable.ic_download_2_outlined),
+                            contentDescription = null
+                        )
+                        Text(
+                            text = formatNumberByLocale(context, downloads),
+                            style = MaterialTheme.typography.labelSmall
+                        )
                     }
                 }
 
@@ -556,8 +539,13 @@ fun ResultProjectLayout(
                     }
 
                     if (isInstalled) {
-                        InstalledModBadge(
-                            modifier = Modifier.align(Alignment.Bottom)
+                        InstalledModBadge()
+                    }
+
+                    onFavoriteClick?.let { onFavorite ->
+                        FavoriteToggleLabel(
+                            isFavorite = isFavorite,
+                            onClick = onFavorite
                         )
                     }
                 }
@@ -571,7 +559,9 @@ fun ProjectTitleHead(
     modifier: Modifier = Modifier,
     platform: Platform,
     title: String,
-    author: String?
+    author: String?,
+    classes: PlatformClasses? = null,
+    reserveAuthor: Boolean = false
 ) {
     //标题栏、作者栏、平台标签
     Row(
@@ -609,6 +599,21 @@ fun ProjectTitleHead(
                     maxLines = 1
                 )
             }
+            if (author == null && reserveAuthor) {
+                //作者信息缺失时保留占位
+                Text(
+                    modifier = Modifier
+                        .weight(0.4f, fill = false)
+                        .alpha(0.7f),
+                    text = "",
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1
+                )
+            }
+        }
+        //资源的类别
+        classes?.let {
+            ClassesIdentifier(classes = it)
         }
         //平台标签
         PlatformIdentifier(platform = platform)
