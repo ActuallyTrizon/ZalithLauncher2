@@ -83,6 +83,11 @@ interface PlatformProject {
     fun platformModLoaders(): List<PlatformDisplayLabel>?
 
     /**
+     * 该项目在平台上是否仍然可用
+     */
+    fun platformAvailable(): Boolean = true
+
+    /**
      * 检查项目类别是否受支持
      */
     fun checkClasses()

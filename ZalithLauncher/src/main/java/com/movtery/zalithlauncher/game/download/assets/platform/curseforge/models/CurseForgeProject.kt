@@ -56,6 +56,8 @@ class CurseForgeProject(
 
     override fun platformFollows(): Long? = null
 
+    override fun platformAvailable(): Boolean = data.isApproved()
+
     override fun platformModLoaders(): List<PlatformDisplayLabel>? {
         return data.platformModLoaders()
     }

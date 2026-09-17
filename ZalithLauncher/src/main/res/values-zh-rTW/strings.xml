@@ -230,6 +230,7 @@
     <string name="favorite_added">已收藏</string>
     <string name="favorites_empty">還沒有收藏的項目，去搜尋並收藏喜歡的資源吧！</string>
     <string name="favorites_empty_filtered">沒有符合當前過濾條件的收藏項目</string>
+    <string name="favorites_item_unavailable">已失效</string>
     <string name="favorites_sort_follow_time">收藏時間</string>
     <string name="favorites_sort_title">項目名稱</string>
     <string name="download_assets_result_previous_page">上一頁</string>

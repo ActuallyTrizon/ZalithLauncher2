@@ -245,6 +245,7 @@
     <string name="favorite_added">已收藏</string>
     <string name="favorites_empty">还没有收藏的项目，去搜索并收藏喜欢的资源吧！</string>
     <string name="favorites_empty_filtered">没有符合当前过滤条件的收藏项目</string>
+    <string name="favorites_item_unavailable">已失效</string>
     <string name="favorites_sort_follow_time">收藏时间</string>
     <string name="favorites_sort_title">项目名称</string>
     <string name="download_assets_result_previous_page">上一页</string>

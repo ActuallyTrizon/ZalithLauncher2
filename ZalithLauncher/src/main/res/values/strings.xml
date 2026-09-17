@@ -245,6 +245,7 @@
     <string name="favorite_added">Favorited</string>
     <string name="favorites_empty">No favorites yet. Go search and favorite the resources you like!</string>
     <string name="favorites_empty_filtered">No favorites match the current filters</string>
+    <string name="favorites_item_unavailable">Unavailable</string>
     <string name="favorites_sort_follow_time">Follow Time</string>
     <string name="favorites_sort_title">Project Name</string>
     <string name="download_assets_result_previous_page">Previous Page</string>

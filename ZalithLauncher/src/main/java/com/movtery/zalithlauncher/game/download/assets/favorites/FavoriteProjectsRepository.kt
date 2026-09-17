@@ -28,6 +28,8 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchData
 import com.movtery.zalithlauncher.game.download.assets.platform.getProjectByVersion
 import com.movtery.zalithlauncher.utils.logging.Logger
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +58,8 @@ data class FavoriteKey(
 data class FavoriteEntry(
     val platform: Platform,
     val project: FavoriteProject,
-    val remote: PlatformProject? = null
+    val remote: PlatformProject? = null,
+    val invalid: Boolean = false
 )
 
 /**
@@ -219,16 +222,39 @@ object FavoriteProjectsRepository {
             //条目可能在刷新过程中被移除，仅更新仍然存在的条目
             mutex.withLock {
                 projects[key]?.let { current ->
-                    val merged = mergeCache(current.project, remote)
-                    projects[key] = current.copy(project = merged, remote = remote)
+                    if (!remote.platformAvailable()) {
+                        //项目被平台标记为不可见（如已删除），标记条目失效
+                        markInvalid(key, current)
+                    } else {
+                        val merged = mergeCache(current.project, remote)
+                        projects[key] = current.copy(project = merged, remote = remote, invalid = false)
+                    }
                 }
             }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Throwable) {
-            Logger.warning(TAG, "Failed to refresh favorite project: ${key.platform}/${key.projectId}", e)
+            if (e.isProjectNotFound()) {
+                //远端项目已不可访问，标记条目失效
+                mutex.withLock {
+                    projects[key]?.let { current -> markInvalid(key, current) }
+                }
+            } else {
+                Logger.warning(TAG, "Failed to refresh favorite project: ${key.platform}/${key.projectId}", e)
+            }
         }
     }
+
+    private fun markInvalid(key: FavoriteKey, current: FavoriteEntry) {
+        if (current.invalid) return
+        projects[key] = current.copy(invalid = true)
+    }
+
+    /**
+     * 平台接口是否返回了项目未找到
+     */
+    private fun Throwable.isProjectNotFound(): Boolean =
+        this is NotFoundException || (this is ClientRequestException && response.status.value == 404)
 
     /**
      * 以远端数据校正本地缓存，数据有变化时回写 MMKV，收藏时间保持不变

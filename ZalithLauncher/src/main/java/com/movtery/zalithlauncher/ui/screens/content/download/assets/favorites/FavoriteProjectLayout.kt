@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteEntry
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformFilterCode
@@ -63,6 +64,8 @@ import com.movtery.zalithlauncher.utils.formatNumberByLocale
 
 /**
  * 收藏项目条目
+ *
+ * 远端项目不可用时整卡减淡并展示失效标识，点击不再生效，仍可取消收藏
  */
 @Composable
 fun FavoriteProjectLayout(
@@ -79,6 +82,7 @@ fun FavoriteProjectLayout(
     val context = LocalContext.current
     val project = entry.project
     val remote = entry.remote
+    val invalid = entry.invalid
 
     val title = remote?.platformTitle() ?: project.title
     val description = remote?.platformSummary() ?: project.description
@@ -98,13 +102,14 @@ fun FavoriteProjectLayout(
         shape = shape,
         color = color,
         contentColor = contentColor,
-        onClick = onClick
+        onClick = onClick.takeIf { !invalid } ?: {}
     ) {
         Row(
             modifier = Modifier
                 .backgroundGlass(blur, color, influencedByBackground)
                 .padding(all = 8.dp)
-                .height(IntrinsicSize.Min),
+                .height(IntrinsicSize.Min)
+                .alpha(if (invalid) 0.5f else 1f),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             AssetsIcon(
@@ -186,6 +191,11 @@ fun FavoriteProjectLayout(
                         }
                     }
 
+                    //失效标识
+                    if (invalid) {
+                        UnavailableIdentifier()
+                    }
+
                     //取消收藏
                     FavoriteToggleLabel(
                         isFavorite = true,
@@ -193,6 +203,39 @@ fun FavoriteProjectLayout(
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * 失效标识元素，远端项目已不可用时展示
+ */
+@Composable
+private fun UnavailableIdentifier(
+    modifier: Modifier = Modifier
+) {
+    val text = stringResource(R.string.favorites_item_unavailable)
+
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        shape = MaterialTheme.shapes.large
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(12.dp),
+                painter = painterResource(R.drawable.ic_block_outlined),
+                contentDescription = text
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
+            )
         }
     }
 }
