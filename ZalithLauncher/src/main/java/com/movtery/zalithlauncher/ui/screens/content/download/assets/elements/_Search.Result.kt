@@ -91,6 +91,7 @@ import com.movtery.zalithlauncher.game.version.mod.InstalledMod
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
+import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.ScalingLabel
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -590,13 +591,12 @@ fun ProjectTitleHead(
                         .padding(vertical = 4.dp),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                 )
-                Text(
+                MarqueeText(
                     modifier = Modifier
                         .weight(0.4f, fill = false)
                         .alpha(0.7f),
                     text = stringResource(R.string.download_assets_result_authors, it),
                     style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1
                 )
             }
             if (author == null && reserveAuthor) {
