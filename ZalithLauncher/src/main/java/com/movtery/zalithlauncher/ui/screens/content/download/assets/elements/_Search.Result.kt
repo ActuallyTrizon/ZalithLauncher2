@@ -539,14 +539,11 @@ fun ResultProjectLayout(
                     }
 
                     if (isInstalled) {
-                        InstalledModBadge(
-                            modifier = Modifier.align(Alignment.Bottom)
-                        )
+                        InstalledModBadge()
                     }
 
                     onFavoriteClick?.let { onFavorite ->
                         FavoriteToggleLabel(
-                            modifier = Modifier.align(Alignment.Bottom),
                             isFavorite = isFavorite,
                             onClick = onFavorite
                         )
