@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.ui.components
 
-import androidx.annotation.IntRange
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,18 +26,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -53,24 +56,48 @@ import com.movtery.zalithlauncher.utils.math.addBigDecimal
 import com.movtery.zalithlauncher.utils.math.subtractBigDecimal
 import java.text.DecimalFormat
 
+@Composable
+fun rememberSyncedSliderState(
+    value: Float,
+    steps: Int = 0,
+    valueRange: ClosedFloatingPointRange<Float>
+): SliderState {
+    val state = rememberSliderState(value = value, steps = steps, trackRange = valueRange)
+    LaunchedEffect(value) {
+        if (state.value != value) state.value = value
+    }
+    return state
+}
+
+@Composable
+private fun SliderValueObserver(
+    state: SliderState,
+    onValueChange: ((Float) -> Unit)?
+) {
+    val currentOnChange by rememberUpdatedState(onValueChange)
+    LaunchedEffect(state) {
+        snapshotFlow { state.value }.collect { newValue ->
+            currentOnChange?.invoke(newValue)
+        }
+    }
+}
+
 /**
  * 简单的文本滑动条，支持实时显示当前滑动条的数值，支持显示自定义数值的单位
  * @param shorter 是否使用更短的指示器的滑动条
  */
 @Composable
 fun SimpleTextSlider(
+    state: SliderState,
     modifier: Modifier = Modifier,
     shorter: Boolean = false,
-    value: Float,
     decimalFormat: String = "#0.00",
     enabled: Boolean = true,
-    onValueChange: (Float) -> Unit,
     toInt: Boolean = false,
     suffix: String? = null,
-    steps: Int = 0,
+    onValueChange: ((Float) -> Unit)? = null,
     onValueChangeFinished: (() -> Unit)? = null,
     onTextClick: (() -> Unit)? = null,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     fineTuningControl: Boolean = false,
     fineTuningStep: Float = 0.5f,
     appendContent: @Composable () -> Unit = {}
@@ -82,19 +109,7 @@ fun SimpleTextSlider(
         formatter.format(value)
     }}"
 
-    fun changeValue(newValue: Float, finished: Boolean) {
-        onValueChange(newValue)
-        if (finished) onValueChangeFinished?.invoke()
-    }
-
-    LaunchedEffect(Unit) {
-        //检查值是否被刻意的修改为超出范围
-        if (value !in valueRange) {
-            val newValue = value.coerceIn(valueRange)
-            //调回范围内
-            changeValue(newValue, true)
-        }
-    }
+    SliderValueObserver(state = state, onValueChange = onValueChange)
 
     Row(
         modifier = modifier,
@@ -102,22 +117,16 @@ fun SimpleTextSlider(
     ) {
         if (shorter) {
             IndicatorSlider(
-                value = value,
+                state = state,
                 enabled = enabled,
-                onValueChange = { changeValue(it, false) },
                 onValueChangeFinished = onValueChangeFinished,
-                valueRange = valueRange,
-                steps = steps,
                 modifier = Modifier.weight(1f)
             )
         } else {
             Slider(
-                value = value,
+                state = state,
                 enabled = enabled,
-                onValueChange = { changeValue(it, false) },
                 onValueChangeFinished = onValueChangeFinished,
-                valueRange = valueRange,
-                steps = steps,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -143,7 +152,7 @@ fun SimpleTextSlider(
                         )
                 ) {
                     Text(
-                        text = getTextString(value),
+                        text = getTextString(state.value),
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
                     suffix?.let { text ->
@@ -156,12 +165,14 @@ fun SimpleTextSlider(
                         enabled = enabled,
                         modifier = Modifier.size(26.dp),
                         onClick = {
-                            val newValue = value.subtractBigDecimal(fineTuningStep)
-                            if (newValue <= valueRange.start) {
-                                changeValue(valueRange.start, true)
+                            val target = state.value.subtractBigDecimal(fineTuningStep)
+                            state.value = if (target <= state.trackRange.start) {
+                                state.trackRange.start
                             } else {
-                                changeValue(newValue, true)
+                                target
                             }
+                            onValueChange?.invoke(state.value)
+                            onValueChangeFinished?.invoke()
                         }
                     ) {
                         Icon(
@@ -174,12 +185,14 @@ fun SimpleTextSlider(
                         enabled = enabled,
                         modifier = Modifier.size(26.dp),
                         onClick = {
-                            val newValue = value.addBigDecimal(fineTuningStep)
-                            if (newValue >= valueRange.endInclusive) {
-                                changeValue(valueRange.endInclusive, true)
+                            val target = state.value.addBigDecimal(fineTuningStep)
+                            state.value = if (target >= state.trackRange.endInclusive) {
+                                state.trackRange.endInclusive
                             } else {
-                                changeValue(newValue, true)
+                                target
                             }
+                            onValueChange?.invoke(state.value)
+                            onValueChangeFinished?.invoke()
                         }
                     ) {
                         Icon(
@@ -194,35 +207,32 @@ fun SimpleTextSlider(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndicatorSlider(
+    state: SliderState,
     modifier: Modifier = Modifier,
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     enabled: Boolean = true,
+    onValueChange: ((Float) -> Unit)? = null,
     onValueChangeFinished: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    @IntRange(from = 0) steps: Int = 0,
     colors: SliderColors = SliderDefaults.colors()
 ) {
     /** Slider顶部需要裁切的像素 */
     val sliderTopCut = with(LocalDensity.current) { 8.dp.toPx().toInt() }
     /** Slider底部需要裁切的像素 */
     val sliderBottomCut = with(LocalDensity.current) { 6.dp.toPx().toInt() }
+
+    SliderValueObserver(state = state, onValueChange = onValueChange)
+
     Layout(
         modifier = modifier,
         content = {
             Slider(
-                value = value,
-                onValueChange = onValueChange,
-                valueRange = valueRange,
+                state = state,
                 enabled = enabled,
                 onValueChangeFinished = onValueChangeFinished,
-                interactionSource = interactionSource,
-                steps = steps,
                 colors = colors,
+                interactionSource = interactionSource,
                 thumb = {
                     SliderDefaults.Thumb(
                         interactionSource = interactionSource,

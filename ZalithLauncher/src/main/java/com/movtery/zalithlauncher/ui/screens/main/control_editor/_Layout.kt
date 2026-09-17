@@ -75,6 +75,7 @@ import com.movtery.zalithlauncher.ui.components.LittleTextLabel
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.SimpleTextSlider
 import com.movtery.zalithlauncher.ui.components.SliderValueEditDialog
+import com.movtery.zalithlauncher.ui.components.rememberSyncedSliderState
 import com.movtery.zalithlauncher.ui.screens.content.elements.DisabledAlpha
 import com.movtery.zalithlauncher.ui.theme.itemColor
 import com.movtery.zalithlauncher.ui.theme.onItemColor
@@ -98,6 +99,7 @@ fun InfoLayoutSliderItem(
     contentColor: Color = onItemColor(),
 ) {
     var showValueEditDialog by remember { mutableStateOf(false) }
+    val sliderState = rememberSyncedSliderState(value = value, valueRange = valueRange)
 
     InfoLayoutItem(
         modifier = modifier,
@@ -112,13 +114,12 @@ fun InfoLayoutSliderItem(
                 style = MaterialTheme.typography.bodyMedium
             )
             SimpleTextSlider(
+                state = sliderState,
                 modifier = Modifier.fillMaxWidth(),
                 shorter = true,
-                value = value,
                 decimalFormat = decimalFormat,
                 enabled = enabled,
                 onValueChange = onValueChange,
-                valueRange = valueRange,
                 onValueChangeFinished = onValueChangeFinished,
                 onTextClick = { showValueEditDialog = true },
                 suffix = suffix,
