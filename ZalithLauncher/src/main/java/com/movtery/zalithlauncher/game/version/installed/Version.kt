@@ -182,6 +182,8 @@ class Version(
 
     fun getJvmArgs(): String = versionConfig.jvmArgs
 
+    fun getGameArgs(): String = versionConfig.gameArgs
+
     fun getCustomInfo(): String = versionConfig.customInfo.getValueOrDefault(AllSettings.versionCustomInfo.getValue())
         .replace("[zl_version]", BuildConfig.VERSION_NAME)
 

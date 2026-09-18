@@ -47,6 +47,7 @@ import com.movtery.zalithlauncher.utils.string.insertJSONValueList
 import com.movtery.zalithlauncher.utils.string.isEmptyOrBlank
 import com.movtery.zalithlauncher.utils.string.isLowerTo
 import com.movtery.zalithlauncher.utils.string.isNotEmptyOrBlank
+import com.movtery.zalithlauncher.utils.string.splitPreservingQuotes
 import com.movtery.zalithlauncher.utils.string.toUnicodeEscaped
 import java.io.File
 
@@ -117,6 +118,9 @@ class LaunchArgs(
                 }
             }
         }
+
+        //追加版本配置的游戏参数，置于参数列表末尾
+        argsList.addAll(version.getGameArgs().splitPreservingQuotes())
 
         return argsList
     }

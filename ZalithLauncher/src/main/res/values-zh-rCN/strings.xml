@@ -741,7 +741,7 @@
     <string name="versions_export_pack_author">整合包作者</string>
     <string name="versions_export_pack_summary">整合包描述</string>
     <string name="versions_export_pack_summary_hint">描述您的整合包，或者写写更新日志（支持使用 Markdown）</string>
-    <string name="versions_export_pack_jvm_args">游戏参数</string>
+    <string name="versions_export_pack_game_args">游戏参数</string>
     <string name="versions_export_pack_java_args">Java 虚拟机参数</string>
     <string name="versions_export_pack_website">整合包官方网站</string>
     <string name="versions_export_pack_min_memory">最小分配内存</string>
@@ -930,6 +930,8 @@
     <string name="settings_game_graphics_api_default_opengl">仅首次启动时设置为 OpenGL</string>
     <string name="settings_game_jvm_args_title">JVM 启动参数</string>
     <string name="settings_game_jvm_args_summary">启动 JVM 时，额外添加的 JVM 参数，不建议在没有把握的情况下进行修改，因为这很有可能导致崩溃</string>
+    <string name="versions_config_game_args_title">游戏参数</string>
+    <string name="versions_config_game_args_summary">启动游戏时，额外传递给游戏的参数，将追加在版本自带的游戏参数之后</string>
     <string name="settings_game_show_log_automatic_title">自动显示日志</string>
     <string name="settings_game_show_log_automatic_summary">在游戏还未正式渲染画面前，自动显示日志</string>
     <string name="settings_game_log_text_size_title">日志字体大小</string>
