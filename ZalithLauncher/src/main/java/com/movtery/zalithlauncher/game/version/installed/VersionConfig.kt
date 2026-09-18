@@ -24,7 +24,6 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.support.touch_controller.VibrationHandler
-import com.movtery.zalithlauncher.game.version.installed.VersionsManager.getZalithVersionPath
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.logging.Logger

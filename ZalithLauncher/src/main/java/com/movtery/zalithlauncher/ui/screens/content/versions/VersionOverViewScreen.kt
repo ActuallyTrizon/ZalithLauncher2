@@ -52,7 +52,6 @@ import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.contract.MediaPickerContract
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
-import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
@@ -109,7 +108,7 @@ fun VersionOverViewScreen(
         var refreshVersionIcon by remember { mutableIntStateOf(0) }
 
         val context = LocalContext.current
-        var iconFileExists by remember { mutableStateOf(VersionsManager.getVersionIconFile(version).exists()) }
+        var iconFileExists by remember { mutableStateOf(version.getVersionIconFile().exists()) }
 
         var versionsOperation by remember { mutableStateOf<VersionsOperation>(VersionsOperation.None) }
         VersionsOperation(
@@ -117,7 +116,7 @@ fun VersionOverViewScreen(
             updateOperation = { versionsOperation = it },
             submitError = submitError,
             resetIcon = {
-                val iconFile = VersionsManager.getVersionIconFile(version)
+                val iconFile = version.getVersionIconFile()
                 FileUtils.deleteQuietly(iconFile)
                 refreshVersionIcon++
                 iconFileExists = iconFile.exists()
@@ -147,7 +146,7 @@ fun VersionOverViewScreen(
                     submitError = submitError,
                     refreshKey = refreshVersionIcon,
                     onIconPicked = {
-                        iconFileExists = VersionsManager.getVersionIconFile(version).exists()
+                        iconFileExists = version.getVersionIconFile().exists()
                         versionsOperation = VersionsOperation.None
                         refreshVersionIcon++
                     },
@@ -193,7 +192,7 @@ fun VersionOverViewScreen(
                         }
                         eventViewModel.sendEvent(
                             EventViewModel.Event.OpenFileManager(
-                                rootPath = GamePathManager.currentPath.value,
+                                rootPath = version.getGameHome(),
                                 currentPath = folder.absolutePath,
                             )
                         )
@@ -218,7 +217,7 @@ private fun VersionInfoLayout(
     val context = LocalContext.current
     val errorImportImageText = stringResource(R.string.error_import_image)
     val iconFile = remember {
-        VersionsManager.getVersionIconFile(version)
+        version.getVersionIconFile()
     }
 
     VersionChunkBackground(
@@ -303,7 +302,7 @@ private fun VersionManagementLayout(
     onDelete: () -> Unit,
 ) {
     val logFile = remember(version) {
-        VersionsManager.getLatestLog(version)
+        version.getLatestLog()
     }
     val logExists = remember(logFile) {
         logFile.exists()
